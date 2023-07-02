@@ -1,0 +1,30 @@
+server:
+  port: 8090
+
+spring:
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher #url 패턴 매칭 전략
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true #쿼리문 보여주는 옵션
+    properties:
+      format_sql: true #줄바꿈 해주는 옵션
+  config:
+    import: classpath:redis-local.yml, classpath:mysql-local.yml
+
+logging:
+  level:
+    web: debug
+  group:
+    db:
+      org.hibernate.type.descriptor.sql: trace
+
+---
+spring.config.activate.on-profile: redis-local
+---
+spring.config.activate.on-profile: mysql-local
+
+
