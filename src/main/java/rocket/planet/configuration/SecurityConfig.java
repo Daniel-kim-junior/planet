@@ -3,6 +3,7 @@ package rocket.planet.configuration;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,13 +78,13 @@ public class SecurityConfig {
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
+		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(false); // 쿠키를 받을건지
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(List.of("http://localhost:3000"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
 		configuration.addAllowedHeader("*");
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}

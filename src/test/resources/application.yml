@@ -1,0 +1,23 @@
+spring:
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher #url 패턴 매칭 전략
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true #쿼리문 보여주는 옵션
+    properties:
+      format_sql: true #줄바꿈 해주는 옵션
+  config:
+    import: classpath:redis-local.yml
+logging:
+  level:
+    web: debug
+  group:
+    db:
+      org.hibernate.type.descriptor.sql: trace
