@@ -11,26 +11,29 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/*
+ * Swagger 설정
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.OAS_30)
-                .useDefaultResponseMessages(true) // Swagger 에서 제공해주는 기본 응답 코드를 표시할 것이면 true
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage(
-                        "rocket.planet.controller")) // Controller가 들어있는 패키지. 이 경로의 하위에 있는 api만 표시됨.
-                .paths(PathSelectors.any()) // 위 패키지 안의 api 중 지정된 path만 보여줌. (any()로 설정 시 모든 api가 보여짐)
-                .build();
-    }
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.OAS_30)
+			.useDefaultResponseMessages(true) // Swagger 에서 제공해주는 기본 응답 코드를 표시할 것이면 true
+			.apiInfo(apiInfo())
+			.select()
+			.apis(RequestHandlerSelectors.basePackage(
+				"rocket.planet.controller")) // Controller가 들어있는 패키지. 이 경로의 하위에 있는 api만 표시됨.
+			.paths(PathSelectors.any()) // 위 패키지 안의 api 중 지정된 path만 보여줌. (any()로 설정 시 모든 api가 보여짐)
+			.build();
+	}
 
-    public ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Planet Rest API Documentation")
-                .description("PlaNet - Rocket")
-                .version("0.1")
-                .build();
-    }
+	public ApiInfo apiInfo() {
+		return new ApiInfoBuilder()
+			.title("Planet Rest API Documentation")
+			.description("PlaNet - Rocket")
+			.version("0.1")
+			.build();
+	}
 }
