@@ -2,7 +2,6 @@ package rocket.planet.util.annotation;
 
 import static java.lang.annotation.RetentionPolicy.*;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -14,7 +13,6 @@ import javax.validation.Payload;
  * 유효한 비밀번호를 검증하는 어노테이션
  */
 @Retention(RUNTIME)
-@Documented
 @Constraint(validatedBy = ValidPasswordValidator.class)
 @Target(ElementType.FIELD)
 public @interface ValidPassword {

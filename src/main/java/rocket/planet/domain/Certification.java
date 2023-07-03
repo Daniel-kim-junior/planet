@@ -48,11 +48,14 @@ public class Certification {
 	@Column(nullable = false)
 	private String certType;
 
+	@Column(nullable = false)
+	private String certNumber;
+
 	@Override
 	public String toString() {
 		return "자격증{" + "자격증 uuid=" + id + ", 자격증 이름='" + certName + '\'' + ", 자격증 취득일=" + certDt
 			+ ", 자격증 발급기관='" + certAgency + '\'' + ", 만료일='" + certExpireDate + '\'' + ", 자격증 유형='"
-			+ certType + '\'' + '}';
+			+ certType + '\'' + ", 자격증 번호='" + certNumber + '\'' + '}';
 	}
 
 }

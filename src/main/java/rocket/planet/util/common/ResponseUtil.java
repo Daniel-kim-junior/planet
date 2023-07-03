@@ -1,4 +1,4 @@
-package rocket.planet.util;
+package rocket.planet.util.common;
 
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.dto.common.CommonResponse;
