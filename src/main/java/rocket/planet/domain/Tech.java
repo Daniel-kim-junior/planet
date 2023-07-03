@@ -38,11 +38,15 @@ public class Tech {
 	@Column(nullable = false, unique = true)
 	private String techName;
 
+	@Column(nullable = false)
+	private String techCategory;
+
 	@Override
 	public String toString() {
 		return "기술{" +
 			"기술 uuid=" + id +
 			", 기술 이름='" + techName + '\'' +
+			", 기술 카테고리='" + techCategory + '\'' +
 			'}';
 	}
 }
