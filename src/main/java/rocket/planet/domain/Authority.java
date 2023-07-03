@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -38,6 +39,7 @@ public class Authority extends BaseTime {
 	private UUID authTargetId;
 
 	@Column(nullable = false)
+	@Email
 	private String authorizerId;
 
 	@Override

@@ -26,6 +26,7 @@ public class LoggingAdvice {
 	private static final Logger logger = LoggerFactory.getLogger(LoggingAdvice.class);
 
 	private String paramMapToString(Map<String, String[]> paramMap) {
+
 		return paramMap.entrySet().stream()
 			.map(entry -> String.format("%s -> (%s)", entry.getKey(), Joiner.on(",").join(entry.getValue())))
 			.collect(Collectors.joining(", "));
@@ -50,6 +51,7 @@ public class LoggingAdvice {
 			return pjp.proceed(pjp.getArgs());
 		} finally {
 			long end = System.currentTimeMillis();
+			System.out.println("호출");
 			logger.debug("Request: {} {}{} < {} ({}ms)", request.getMethod(), request.getRequestURI(),
 				params, request.getRemoteHost(), end - start);
 		}

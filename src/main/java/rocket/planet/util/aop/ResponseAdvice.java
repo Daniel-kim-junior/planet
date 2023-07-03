@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import rocket.planet.dto.common.CommonErrorDto;
-import rocket.planet.util.ResponseUtil;
+import rocket.planet.util.common.ResponseUtil;
 
 /*
  * Response 공통 처리를 위한 어드바이스(AOP)
