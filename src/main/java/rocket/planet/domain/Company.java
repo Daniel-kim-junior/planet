@@ -5,7 +5,6 @@ import static lombok.AccessLevel.*;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,8 +33,11 @@ public class Company {
 	@Column(nullable = false, unique = true)
 	private String companyName;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company")
+	@OneToMany(mappedBy = "company")
 	private List<Department> department;
+
+	@OneToMany(mappedBy = "company")
+	private List<Org> org;
 
 	@Override
 	public String toString() {

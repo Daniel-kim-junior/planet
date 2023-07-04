@@ -11,11 +11,11 @@ spring:
     show-sql: true
   config:
     import: classpath:local-profile.yml
-
 logging:
   level:
     root: WARN
     rocket.planet: DEBUG
+
 ---
 spring.config.activate.on-profile: local-profile
 ---
