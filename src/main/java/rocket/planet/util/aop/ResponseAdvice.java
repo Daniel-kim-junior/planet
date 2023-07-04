@@ -29,7 +29,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 		if (body instanceof CommonErrorDto) {
 			return ResponseUtil.error((CommonErrorDto)body);
 		}
-
 		return ResponseUtil.success(body);
 	}
 }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import rocket.planet.dto.common.CommonResponse;
 import rocket.planet.dto.login.LoginRequestDto;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
@@ -18,10 +20,11 @@ import rocket.planet.util.exception.PasswordMismatchException;
 @RestController
 @RequestMapping("/test/error")
 public class ExceptionController {
+
 	@GetMapping
-	public LoginRequestDto test() {
-		LoginRequestDto loginRequest = LoginRequestDto.builder().id("ff").password("ff").build();
-		return loginRequest;
+	public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
+		CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
+		return response;
 	}
 
 	@PostMapping("/id-mismatch")
@@ -29,7 +32,7 @@ public class ExceptionController {
 		if (!loginRequest.getId().equals("testId")) {
 			throw new IdMismatchException("id mismatch");
 		}
-		return "login success";
+		return "dd";
 	}
 
 	@PostMapping("/password-mismatch")

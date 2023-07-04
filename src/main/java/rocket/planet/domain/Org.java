@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -37,15 +36,17 @@ public class Org extends BaseTime {
 	@MapsId
 	private User user;
 
-	@OneToOne(fetch = LAZY, optional = false)
+	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "company_uid")
 	private Company company;
 
-	@Column(name = "dept_uid", columnDefinition = "BINARY(16)")
-	private UUID deptUid;
+	@ManyToOne(fetch = LAZY, optional = false)
+	@JoinColumn(name = "dept_uid", nullable = false)
+	private Department department;
 
-	@Column(name = "team_uid", columnDefinition = "BINARY(16)")
-	private UUID teamUid;
+	@ManyToOne(fetch = LAZY, optional = false)
+	@JoinColumn(name = "team_uid", nullable = false)
+	private Team team;
 	@Column(name = "belong_inviter")
 	private String belongInviter;
 
@@ -56,8 +57,8 @@ public class Org extends BaseTime {
 	public String toString() {
 		return "소속{" +
 			"내 uuid=" + id +
-			", 부서 uuid=" + deptUid +
-			", 팀 uuid=" + teamUid +
+			", 부서 uuid=" + department +
+			", 팀 uuid=" + team +
 			", 소속 할당 담당자='" + belongInviter + '\'' +
 			", 현재 소속 여부=" + belongStatus +
 			'}';
