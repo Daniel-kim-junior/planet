@@ -30,26 +30,28 @@ class ProjectControllerTest {
 	@Test
 	@Rollback(false)
 	void 프로젝트_생성_테스트() {
-		//
-		// private String userName;
-		// private String projectName;
-		// private String projectDesc;
-		// private String projectTech;
-		// private LocalDate projectStartDt;
-		// private LocalDate projectEndDt;
-		// private ProjectStatus projectStatus;
-		ProjectRegisterReqDto project = ProjectRegisterReqDto.builder()
+		ProjectRegisterReqDto project1 = ProjectRegisterReqDto.builder()
 			.userName("박피엘")
 			.projectName("스마트 시티 TF")
 			.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
 			.projectTech("Spring, Java, Computer Vision")
 			.projectStartDt(LocalDate.of(2023,7,5))
 			.projectEndDt(LocalDate.of(2023,8,14))
-			.projectStatus(ProjectStatus.WAITING)
 			.build();
 
-		ProjectRegisterResDto res = projectService.registerProject(project);
-		assertThat(projectRepository.findAll().size()).isEqualTo(1);
+		ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
+			.userName("파일럿")
+			.projectName("스마트 챗봇을 이용한 의료 시스템")
+			.projectDesc("의료 시스템에 스마트 챗봇을 이용하여 효율적으로 진료를 할 수 있게 합니다.")
+			.projectTech("C++, Python, NLP")
+			.projectStartDt(LocalDate.of(2023,7,6))
+			.projectEndDt(LocalDate.of(2023,8,20))
+			.build();
+
+		projectService.registerProject(project1);
+		projectService.registerProject(project2);
+
+		assertThat(projectRepository.findAll().size()).isEqualTo(2);
 
 	}
 

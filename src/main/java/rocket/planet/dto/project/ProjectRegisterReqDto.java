@@ -15,5 +15,4 @@ public class ProjectRegisterReqDto {
 	private String projectTech;
 	private LocalDate projectStartDt;
 	private LocalDate projectEndDt;
-	private ProjectStatus projectStatus;
 }

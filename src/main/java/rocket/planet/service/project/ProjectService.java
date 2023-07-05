@@ -1,5 +1,6 @@
 package rocket.planet.service.project;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,9 +31,8 @@ public class ProjectService {
 	public ProjectRegisterResDto registerProject(ProjectRegisterReqDto registerDto){
 		Optional<User> user = userRepository.findByUserName(registerDto.getUserName());
 		Optional<Org> org = orgRepository.findByUser_Id(user.get().getId());
-		System.out.println(user + " " + org + " ");
-
 		Optional<Team> team = teamRepository.findById(org.get().getTeam().getId());
+
 		Project project = Project.builder()
 				.projectName(registerDto.getProjectName())
 				.projectDesc(registerDto.getProjectDesc())
@@ -53,9 +53,8 @@ public class ProjectService {
 	}
 
 	public void updateProject(Project project){
-		Project updatedProject = projectRepository.findById(project.getId())
-			.orElseThrow();
-		updatedProject.update(project);
+		Optional<Project> updatedProject = projectRepository.findById(project.getId());
+		updatedProject.get().update(project);
 
 	}
 }

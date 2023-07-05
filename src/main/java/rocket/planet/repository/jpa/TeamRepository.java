@@ -10,5 +10,4 @@ import rocket.planet.domain.Team;
 public interface TeamRepository extends JpaRepository<Team, UUID> {
     Team findByTeamName(String teamName);
 
-	OrgType findTeamTypeById(UUID teamId);
 }
