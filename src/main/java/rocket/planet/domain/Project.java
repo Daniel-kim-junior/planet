@@ -59,6 +59,7 @@ public class Project {
 	@Column(nullable = false)
 	private LocalDate projectEndDt;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private ProjectStatus projectStatus;
 

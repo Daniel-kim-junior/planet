@@ -42,6 +42,7 @@ public class Team extends BaseTime {
 
 	@OneToMany(mappedBy = "team")
 	private List<Org> org;
+
 	@Column(nullable = false, unique = true)
 	private String teamName;
 

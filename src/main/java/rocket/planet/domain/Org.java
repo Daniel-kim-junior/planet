@@ -2,24 +2,16 @@ package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
-
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
@@ -51,6 +43,13 @@ public class Org extends BaseTime {
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "team_uid", nullable = false)
 	private Team team;
+
+	@Column(name = "belong_start_date")
+	private LocalDate belongStartDate;
+
+	@Column(name = "belong_end_date")
+	private LocalDate belongEndDate;
+
 	@Column(name = "belong_inviter")
 	private String belongInviter;
 
@@ -66,6 +65,7 @@ public class Org extends BaseTime {
 			", 소속 할당 담당자='" + belongInviter + '\'' +
 			", 현재 소속 여부=" + belongStatus +
 			'}';
+
 	}
 
 }
