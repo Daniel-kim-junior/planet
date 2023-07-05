@@ -60,8 +60,6 @@ public class Org extends BaseTime {
 	public String toString() {
 		return "소속{" +
 			"내 uuid=" + id +
-			", 부서 uuid=" + department +
-			", 팀 uuid=" + team +
 			", 소속 할당 담당자='" + belongInviter + '\'' +
 			", 현재 소속 여부=" + belongStatus +
 			'}';

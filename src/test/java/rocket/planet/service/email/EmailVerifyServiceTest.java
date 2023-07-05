@@ -35,7 +35,7 @@ class EmailVerifyServiceTest {
 	@Test
 	void 인증_서비스_컨트롤러_테스트() throws Exception {
 		emailVerifyService.redisSaveToken("test20412041@gmail.com",
-			"123456")
+			"123456");
 
 	}
 }

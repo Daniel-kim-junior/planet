@@ -4,15 +4,18 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,15 +30,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-@IdClass(UserProjectId.class)
 @EntityListeners(AuditingEntityListener.class)
 public class UserProject {
 	@Id
+	@GeneratedValue(generator = "uuid4")
+	@GenericGenerator(name = "UUID", strategy = "uuid4")
+	@Column(name = "user_pjt_uid", columnDefinition = "BINARY(16)")
+	private UUID id;
+
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "user_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private User user;
 
-	@Id
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "project_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private Project project;
