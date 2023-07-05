@@ -18,6 +18,9 @@ import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidPassword;
 import rocket.planet.util.exception.ExceptionEnum;
 import rocket.planet.util.exception.IdMismatchException;
+import rocket.planet.util.exception.NoSuchEmailException;
+import rocket.planet.util.exception.NoSuchEmailTokenException;
+import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 
 /*
@@ -61,7 +64,28 @@ public class ExceptionAdvice {
 				return getCommonErrorDto(ExceptionEnum.PASSWORD_NOT_VALID_EXCEPTION);
 			}
 		}
-		return getCommonErrorDto(ExceptionEnum.EMAIL_DUPLICATION_EXCEPTION);
+		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
+	}
+
+	@ExceptionHandler(NoSuchEmailException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoSuchEmailException(NoSuchEmailException e) {
+		log.error("NoSuchEmailException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_FOUND_EXCEPTION);
+	}
+
+	@ExceptionHandler(NoSuchEmailTokenException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoSuchEmailException(NoSuchEmailTokenException e) {
+		log.error("NoSuchEmailTokenException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.EMAIL_TOKEN_NOT_FOUND_EXCEPTION);
+	}
+
+	@ExceptionHandler(NoValidEmailTokenException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoValidEmailTokenException(NoSuchEmailTokenException e) {
+		log.error("NoSuchEmailTokenException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.EMAIL_TOKEN_NOT_VALID_EXCEPTION);
 	}
 
 	private CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {

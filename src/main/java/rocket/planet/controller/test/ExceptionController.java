@@ -1,5 +1,7 @@
 package rocket.planet.controller.test;
 
+import static rocket.planet.dto.login.LoginDto.*;
+
 import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import rocket.planet.dto.common.CommonResponse;
-import rocket.planet.dto.login.LoginRequestDto;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
 
@@ -20,14 +21,13 @@ import rocket.planet.util.exception.PasswordMismatchException;
 @RestController
 @RequestMapping("/test/error")
 public class ExceptionController {
-
-	@GetMapping
+	@GetMapping(produces = "application/json", consumes = "application/json")
 	public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
 		CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
 		return response;
 	}
 
-	@PostMapping("/id-mismatch")
+	@PostMapping(value = "/id-mismatch", produces = "application/json", consumes = "application/json")
 	public String idMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {
 		if (!loginRequest.getId().equals("testId")) {
 			throw new IdMismatchException("id mismatch");
@@ -35,7 +35,7 @@ public class ExceptionController {
 		return "dd";
 	}
 
-	@PostMapping("/password-mismatch")
+	@PostMapping(value = "/password-mismatch", produces = "application/json", consumes = "application/json")
 	public String passwordMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {
 		if (!loginRequest.getPassword().equals("testPassword")) {
 			throw new PasswordMismatchException("password mismatch");
@@ -43,7 +43,7 @@ public class ExceptionController {
 		return "login success";
 	}
 
-	@PostMapping("/user-data-invalid")
+	@PostMapping(value = "/user-data-invalid", produces = "application/json", consumes = "application/json")
 	public String emailInvalid(@Valid @RequestBody LoginRequestDto loginRequest) {
 		return "email valid";
 	}
