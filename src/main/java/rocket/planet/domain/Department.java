@@ -34,6 +34,7 @@ public class Department {
 	@GenericGenerator(name = "UUID", strategy = "uuid4")
 	@Column(name = "dept_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "company_uid", nullable = false, updatable = false)
 	private Company company;

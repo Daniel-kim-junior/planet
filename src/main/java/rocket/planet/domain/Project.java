@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.project.ProjectRegisterResDto;
 
 @Entity
 @Getter
@@ -59,8 +60,11 @@ public class Project {
 	@Column(nullable = false)
 	private LocalDate projectEndDt;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	private String projectTech;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private ProjectStatus projectStatus;
 
 	@Column(nullable = false)
@@ -79,6 +83,7 @@ public class Project {
 		return "프로젝트{" +
 			"프로젝트 uuid=" + id +
 			", 프로젝트 이름='" + projectName + '\'' +
+			", 프로젝트 사용 기술='" + projectTech + '\'' +
 			", 프로젝트 설명='" + projectDesc + '\'' +
 			", 프로젝트 시작일=" + projectStartDt +
 			", 프로젝트 종료일=" + projectEndDt +
@@ -89,4 +94,23 @@ public class Project {
 			'}';
 	}
 
+	public ProjectRegisterResDto toProjectRegisterResDto(Project project){
+		return ProjectRegisterResDto.builder()
+			.projectStatus(ProjectStatus.WAITING)
+			.build();
+	}
+
+	public void toUpdateProjectStatusDto(Project project) {
+		ProjectRegisterResDto.builder()
+			.projectStatus(ProjectStatus.ONGOING)
+			.build();
+	}
+
+	public void update(Project project){
+		this.projectName = project.getProjectName();
+		this.projectDesc = project.getProjectDesc();
+		this.projectStartDt = project.getProjectStartDt();
+		this.projectEndDt = project.getProjectEndDt();
+		this.projectTech = project.getProjectTech();
+	}
 }

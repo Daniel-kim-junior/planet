@@ -30,6 +30,7 @@ public class Company {
 	@GenericGenerator(name = "UUID", strategy = "uuid4")
 	@Column(name = "company_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
+
 	@Column(nullable = false, unique = true)
 	private String companyName;
 
