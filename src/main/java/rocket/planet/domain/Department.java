@@ -39,10 +39,8 @@ public class Department {
 	@JoinColumn(name = "company_uid", nullable = false, updatable = false)
 	private Company company;
 
-	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "department")
 	private List<Team> team;
-	@Column(nullable = false)
-	private String deptCode;
 
 	@Column(nullable = false, unique = true)
 	private String deptName;
@@ -55,7 +53,6 @@ public class Department {
 	public String toString() {
 		return "Department{" +
 			"부서 uuid=" + id +
-			", 부서 코드='" + deptCode + '\'' +
 			", 부서 이름='" + deptName + '\'' +
 			", 개발/비개발='" + deptType + '\'' +
 			'}';

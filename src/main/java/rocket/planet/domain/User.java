@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.repository.jpa.ProfileRepository;
 
 @Entity
 @Getter
@@ -65,7 +66,7 @@ public class User extends BaseTime {
 	@JoinColumn(name = "auth_uid")
 	private Authority authority;
 
-	@OneToOne(fetch = LAZY, optional = false)
+	@OneToOne(fetch = LAZY)
 	@JoinColumn(name = "profile_uid")
 	private Profile profile;
 
@@ -82,4 +83,10 @@ public class User extends BaseTime {
 			", 유저 id='" + userId + '\'' +
 			'}';
 	}
+
+	public User updateProfile(Profile profile) {
+		this.profile = profile;
+		return this;
+	}
+
 }

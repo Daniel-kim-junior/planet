@@ -35,7 +35,7 @@ public class Authority extends BaseTime {
 	@Column(nullable = false)
 	private AuthType authType;
 
-	@Column(nullable = false, columnDefinition = "BINARY(16)")
+	@Column(columnDefinition = "BINARY(16)")
 	private UUID authTargetId;
 
 	@Column(nullable = false)

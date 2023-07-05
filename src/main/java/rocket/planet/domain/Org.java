@@ -3,22 +3,17 @@ package rocket.planet.domain;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
@@ -30,22 +25,34 @@ import lombok.NoArgsConstructor;
 })
 public class Org extends BaseTime {
 	@Id
+	@GeneratedValue(generator = "uuid4")
+	@GenericGenerator(name = "UUID", strategy = "uuid4")
+	@Column(name = "org_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "user_uid", nullable = false, columnDefinition = "BINARY(16)")
-	@MapsId
 	private User user;
 
-	@OneToOne(fetch = LAZY, optional = false)
+	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "company_uid")
 	private Company company;
 
-	@Column(name = "dept_uid", columnDefinition = "BINARY(16)")
-	private UUID deptUid;
+	@ManyToOne(fetch = LAZY, optional = false)
+	@JoinColumn(name = "dept_uid", nullable = false)
+	private Department department;
 
-	@Column(name = "team_uid", columnDefinition = "BINARY(16)")
-	private UUID teamUid;
+	@ManyToOne(fetch = LAZY, optional = false)
+	@JoinColumn(name = "team_uid", nullable = false)
+	private Team team;
+
+	@Column(name = "belong_start_date")
+	private LocalDate belongStartDate;
+
+	@Column(name = "belong_end_date")
+	private LocalDate belongEndDate;
+
+
 	@Column(name = "belong_inviter")
 	private String belongInviter;
 
@@ -55,12 +62,12 @@ public class Org extends BaseTime {
 	@Override
 	public String toString() {
 		return "소속{" +
-			"내 uuid=" + id +
-			", 부서 uuid=" + deptUid +
-			", 팀 uuid=" + teamUid +
-			", 소속 할당 담당자='" + belongInviter + '\'' +
-			", 현재 소속 여부=" + belongStatus +
-			'}';
+				"내 uuid=" + id +
+				", 부서 uuid=" + department +
+				", 팀 uuid=" + team +
+				", 소속 할당 담당자='" + belongInviter + '\'' +
+				", 현재 소속 여부=" + belongStatus +
+				'}';
 	}
 
 }

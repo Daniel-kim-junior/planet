@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.repository.jpa.AuthRepository;
@@ -29,4 +30,5 @@ public class AuthorityTest {
 		List<Authority> all = em.findAll();
 		Assertions.assertThat(all.get(0).getId()).isEqualTo(save.getId());
 	}
+
 }

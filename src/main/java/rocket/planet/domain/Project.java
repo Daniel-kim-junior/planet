@@ -47,16 +47,14 @@ public class Project {
 	private String projectDesc;
 
 	@Column(nullable = false)
-	private String projectCode;
-
-	@Column(nullable = false)
 	private LocalDate projectStartDt;
 
 	@Column(nullable = false)
 	private LocalDate projectEndDt;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private boolean projectStatus;
+	private ProjectStatus projectStatus;
 
 	@Column(nullable = false)
 	private String projectLastModifiedBy;
@@ -75,7 +73,6 @@ public class Project {
 			"프로젝트 uuid=" + id +
 			", 프로젝트 이름='" + projectName + '\'' +
 			", 프로젝트 설명='" + projectDesc + '\'' +
-			", 프로젝트 코드='" + projectCode + '\'' +
 			", 프로젝트 시작일=" + projectStartDt +
 			", 프로젝트 종료일=" + projectEndDt +
 			", 프로젝트 상태=" + projectStatus +

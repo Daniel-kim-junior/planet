@@ -34,7 +34,7 @@ public class Company {
 	@Column(nullable = false, unique = true)
 	private String companyName;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company")
+	@OneToMany(mappedBy = "company")
 	private List<Department> department;
 
 	@Override
