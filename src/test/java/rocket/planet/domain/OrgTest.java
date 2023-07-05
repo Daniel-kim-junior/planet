@@ -6,6 +6,7 @@ import org.springframework.test.annotation.Rollback;
 import rocket.planet.repository.jpa.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest
@@ -42,16 +43,16 @@ public class OrgTest {
         Team itConsultingTeam = teamRepository.findByTeamName("IT컨설팅");
 
 
-        User admin = userRepository.findByUserIdContaining("admin");
-        User crew = userRepository.findByUserIdContaining("crew");
-        User pilot = userRepository.findByUserIdContaining("pilot");
-        User captain = userRepository.findByUserIdContaining("captain");
-        User radar = userRepository.findByUserIdContaining("radar");
-        User pl = userRepository.findByUserIdContaining("pl");
+        Optional<User> admin = userRepository.findByUserIdContaining("admin");
+        Optional<User> crew = userRepository.findByUserIdContaining("crew");
+        Optional<User> pilot = userRepository.findByUserIdContaining("pilot");
+        Optional<User> captain = userRepository.findByUserIdContaining("captain");
+        Optional<User> radar = userRepository.findByUserIdContaining("radar");
+        Optional<User> pl = userRepository.findByUserIdContaining("pl");
 
 
         Org adminOrg = Org.builder()
-                .user(admin)
+                .user(admin.get())
                 .company(company)
                 .department(hrDept)
                 .team(hrTeam)
@@ -61,7 +62,7 @@ public class OrgTest {
                 .build();
         orgRepository.save(adminOrg);
         Org crewOrg = Org.builder()
-                .user(crew)
+                .user(crew.get())
                 .company(company)
                 .department(smartDept)
                 .team(smartCityTeam)
@@ -71,7 +72,7 @@ public class OrgTest {
                 .build();
         orgRepository.save(crewOrg);
         Org pilotOrg = Org.builder()
-                .user(pilot)
+                .user(pilot.get())
                 .company(company)
                 .department(aiChatbotDept)
                 .team(aiChatbotTeam)
@@ -81,7 +82,7 @@ public class OrgTest {
                 .build();
         orgRepository.save(pilotOrg);
         Org captainOrg = Org.builder()
-                .user(captain)
+                .user(captain.get())
                 .company(company)
                 .department(smartDept)
                 .team(smartFactoryTeam)
@@ -91,7 +92,7 @@ public class OrgTest {
                 .build();
         orgRepository.save(captainOrg);
         Org radarOrg = Org.builder()
-                .user(radar)
+                .user(radar.get())
                 .company(company)
                 .department(internalSysDept)
                 .team(internalSysTeam)
@@ -101,7 +102,7 @@ public class OrgTest {
                 .build();
         orgRepository.save(radarOrg);
         Org plOrg = Org.builder()
-                .user(pl)
+                .user(pl.get())
                 .company(company)
                 .department(itConsultingDept)
                 .team(itConsultingTeam)

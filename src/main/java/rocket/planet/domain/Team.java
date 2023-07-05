@@ -28,11 +28,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PROTECTED)
 public class Team extends BaseTime {
+
 	@Id
 	@GeneratedValue(generator = "uuid4")
 	@GenericGenerator(name = "UUID", strategy = "uuid4")
 	@Column(name = "team_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "dept_uid", nullable = false, updatable = false)
 	private Department department;
@@ -48,6 +50,7 @@ public class Team extends BaseTime {
 
 	@Column(nullable = false)
 	private String teamDesc;
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private OrgType teamType;

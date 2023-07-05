@@ -34,7 +34,7 @@ public class PjtRecord {
 	private UUID id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(columnDefinition = "BINARY(16)", name = "profile_uid", nullable = false)
+	@JoinColumn(name = "profile_uid", nullable = false)
 	private Profile profile;
 
 	@Column(name = "profile_pjt_name", nullable = false, unique = true)
