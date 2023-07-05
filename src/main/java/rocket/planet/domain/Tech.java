@@ -31,8 +31,7 @@ public class Tech {
 	@Column(name = "tech_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@OneToMany
-	@JoinColumn(name = "tech_uid", nullable = false)
+	@OneToMany(mappedBy = "tech")
 	private List<ProfileTech> profileTech;
 
 	@Column(nullable = false, unique = true)
