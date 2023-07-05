@@ -2,13 +2,11 @@ package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
-
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.persistence.*;
-
+import org.hibernate.annotations.GenericGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,7 +50,6 @@ public class Org extends BaseTime {
 	@Column(name = "belong_end_date")
 	private LocalDate belongEndDate;
 
-
 	@Column(name = "belong_inviter")
 	private String belongInviter;
 
@@ -62,12 +59,13 @@ public class Org extends BaseTime {
 	@Override
 	public String toString() {
 		return "소속{" +
-				"내 uuid=" + id +
-				", 부서 uuid=" + department +
-				", 팀 uuid=" + team +
-				", 소속 할당 담당자='" + belongInviter + '\'' +
-				", 현재 소속 여부=" + belongStatus +
-				'}';
+			"내 uuid=" + id +
+			", 부서 uuid=" + department +
+			", 팀 uuid=" + team +
+			", 소속 할당 담당자='" + belongInviter + '\'' +
+			", 현재 소속 여부=" + belongStatus +
+			'}';
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package rocket.planet.domain;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -36,6 +39,10 @@ public class Project {
 	@GenericGenerator(name = "UUID", strategy = "uuid4")
 	@Column(name = "project_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
+
+	@ManyToOne(fetch = LAZY, optional = false)
+	@JoinColumn(name = "team_uid")
+	private Team team;
 
 	@OneToMany(mappedBy = "project")
 	private List<UserProject> userProject;

@@ -5,7 +5,6 @@ import static lombok.AccessLevel.*;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,6 +40,9 @@ public class Department {
 
 	@OneToMany(mappedBy = "department")
 	private List<Team> team;
+
+	@OneToMany(mappedBy = "department")
+	private List<Org> org;
 
 	@Column(nullable = false, unique = true)
 	private String deptName;

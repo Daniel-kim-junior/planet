@@ -1,6 +1,7 @@
 package rocket.planet.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static rocket.planet.dto.login.LoginDto.*;
 
 import java.nio.charset.StandardCharsets;
 
@@ -21,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import rocket.planet.configuration.SecurityConfig;
 import rocket.planet.controller.test.ExceptionController;
-import rocket.planet.dto.login.LoginRequestDto;
 
 /*
  * Controller Exception 테스트 (스프링 시큐리티 제외)
@@ -74,11 +74,11 @@ class ControllerExceptionUnitTest {
 	@DisplayName("이메일 형식 유효성 검사 실패")
 	@Test
 	void 이메일_형식_유효성_에러_핸들링() throws Exception {
-		String jsonReq = objectMapper.writeValueAsString(
+		String jsonLoginReq = objectMapper.writeValueAsString(
 			LoginRequestDto.builder().id("now2041gmail.com").password("qqwe1234!").build());
 		String expectedJson = "{\"success\":false,\"response\":null,\"error\":{\"code\":\"UE003\",\"message\":\"이메일 형식이 올바르지 않습니다\"}}";
 		MvcResult mvcResult = mockMvc.perform(
-				post("/test/error/user-data-invalid").content(jsonReq)
+				post("/test/error/user-data-invalid").content(jsonLoginReq)
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(
 						StandardCharsets.UTF_8))
@@ -91,12 +91,11 @@ class ControllerExceptionUnitTest {
 	@DisplayName("비밀번호 유효성 검사 실패")
 	@Test
 	void 비밀번호_유효성_검사_에러_핸들링() throws Exception {
-		String jsonReq = objectMapper.writeValueAsString(
-			LoginRequestDto.builder().id("now2041@gmail.com").password("qqwe123").build());
+		String jsonLoginReq = objectMapper.writeValueAsString(
+			LoginRequestDto.builder().id("now2041@gmail.com").password("qqwe1234").build());
 		String expectedJson = "{\"success\":false,\"response\":null,\"error\":{\"code\":\"UE004\",\"message\":\"8자 이상 16자 미만의 특수문자, 숫자, 영문자 조합이어야 합니다\"}}";
-
 		MvcResult mvcResult = mockMvc.perform(
-				post("/test/error/user-data-invalid").content(jsonReq)
+				post("/test/error/user-data-invalid").content(jsonLoginReq)
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(
 						StandardCharsets.UTF_8))

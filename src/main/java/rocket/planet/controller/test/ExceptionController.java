@@ -1,5 +1,7 @@
 package rocket.planet.controller.test;
 
+import static rocket.planet.dto.login.LoginDto.*;
+
 import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import rocket.planet.dto.login.LoginRequestDto;
+import io.swagger.v3.oas.annotations.Parameter;
+import rocket.planet.dto.common.CommonResponse;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
 
@@ -18,21 +21,21 @@ import rocket.planet.util.exception.PasswordMismatchException;
 @RestController
 @RequestMapping("/test/error")
 public class ExceptionController {
-	@GetMapping
-	public LoginRequestDto test() {
-		LoginRequestDto loginRequest = LoginRequestDto.builder().id("ff").password("ff").build();
-		return loginRequest;
+	@GetMapping(produces = "application/json", consumes = "application/json")
+	public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
+		CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
+		return response;
 	}
 
-	@PostMapping("/id-mismatch")
+	@PostMapping(value = "/id-mismatch", produces = "application/json", consumes = "application/json")
 	public String idMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {
 		if (!loginRequest.getId().equals("testId")) {
 			throw new IdMismatchException("id mismatch");
 		}
-		return "login success";
+		return "dd";
 	}
 
-	@PostMapping("/password-mismatch")
+	@PostMapping(value = "/password-mismatch", produces = "application/json", consumes = "application/json")
 	public String passwordMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {
 		if (!loginRequest.getPassword().equals("testPassword")) {
 			throw new PasswordMismatchException("password mismatch");
@@ -40,7 +43,7 @@ public class ExceptionController {
 		return "login success";
 	}
 
-	@PostMapping("/user-data-invalid")
+	@PostMapping(value = "/user-data-invalid", produces = "application/json", consumes = "application/json")
 	public String emailInvalid(@Valid @RequestBody LoginRequestDto loginRequest) {
 		return "email valid";
 	}

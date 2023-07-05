@@ -37,9 +37,11 @@ public class Team extends BaseTime {
 	@JoinColumn(name = "dept_uid", nullable = false, updatable = false)
 	private Department department;
 
-	@OneToMany
-	@JoinColumn(name = "project_uid")
+	@OneToMany(mappedBy = "team")
 	private List<Project> project;
+
+	@OneToMany(mappedBy = "team")
+	private List<Org> org;
 
 	@Column(nullable = false, unique = true)
 	private String teamName;
