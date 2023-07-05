@@ -102,6 +102,7 @@ public class Project {
 
 	public void toUpdateProjectStatusDto(Project project) {
 		ProjectRegisterResDto.builder()
+			.projectName(project.getProjectName())
 			.projectStatus(ProjectStatus.ONGOING)
 			.build();
 	}
