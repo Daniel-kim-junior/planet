@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,7 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.util.security.CustomAccessDeniedHandler;
 import rocket.planet.util.security.CustomAuthenticationEntryPoint;
-import rocket.planet.util.security.SecurityAuthenticationFilter;
 
 /*
  * Spring Security 설정
@@ -56,9 +54,9 @@ public class SecurityConfig {
 
 		http.authorizeRequests()
 			.antMatchers("/**").permitAll();
-		
-		http
-			.addFilterBefore(new SecurityAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		// http
+		// .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

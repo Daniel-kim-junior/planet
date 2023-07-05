@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import rocket.planet.configuration.SecurityConfig;
+import rocket.planet.controller.test.ExceptionController;
 
 /*
  * Controller Exception 테스트 (스프링 시큐리티 제외)

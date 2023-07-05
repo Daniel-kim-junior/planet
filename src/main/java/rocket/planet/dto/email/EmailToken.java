@@ -1,26 +1,31 @@
 package rocket.planet.dto.email;
 
-import java.util.concurrent.TimeUnit;
+import static lombok.AccessLevel.*;
 
-import javax.persistence.Id;
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Builder
-@RedisHash
+@ToString
+@RedisHash("emailToken")
 public class EmailToken {
-
 	@Id
 	private String id;
-	private String random;
-	@TimeToLive(unit = TimeUnit.MINUTES)
-	private Long timeToLive;
+	private String randomString;
+
+	private boolean isVerified;
+
+	public EmailToken verifiedToken() {
+		this.isVerified = true;
+		return this;
+	}
 }

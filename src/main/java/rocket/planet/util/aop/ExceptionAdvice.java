@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidPassword;
@@ -83,9 +86,16 @@ public class ExceptionAdvice {
 
 	@ExceptionHandler(NoValidEmailTokenException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public CommonErrorDto handleNoValidEmailTokenException(NoSuchEmailTokenException e) {
-		log.error("NoSuchEmailTokenException", e.getClass().getSimpleName(), e.getMessage());
+	public CommonErrorDto handleNoValidEmailTokenException(NoValidEmailTokenException e) {
+		log.error("NoValidEmailTokenException", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.EMAIL_TOKEN_NOT_VALID_EXCEPTION);
+	}
+
+	@ExceptionHandler({RedisException.class, JsonProcessingException.class})
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public CommonErrorDto handleRedisException(RedisException e) {
+		log.error("RedisException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
 	}
 
 	private CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
