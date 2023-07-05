@@ -34,10 +34,10 @@ public class ProfileTech {
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "profile_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	@JoinColumn(name = "profile_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private Profile profile;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "tech_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	@JoinColumn(name = "tech_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private Tech tech;
 }

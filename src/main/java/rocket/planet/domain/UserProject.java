@@ -39,11 +39,11 @@ public class UserProject {
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "user_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	@JoinColumn(name = "user_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private User user;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "project_uid", insertable = false, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	@JoinColumn(name = "project_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private Project project;
 	@Column(nullable = false)
 	private String userPjtInviter;

@@ -32,7 +32,7 @@ public class Tech {
 	private UUID id;
 
 	@OneToMany
-	@JoinColumn(columnDefinition = "BINARY(16)", name = "tech_uid", nullable = false)
+	@JoinColumn(name = "tech_uid", nullable = false)
 	private List<ProfileTech> profileTech;
 
 	@Column(nullable = false, unique = true)
