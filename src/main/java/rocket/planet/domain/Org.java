@@ -7,12 +7,14 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,11 +31,13 @@ import lombok.NoArgsConstructor;
 })
 public class Org extends BaseTime {
 	@Id
+	@GeneratedValue(generator = "uuid4")
+	@GenericGenerator(name = "UUID", strategy = "uuid4")
+	@Column(name = "org_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "user_uid", nullable = false, columnDefinition = "BINARY(16)")
-	@MapsId
 	private User user;
 
 	@ManyToOne(fetch = LAZY, optional = false)

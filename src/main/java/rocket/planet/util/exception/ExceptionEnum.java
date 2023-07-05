@@ -25,8 +25,15 @@ public enum ExceptionEnum {
 
 	// Invalid Exception
 	EMAIL_NOT_VALID_EXCEPTION("UE003", "이메일 형식이 올바르지 않습니다"),
+
 	PASSWORD_NOT_VALID_EXCEPTION("UE004", "8자 이상 16자 미만의 특수문자, 숫자, 영문자 조합이어야 합니다"),
-	EMAIL_DUPLICATION_EXCEPTION("UE005", "이미 가입된 이메일입니다");
+
+	EMAIL_NOT_FOUND_EXCEPTION("UE005", "해당 이메일이 존재하지 않습니다"),
+
+	// Request Exception
+	REQUEST_NOT_VALID_EXCEPTION("UE006", "요청이 올바르지 않습니다"),
+	EMAIL_TOKEN_NOT_FOUND_EXCEPTION("UE007", "이메일 토큰이 만료되었습니다"),
+	EMAIL_TOKEN_NOT_VALID_EXCEPTION("UE008", "이메일 토큰이 유효하지 않습니다");
 
 	private HttpStatus httpStatus;
 	private final String code;

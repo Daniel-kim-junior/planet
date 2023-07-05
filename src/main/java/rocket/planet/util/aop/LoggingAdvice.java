@@ -50,7 +50,6 @@ public class LoggingAdvice {
 			return pjp.proceed(pjp.getArgs());
 		} finally {
 			long end = System.currentTimeMillis();
-			System.out.println("호출");
 			logger.debug("Request: {} {}{} < {} ({}ms)", request.getMethod(), request.getRequestURI(),
 				params, request.getRemoteHost(), end - start);
 		}

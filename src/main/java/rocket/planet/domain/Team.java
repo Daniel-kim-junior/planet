@@ -42,10 +42,6 @@ public class Team extends BaseTime {
 
 	@OneToMany(mappedBy = "team")
 	private List<Org> org;
-
-	@Column(nullable = false)
-	private String teamCode;
-
 	@Column(nullable = false, unique = true)
 	private String teamName;
 
@@ -59,7 +55,6 @@ public class Team extends BaseTime {
 	public String toString() {
 		return "팀{" +
 			"팀 uuid=" + id +
-			", 팀 코드='" + teamCode + '\'' +
 			", 팀 이름='" + teamName + '\'' +
 			", 팀 설명='" + teamDesc + '\'' +
 			", 팀 타입='" + teamType + '\'' +
