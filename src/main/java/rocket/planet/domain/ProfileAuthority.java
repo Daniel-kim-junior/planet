@@ -1,17 +1,19 @@
 package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
+import static lombok.AccessLevel.PROTECTED;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-
+@Entity
+@Getter
+@NoArgsConstructor(access = PROTECTED)
 public class ProfileAuthority {
 	@Id
 	@GeneratedValue(generator = "uuid4")
@@ -26,4 +28,19 @@ public class ProfileAuthority {
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "auth_uid", nullable = false)
 	private Authority authority;
+
+	@Builder
+	public ProfileAuthority(Profile profile, Authority authority) {
+		this.profile = profile;
+		this.authority = authority;
+	}
+
+	@Override
+	public String toString() {
+		return "ProfileAuthority{" +
+				"id=" + id +
+				", 프로필 UUID=" + profile +
+				", 권한 UUID=" + authority +
+				'}';
+	}
 }
