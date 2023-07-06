@@ -27,6 +27,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import rocket.planet.dto.project.ProjectRegisterResDto;
+import rocket.planet.dto.project.ProjectUpdateReqDto;
 
 @Entity
 @Getter
@@ -110,22 +111,18 @@ public class Project {
 
 	public ProjectRegisterResDto toProjectRegisterResDto(Project project) {
 		return ProjectRegisterResDto.builder()
-			.projectStatus(ProjectStatus.WAITING)
-			.build();
-	}
-
-	public void toUpdateProjectStatusDto(Project project) {
-		ProjectRegisterResDto.builder()
 			.projectName(project.getProjectName())
-			.projectStatus(ProjectStatus.ONGOING)
+			.projectStatus(project.getProjectStatus())
 			.build();
 	}
 
-	public void update(Project project) {
+	public void updateProject(ProjectUpdateReqDto project) {
 		this.projectName = project.getProjectName();
 		this.projectDesc = project.getProjectDesc();
 		this.projectStartDt = project.getProjectStartDt();
 		this.projectEndDt = project.getProjectEndDt();
 		this.projectTech = project.getProjectTech();
+		this.projectLastModifiedBy = project.getUserName();
+
 	}
 }

@@ -41,18 +41,24 @@ public class UserProject {
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "project_uid", updatable = false, nullable = false)
 	private Project project;
+	
 	@Column(nullable = false)
 	private String userPjtInviter;
+
 	@Column(nullable = false)
 	@CreatedDate
 	private LocalDate userPjtJoinDt;
+
 	@Column(nullable = false)
 	@LastModifiedDate
 	private LocalDate userPjtModifyDt;
+
 	@Column(nullable = false)
 	private LocalDate userPjtCloseDt;
+
 	@Column(nullable = false)
 	private boolean userPjtCloseApply;
+
 	@Column(nullable = false)
 	private String userPjtDesc;
 

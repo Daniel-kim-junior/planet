@@ -48,6 +48,7 @@ public class PjtRecord {
 
 	@Column(name = "profile_pjt_tech", nullable = false)
 	private String pjtTech;
+	
 	@Column(name = "profile_pjt_user_tech", nullable = false)
 	private String pjtUserTech;
 

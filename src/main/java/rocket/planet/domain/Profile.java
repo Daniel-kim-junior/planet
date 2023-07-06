@@ -72,8 +72,8 @@ public class Profile extends BaseTime {
 
 	@Builder
 	public Profile(Org org, LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
-				   int profileCareer,
-				   boolean profileAnnualStatus, String userName) {
+		int profileCareer,
+		boolean profileAnnualStatus, String userName) {
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
@@ -86,13 +86,13 @@ public class Profile extends BaseTime {
 	@Override
 	public String toString() {
 		return "Profile{" +
-				"id=" + id +
-				"유저 id=" + userId +
-				"유저이름=" + userName +
-				", 생년월일 =" + profileBirthDt +
-				", 프로필 노출여부 =" + profileDisplay +
-				", 경력 =" + profileCareer +
-				", 휴가 여부 =" + profileAnnualStatus +
-				'}';
+			"id=" + id +
+			"유저 id=" + userId +
+			"유저이름=" + userName +
+			", 생년월일 =" + profileBirthDt +
+			", 프로필 노출여부 =" + profileDisplay +
+			", 경력 =" + profileCareer +
+			", 휴가 여부 =" + profileAnnualStatus +
+			'}';
 	}
 }
