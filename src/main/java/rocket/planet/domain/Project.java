@@ -4,10 +4,10 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -23,7 +23,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +30,7 @@ import rocket.planet.dto.project.ProjectRegisterResDto;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Project {
 	@Id
@@ -47,7 +44,7 @@ public class Project {
 	private Team team;
 
 	@OneToMany(mappedBy = "project")
-	private List<UserProject> userProject;
+	private List<UserProject> userProject = new ArrayList<>();
 
 	@Column(nullable = false, unique = true)
 	private String projectName;
@@ -79,6 +76,22 @@ public class Project {
 	@LastModifiedDate
 	private LocalDate lastModifiedDate;
 
+	@Builder
+	public Project(Team team, String projectName, String projectDesc, LocalDate projectStartDt,
+		LocalDate projectEndDt, String projectTech, ProjectStatus projectStatus, String projectLastModifiedBy,
+		OrgType projectType, LocalDate lastModifiedDate) {
+		this.team = team;
+		this.projectName = projectName;
+		this.projectDesc = projectDesc;
+		this.projectStartDt = projectStartDt;
+		this.projectEndDt = projectEndDt;
+		this.projectTech = projectTech;
+		this.projectStatus = projectStatus;
+		this.projectLastModifiedBy = projectLastModifiedBy;
+		this.projectType = projectType;
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
 	@Override
 	public String toString() {
 		return "프로젝트{" +
@@ -95,7 +108,7 @@ public class Project {
 			'}';
 	}
 
-	public ProjectRegisterResDto toProjectRegisterResDto(Project project){
+	public ProjectRegisterResDto toProjectRegisterResDto(Project project) {
 		return ProjectRegisterResDto.builder()
 			.projectStatus(ProjectStatus.WAITING)
 			.build();
@@ -108,7 +121,7 @@ public class Project {
 			.build();
 	}
 
-	public void update(Project project){
+	public void update(Project project) {
 		this.projectName = project.getProjectName();
 		this.projectDesc = project.getProjectDesc();
 		this.projectStartDt = project.getProjectStartDt();

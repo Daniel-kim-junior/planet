@@ -2,25 +2,26 @@ package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
+
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.annotations.GenericGenerator;
-import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
-@Builder
-@Table(uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"user_uid", "dept_uid", "team_uid", "company_uid"})
-})
 public class Org extends BaseTime {
 	@Id
 	@GeneratedValue(generator = "uuid4")
@@ -29,8 +30,8 @@ public class Org extends BaseTime {
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "user_uid", nullable = false, columnDefinition = "BINARY(16)")
-	private User user;
+	@JoinColumn(name = "profile_uid", nullable = false)
+	private Profile profile;
 
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "company_uid")
@@ -55,6 +56,19 @@ public class Org extends BaseTime {
 
 	@Column(name = "belong_status")
 	private boolean belongStatus;
+
+	@Builder
+	public Org(Profile profile, Company company, Department department, Team team, LocalDate belongStartDate,
+		LocalDate belongEndDate, String belongInviter, boolean belongStatus) {
+		this.profile = profile;
+		this.company = company;
+		this.department = department;
+		this.team = team;
+		this.belongStartDate = belongStartDate;
+		this.belongEndDate = belongEndDate;
+		this.belongInviter = belongInviter;
+		this.belongStatus = belongStatus;
+	}
 
 	@Override
 	public String toString() {

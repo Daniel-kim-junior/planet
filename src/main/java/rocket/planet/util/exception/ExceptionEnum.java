@@ -28,7 +28,7 @@ public enum ExceptionEnum {
 
 	PASSWORD_NOT_VALID_EXCEPTION("UE004", "8자 이상 16자 미만의 특수문자, 숫자, 영문자 조합이어야 합니다"),
 
-	EMAIL_NOT_FOUND_EXCEPTION("UE005", "해당 이메일이 존재하지 않습니다"),
+	EMAIL_NOT_FOUND_EXCEPTION("UE005", "중복되는 이메일 입니다"),
 
 	// Request Exception
 	REQUEST_NOT_VALID_EXCEPTION("UE006", "요청이 올바르지 않습니다"),

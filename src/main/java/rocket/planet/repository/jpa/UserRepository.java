@@ -10,8 +10,8 @@ import rocket.planet.domain.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    List<User> findAllByUserIdContaining(String searchWord);
-    Optional<User> findByUserIdContaining(String userId);
+	List<User> findAllByUserIdContaining(String searchWord);
 
-	Optional<User> findByUserName(String userName);
+	Optional<User> findByUserIdContaining(String userId);
+
 }

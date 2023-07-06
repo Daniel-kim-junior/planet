@@ -11,12 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "profile_cert")
-@Builder
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 public class Certification {
 	@Id
 	@GeneratedValue(generator = "uuid4")
@@ -55,6 +51,18 @@ public class Certification {
 
 	@Column(nullable = false)
 	private String certNumber;
+
+	@Builder
+	public Certification(Profile profile, String certName, LocalDate certDt, String certAgency, String certExpireDate,
+		String certType, String certNumber) {
+		this.profile = profile;
+		this.certName = certName;
+		this.certDt = certDt;
+		this.certAgency = certAgency;
+		this.certExpireDate = certExpireDate;
+		this.certType = certType;
+		this.certNumber = certNumber;
+	}
 
 	@Override
 	public String toString() {
