@@ -32,7 +32,7 @@ public class Profile extends BaseTime {
 	private UUID id;
 
 	@OneToMany(mappedBy = "profile")
-	private List<Authority> authority = new ArrayList<>();
+	private List<ProfileAuthority> authority = new ArrayList<>();
 
 	@OneToMany(mappedBy = "profile")
 	private List<UserProject> userProject = new ArrayList<>();

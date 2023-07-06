@@ -1,8 +1,9 @@
 package rocket.planet.domain;
 
-import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -30,8 +31,8 @@ public class Authority extends BaseTime {
 	@Column(name = "auth_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	private Profile profile;
+	@OneToMany(mappedBy = "authority")
+	private List<ProfileAuthority> profileAuthority = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -48,9 +49,8 @@ public class Authority extends BaseTime {
 	private String authorizerId;
 
 	@Builder
-	public Authority(AuthType authType, Profile profile, UUID authTargetId, UUID userUid, String authorizerId) {
+	public Authority(AuthType authType, UUID authTargetId, UUID userUid, String authorizerId) {
 		this.authType = authType;
-		this.profile = profile;
 		this.authTargetId = authTargetId;
 		this.userUid = userUid;
 		this.authorizerId = authorizerId;
