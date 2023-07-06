@@ -3,9 +3,9 @@ package rocket.planet.controller.email;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.dto.common.CommonResponse;
+import rocket.planet.dto.email.EmailDto.EmailDuplicateCheckAndSendEmailDto;
+import rocket.planet.dto.email.EmailDto.EmailVerifyCheckDto;
 import rocket.planet.service.email.EmailVerifyService;
 import rocket.planet.util.exception.NoSuchEmailException;
 
@@ -20,14 +22,15 @@ import rocket.planet.util.exception.NoSuchEmailException;
  * 이메일 인증 컨트롤러
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class EmailVerifyController {
 
 	private final EmailVerifyService emailVerifyService;
 
-	@GetMapping(value = "/email-verify", headers = "Accept=application/json", produces = "application/json")
-	public CompletableFuture<CommonResponse<String>> emailVerify(@RequestParam String email) {
+	@PostMapping(value = "/email-verify", headers = "Accept=application/json", produces = "application/json")
+	public CompletableFuture<CommonResponse<String>> emailVerify(@RequestBody EmailDuplicateCheckAndSendEmailDto dto) {
+		String email = dto.getEmail();
 		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email)
 			.exceptionally(throwable -> {
 				throw new NoSuchEmailException();
@@ -40,10 +43,10 @@ public class EmailVerifyController {
 		}
 	}
 
-	@GetMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
-	public CommonResponse<String> emailVerifyCheck(@RequestParam String email, String code) throws
+	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
+	public CommonResponse<String> emailVerifyCheck(@RequestBody EmailVerifyCheckDto dto) throws
 		JsonProcessingException {
-		return emailVerifyService.confirmByRedisEmailTokenAndSaveToken(email, code);
+		return emailVerifyService.confirmByRedisEmailTokenAndSaveToken(dto.getEmail(), dto.getCode());
 	}
 
 }
