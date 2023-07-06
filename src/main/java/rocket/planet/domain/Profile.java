@@ -1,6 +1,5 @@
 package rocket.planet.domain;
 
-import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
@@ -14,8 +13,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -34,9 +31,8 @@ public class Profile extends BaseTime {
 	@Column(name = "profile_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "auth_uid")
-	private Authority authority;
+	@OneToMany(mappedBy = "profile")
+	private List<Authority> authority = new ArrayList<>();
 
 	@OneToMany(mappedBy = "profile")
 	private List<UserProject> userProject = new ArrayList<>();
@@ -66,9 +62,8 @@ public class Profile extends BaseTime {
 	private boolean profileAnnualStatus;
 
 	@Builder
-	public Profile(Authority authority, LocalDate profileBirthDt, Role role, boolean profileDisplay, int profileCareer,
+	public Profile(LocalDate profileBirthDt, Role role, boolean profileDisplay, int profileCareer,
 		boolean profileAnnualStatus) {
-		this.authority = authority;
 		this.profileBirthDt = profileBirthDt;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
