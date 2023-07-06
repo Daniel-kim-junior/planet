@@ -9,22 +9,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 public class ProfileTech {
 
 	@Id
@@ -40,4 +36,11 @@ public class ProfileTech {
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "tech_uid", updatable = false, nullable = false)
 	private Tech tech;
+
+	@Builder
+	public ProfileTech(Profile profile, Tech tech) {
+		this.id = id;
+		this.profile = profile;
+		this.tech = tech;
+	}
 }

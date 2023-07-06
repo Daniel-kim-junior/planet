@@ -3,18 +3,20 @@ package rocket.planet.domain;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +24,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
-@Builder
 public class Profile extends BaseTime {
 	@Id
 	@GeneratedValue(generator = "uuid4")
@@ -32,17 +32,26 @@ public class Profile extends BaseTime {
 	private UUID id;
 
 	@OneToMany(mappedBy = "profile")
-	private List<PjtRecord> extPjtRecord;
+	private List<ProfileAuthority> authority = new ArrayList<>();
 
 	@OneToMany(mappedBy = "profile")
-	private List<Certification> certification;
+	private List<UserProject> userProject = new ArrayList<>();
 
 	@OneToMany(mappedBy = "profile")
-	private List<ProfileTech> profileTech;
+	private List<PjtRecord> extPjtRecord = new ArrayList<>();
+
+	@OneToMany(mappedBy = "profile")
+	private List<Certification> certification = new ArrayList<>();
+
+	@OneToMany(mappedBy = "profile")
+	private List<ProfileTech> profileTech = new ArrayList<>();
 
 	@Column(nullable = false)
 	private LocalDate profileBirthDt;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
 	@Column
 	private boolean profileDisplay;
 
@@ -51,6 +60,16 @@ public class Profile extends BaseTime {
 
 	@Column
 	private boolean profileAnnualStatus;
+
+	@Builder
+	public Profile(LocalDate profileBirthDt, Role role, boolean profileDisplay, int profileCareer,
+		boolean profileAnnualStatus) {
+		this.profileBirthDt = profileBirthDt;
+		this.role = role;
+		this.profileDisplay = profileDisplay;
+		this.profileCareer = profileCareer;
+		this.profileAnnualStatus = profileAnnualStatus;
+	}
 
 	@Override
 	public String toString() {

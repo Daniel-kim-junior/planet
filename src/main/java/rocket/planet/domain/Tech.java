@@ -2,6 +2,7 @@ package rocket.planet.domain;
 
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,21 +10,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
-@Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
+@Getter
 public class Tech {
 	@Id
 	@GeneratedValue(generator = "uuid4")
@@ -32,13 +29,19 @@ public class Tech {
 	private UUID id;
 
 	@OneToMany(mappedBy = "tech")
-	private List<ProfileTech> profileTech;
+	private List<ProfileTech> profileTech = new ArrayList<>();
 
 	@Column(nullable = false, unique = true)
 	private String techName;
 
 	@Column(nullable = false)
 	private String techCategory;
+
+	@Builder
+	public Tech(String techName, String techCategory) {
+		this.techName = techName;
+		this.techCategory = techCategory;
+	}
 
 	@Override
 	public String toString() {

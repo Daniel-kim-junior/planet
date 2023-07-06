@@ -2,6 +2,7 @@ package rocket.planet.domain;
 
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,16 +18,13 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 public class Team extends BaseTime {
 
 	@Id
@@ -40,10 +38,10 @@ public class Team extends BaseTime {
 	private Department department;
 
 	@OneToMany(mappedBy = "team")
-	private List<Project> project;
+	private List<Project> project = new ArrayList<>();
 
 	@OneToMany(mappedBy = "team")
-	private List<Org> org;
+	private List<Org> org = new ArrayList<>();
 
 	@Column(nullable = false, unique = true)
 	private String teamName;
@@ -54,6 +52,14 @@ public class Team extends BaseTime {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private OrgType teamType;
+
+	@Builder
+	public Team(Department department, String teamName, String teamDesc, OrgType teamType) {
+		this.department = department;
+		this.teamName = teamName;
+		this.teamDesc = teamDesc;
+		this.teamType = teamType;
+	}
 
 	@Override
 	public String toString() {

@@ -15,16 +15,13 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 @Table(name = "profile_pjt_records")
 public class PjtRecord {
 	@Id
@@ -53,6 +50,18 @@ public class PjtRecord {
 	private String pjtTech;
 	@Column(name = "profile_pjt_user_tech", nullable = false)
 	private String pjtUserTech;
+
+	@Builder
+	public PjtRecord(Profile profile, String pjtName, String pjtDesc, LocalDate pjtStartDt, LocalDate pjtEndDt,
+		String pjtTech, String pjtUserTech) {
+		this.profile = profile;
+		this.pjtName = pjtName;
+		this.pjtDesc = pjtDesc;
+		this.pjtStartDt = pjtStartDt;
+		this.pjtEndDt = pjtEndDt;
+		this.pjtTech = pjtTech;
+		this.pjtUserTech = pjtUserTech;
+	}
 
 	@Override
 	public String toString() {

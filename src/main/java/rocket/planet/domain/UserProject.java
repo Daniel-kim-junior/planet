@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -20,15 +19,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor(access = PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class UserProject {
@@ -39,11 +35,11 @@ public class UserProject {
 	private UUID id;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "user_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
-	private User user;
+	@JoinColumn(name = "profile_uid", updatable = false, nullable = false)
+	private Profile profile;
 
 	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "project_uid", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	@JoinColumn(name = "project_uid", updatable = false, nullable = false)
 	private Project project;
 	@Column(nullable = false)
 	private String userPjtInviter;
@@ -59,6 +55,19 @@ public class UserProject {
 	private boolean userPjtCloseApply;
 	@Column(nullable = false)
 	private String userPjtDesc;
+
+	@Builder
+	public UserProject(Profile profile, Project project, String userPjtInviter, LocalDate userPjtJoinDt,
+		LocalDate userPjtModifyDt, LocalDate userPjtCloseDt, boolean userPjtCloseApply, String userPjtDesc) {
+		this.profile = profile;
+		this.project = project;
+		this.userPjtInviter = userPjtInviter;
+		this.userPjtJoinDt = userPjtJoinDt;
+		this.userPjtModifyDt = userPjtModifyDt;
+		this.userPjtCloseDt = userPjtCloseDt;
+		this.userPjtCloseApply = userPjtCloseApply;
+		this.userPjtDesc = userPjtDesc;
+	}
 
 	@Override
 	public String toString() {

@@ -2,6 +2,7 @@ package rocket.planet.domain;
 
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,16 +18,13 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PROTECTED)
 public class Department {
 
 	@Id
@@ -40,10 +38,10 @@ public class Department {
 	private Company company;
 
 	@OneToMany(mappedBy = "department")
-	private List<Team> team;
+	private List<Team> team = new ArrayList<>();
 
 	@OneToMany(mappedBy = "department")
-	private List<Org> org;
+	private List<Org> org = new ArrayList<>();
 
 	@Column(nullable = false, unique = true)
 	private String deptName;
@@ -51,6 +49,13 @@ public class Department {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private OrgType deptType;
+
+	@Builder
+	public Department(Company company, String deptName, OrgType deptType) {
+		this.company = company;
+		this.deptName = deptName;
+		this.deptType = deptType;
+	}
 
 	@Override
 	public String toString() {
