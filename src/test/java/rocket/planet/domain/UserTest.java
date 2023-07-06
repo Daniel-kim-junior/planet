@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 
 import rocket.planet.repository.jpa.AuthRepository;
@@ -14,172 +16,130 @@ import rocket.planet.repository.jpa.UserRepository;
 
 @SpringBootTest
 public class UserTest {
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private AuthRepository authRepository;
-	@Autowired
-	private ProfileRepository profileRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Test
-	@Rollback(false)
-	void saveUser() {
-		UUID adminAuthorityId = UUID.randomUUID();
+    @Autowired
+    private ProfileRepository profileRepository;
 
-		Authority adminAuthority = Authority.builder()
-			.authType(AuthType.ADMIN)
-			.authTargetId(adminAuthorityId)
-			.authorizerId("rocket@gmail.com")
-			.build();
-		authRepository.saveAndFlush(adminAuthority);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-		User adminUser = User.builder()
-			.userPwd("admin111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("admin@gmail.com")
-			.build();
+    @Test
+    @Rollback(false)
+    void saveUser() {
 
-		Profile adminProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1995, 3, 22))
-			.profileDisplay(true)
-			.profileCareer(1)
-			.profileAnnualStatus(true)
-			.build();
+        Profile adminProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1995, 3, 22))
+                .role(Role.ADMIN)
+                .userId("admin@gmail.com")
+                .userName("어드민")
+                .profileDisplay(true)
+                .profileCareer(1)
+                .profileAnnualStatus(true)
+                .build();
 
-		profileRepository.saveAndFlush(adminProfile);
-		adminUser.updateProfile(adminProfile);
-		userRepository.saveAndFlush(adminUser);
+        User adminUser = User.builder()
+                .userPwd(passwordEncoder.encode("admin111!"))
+                .userLock(false)
+                .profile(adminProfile)
+                .userAccessDt(LocalDate.now())
+                .userId(adminProfile.getUserId())
+                .build();
+        profileRepository.save(adminProfile);
+        userRepository.save(adminUser);
 
-		User crewUser = User.builder()
-			.userPwd("crew111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("crew@gmail.com")
-			.build();
-		Profile crewProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1996, 8, 22))
-			.profileDisplay(true)
-			.profileCareer(5)
-			.profileAnnualStatus(true)
-			.build();
-		profileRepository.saveAndFlush(crewProfile);
-		crewUser.updateProfile(crewProfile);
-		User userCrew = userRepository.saveAndFlush(crewUser);
+        Profile crewProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1996, 8, 22))
+                .role(Role.CREW)
+                .userId("crew@gmail.com")
+                .userName("김크루")
+                .profileDisplay(true)
+                .profileCareer(5)
+                .profileAnnualStatus(true)
+                .build();
+        User crewUser = User.builder()
+                .userPwd("crew111!")
+                .userLock(false)
+                .userAccessDt(LocalDate.now())
+                .userId(crewProfile.getUserId())
+                .build();
+        profileRepository.saveAndFlush(crewProfile);
+        userRepository.saveAndFlush(crewUser);
 
-		UUID crew = userCrew.getId();
+        Profile pilotProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1994, 1, 17))
+                .role(Role.PILOT)
+                .userId("pilot@gmail.com")
+                .userName("파일럿")
+                .profileDisplay(true)
+                .profileCareer(10)
+                .profileAnnualStatus(true)
+                .build();
+        User pilotUser = User.builder()
+                .userPwd("pilot111!")
+                .userLock(false)
+                .userAccessDt(LocalDate.now())
+                .userId(pilotProfile.getUserId())
+                .build();
+        profileRepository.saveAndFlush(pilotProfile);
+        userRepository.saveAndFlush(pilotUser);
 
-		Authority crewAuthority = Authority.builder()
-			.authType(AuthType.CREW)
-			.authTargetId(crew)
-			.authorizerId("admin@gmail.com")
-			.build();
-		authRepository.saveAndFlush(crewAuthority);
-		userRepository.saveAndFlush(crewUser);
+        Profile captainProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1999, 8, 23))
+                .role(Role.CAPTAIN)
+                .userId("captain@gmail.com")
+                .userName("강캡틴")
+                .profileDisplay(true)
+                .profileCareer(15)
+                .profileAnnualStatus(false)
+                .build();
+        User captainUser = User.builder()
+                .userPwd("captain111!")
+                .userLock(false)
+                .userAccessDt(LocalDate.now())
+                .userId(captainProfile.getUserId())
+                .build();
+        profileRepository.saveAndFlush(captainProfile);
+        userRepository.saveAndFlush(captainUser);
 
-		User pilotUser = User.builder()
-			.userPwd("pilot111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("pilot@gmail.com")
-			.build();
-		Profile pilotProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1994, 1, 17))
-			.profileDisplay(true)
-			.profileCareer(10)
-			.profileAnnualStatus(true)
-			.build();
-		profileRepository.saveAndFlush(pilotProfile);
-		pilotUser.updateProfile(pilotProfile);
-		User userPilot = userRepository.saveAndFlush(pilotUser);
+        Profile radarProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1997, 12, 20))
+                .role(Role.RADAR)
+                .userId("radar@gmail.com")
+                .userName("레이더")
+                .profileDisplay(true)
+                .profileCareer(7)
+                .profileAnnualStatus(true)
+                .build();
+        User radarUser = User.builder()
+                .userPwd("radar111!")
+                .userLock(false)
+                .userAccessDt(LocalDate.now())
+                .userId(radarProfile.getUserId())
+                .build();
+        profileRepository.saveAndFlush(radarProfile);
+        userRepository.saveAndFlush(radarUser);
 
-		UUID pilot = userPilot.getId();
-		Authority pilotAuthority = Authority.builder()
-			.authType(AuthType.TEAM)
-			.authTargetId(pilot)
-			.authorizerId("admin@gmail.com")
-			.build();
-		authRepository.saveAndFlush(pilotAuthority);
-		userRepository.saveAndFlush(userPilot);
+        Profile plProfile = Profile.builder()
+                .profileBirthDt(LocalDate.of(1994, 7, 30))
+                .role(Role.CREW)
+                .userId("plpl@gmail.com")
+                .userName("홍피엘")
+                .profileDisplay(true)
+                .profileCareer(3)
+                .profileAnnualStatus(false)
+                .build();
+        User plUser = User.builder()
+                .userPwd("plpl111!")
+                .userLock(false)
+                .userAccessDt(LocalDate.now())
+                .userId(plProfile.getUserId())
+                .build();
+        profileRepository.saveAndFlush(plProfile);
+        userRepository.saveAndFlush(plUser);
 
-		User captainUser = User.builder()
-			.userPwd("captain111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("captain@gmail.com")
-			.build();
-		Profile captainProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1999, 8, 23))
-			.profileDisplay(true)
-			.profileCareer(15)
-			.profileAnnualStatus(false)
-			.build();
 
-		profileRepository.saveAndFlush(captainProfile);
-		captainUser.updateProfile(captainProfile);
-		User userCaptain = userRepository.saveAndFlush(captainUser);
-
-		UUID captain = userCaptain.getId();
-
-		Authority captainAuthority = Authority.builder()
-			.authType(AuthType.TEAM)
-			.authTargetId(captain)
-			.authorizerId("admin@gmail.com")
-			.build();
-		authRepository.saveAndFlush(captainAuthority);
-		userRepository.saveAndFlush(captainUser);
-
-		User radarUser = User.builder()
-			.userPwd("radar111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("radar@gmail.com")
-			.build();
-		Profile radarProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1997, 12, 20))
-			.profileDisplay(true)
-			.profileCareer(7)
-			.profileAnnualStatus(true)
-			.build();
-
-		profileRepository.saveAndFlush(radarProfile);
-		radarUser.updateProfile(radarProfile);
-		User userRadar = userRepository.saveAndFlush(radarUser);
-
-		UUID radar = userRadar.getId();
-		Authority radarAuthority = Authority.builder()
-			.authType(AuthType.TEAM)
-			.authTargetId(radar)
-			.authorizerId("admin@gmail.com")
-			.build();
-		authRepository.saveAndFlush(radarAuthority);
-		userRepository.saveAndFlush(userRadar);
-
-		User plUser = User.builder()
-			.userPwd("plpl111!")
-			.userLock(false)
-			.userAccessDt(LocalDate.now())
-			.userId("plpl@gmail.com")
-			.build();
-		Profile plProfile = Profile.builder()
-			.profileBirthDt(LocalDate.of(1998, 12, 5))
-			.profileDisplay(true)
-			.profileCareer(3)
-			.profileAnnualStatus(false)
-			.build();
-		profileRepository.saveAndFlush(plProfile);
-		plUser.updateProfile(plProfile);
-		User userPl = userRepository.saveAndFlush(plUser);
-
-		UUID pl = userPl.getId();
-		Authority plAuthority = Authority.builder()
-			.authType(AuthType.TEAM)
-			.authTargetId(pl)
-			.authorizerId("admin@gmail.com")
-			.build();
-		authRepository.saveAndFlush(plAuthority);
-		userRepository.saveAndFlush(userPl);
-
-	}
+    }
 
 }

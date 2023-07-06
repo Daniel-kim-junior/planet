@@ -32,6 +32,9 @@ public class Profile extends BaseTime {
 	private UUID id;
 
 	@OneToMany(mappedBy = "profile")
+	private List<Org> org = new ArrayList<>();
+
+	@OneToMany(mappedBy = "profile")
 	private List<ProfileAuthority> authority = new ArrayList<>();
 
 	@OneToMany(mappedBy = "profile")
@@ -56,15 +59,24 @@ public class Profile extends BaseTime {
 	private boolean profileDisplay;
 
 	@Column
+	private String userName;
+
+	@Column
 	private int profileCareer;
 
 	@Column
 	private boolean profileAnnualStatus;
 
+	@Column(nullable = false, unique = true)
+	private String userId;
+
 	@Builder
-	public Profile(LocalDate profileBirthDt, Role role, boolean profileDisplay, int profileCareer,
-		boolean profileAnnualStatus) {
+	public Profile(Org org, LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
+				   int profileCareer,
+				   boolean profileAnnualStatus, String userName) {
 		this.profileBirthDt = profileBirthDt;
+		this.userName = userName;
+		this.userId = userId;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;
@@ -74,11 +86,13 @@ public class Profile extends BaseTime {
 	@Override
 	public String toString() {
 		return "Profile{" +
-			"id=" + id +
-			", 생년월일 =" + profileBirthDt +
-			", 프로필 노출여부 =" + profileDisplay +
-			", 경력 =" + profileCareer +
-			", 휴가 여부 =" + profileAnnualStatus +
-			'}';
+				"id=" + id +
+				"유저 id=" + userId +
+				"유저이름=" + userName +
+				", 생년월일 =" + profileBirthDt +
+				", 프로필 노출여부 =" + profileDisplay +
+				", 경력 =" + profileCareer +
+				", 휴가 여부 =" + profileAnnualStatus +
+				'}';
 	}
 }

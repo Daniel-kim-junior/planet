@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 
-import java.util.UUID;
 
 @SpringBootTest
 public class TeamTest {
@@ -25,6 +23,7 @@ public class TeamTest {
         Department hrDept = deptRepository.findByDeptName("경영지원");
         Department aiChatbotDept = deptRepository.findByDeptName("AI챗봇");
         Department ftDept = deptRepository.findByDeptName("기업솔루션");
+        Department itOutDept = deptRepository.findByDeptName("IT아웃소싱");
 
         Team smartFactoryTeam = Team.builder()
                 .department(smartSolutionDept)
@@ -75,7 +74,7 @@ public class TeamTest {
         teamRepository.saveAndFlush(internalSysTeam);
 
         Team itConsultingTeam = Team.builder()
-                .department(ftDept)
+                .department(itOutDept)
                 .teamName("IT컨설팅")
                 .teamDesc("IT컨설팅 팀입니다.")
                 .teamType(OrgType.DEVELOPMENT)

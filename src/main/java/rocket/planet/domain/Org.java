@@ -58,12 +58,12 @@ public class Org extends BaseTime {
 	private boolean belongStatus;
 
 	@Builder
-	public Org(Profile profile, Company company, Department department, Team team, LocalDate belongStartDate,
-		LocalDate belongEndDate, String belongInviter, boolean belongStatus) {
-		this.profile = profile;
+	public Org(Company company,Profile profile ,Department department, Team team, LocalDate belongStartDate,
+			   LocalDate belongEndDate, String belongInviter, boolean belongStatus) {
 		this.company = company;
 		this.department = department;
 		this.team = team;
+		this.profile = profile;
 		this.belongStartDate = belongStartDate;
 		this.belongEndDate = belongEndDate;
 		this.belongInviter = belongInviter;
@@ -73,10 +73,10 @@ public class Org extends BaseTime {
 	@Override
 	public String toString() {
 		return "소속{" +
-			"내 uuid=" + id +
-			", 소속 할당 담당자='" + belongInviter + '\'' +
-			", 현재 소속 여부=" + belongStatus +
-			'}';
+				"내 uuid=" + id +
+				", 소속 할당 담당자='" + belongInviter + '\'' +
+				", 현재 소속 여부=" + belongStatus +
+				'}';
 
 	}
 
