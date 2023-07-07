@@ -15,4 +15,5 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 	Optional<Project> findByProjectName(String projectName);
 
 	List<Project> findAllByProjectDescIsContaining(String keyword);
+
 }

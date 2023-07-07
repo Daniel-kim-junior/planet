@@ -67,10 +67,14 @@ public class ProjectService {
 
 	}
 
-	// public List<ProjectSummaryDto> getProjectList() {
+	public boolean checkUser(String userNickName) {
+		return profileRepository.findByUserNickName(userNickName).isPresent();
+	}
+
+	// public List<ProjectSummaryDto> getProjectList(String teamName) {
 	//
 	// }
-	//
+
 	// public Project getProjectDetail(String ProjectName) {
 	//
 	// }
