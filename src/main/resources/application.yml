@@ -10,7 +10,7 @@ spring:
     generate-ddl: false
     show-sql: true
     hibernate:
-        ddl-auto: update
+      ddl-auto: update
   config:
     import: classpath:local-profile.yml
 logging:

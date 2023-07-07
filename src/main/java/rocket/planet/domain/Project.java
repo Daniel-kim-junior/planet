@@ -2,6 +2,7 @@ package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
+import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,12 +23,12 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import rocket.planet.dto.project.ProjectRegisterResDto;
-import rocket.planet.dto.project.ProjectUpdateReqDto;
 
 @Entity
 @Getter
@@ -106,23 +107,22 @@ public class Project {
 			", 프로젝트 마지막 수정자='" + projectLastModifiedBy + '\'' +
 			", 프로젝트 타입(개발/비개발)='" + projectType + '\'' +
 			", 마지막 수정일자=" + lastModifiedDate +
-			'}';
+			"}";
 	}
 
-	public ProjectRegisterResDto toProjectRegisterResDto(Project project) {
-		return ProjectRegisterResDto.builder()
+	@Transactional
+	public void toUpdateProjectStatusDto(Project project) {
+		ProjectRegisterResDto.builder()
 			.projectName(project.getProjectName())
-			.projectStatus(project.getProjectStatus())
+			.projectStatus(ProjectStatus.ONGOING)
 			.build();
 	}
 
-	public void updateProject(ProjectUpdateReqDto project) {
-		this.projectName = project.getProjectName();
+	public void updateProject(ProjectUpdateDetailDto project) {
 		this.projectDesc = project.getProjectDesc();
 		this.projectStartDt = project.getProjectStartDt();
 		this.projectEndDt = project.getProjectEndDt();
 		this.projectTech = project.getProjectTech();
 		this.projectLastModifiedBy = project.getUserName();
-
 	}
 }

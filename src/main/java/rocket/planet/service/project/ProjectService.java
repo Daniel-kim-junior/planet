@@ -1,20 +1,19 @@
 package rocket.planet.service.project;
 
-import java.util.List;
+import static rocket.planet.dto.project.ProjectUpdateDto.*;
+
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.domain.Org;
 import rocket.planet.domain.OrgType;
+import rocket.planet.domain.Profile;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
-import rocket.planet.dto.project.ProjectRegisterResDto;
-import rocket.planet.dto.project.ProjectUpdateReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 
@@ -24,9 +23,11 @@ public class ProjectService {
 	private final ProjectRepository projectRepository;
 	private final ProfileRepository profileRepository;
 
-	public ProjectRegisterResDto registerProject(ProjectRegisterReqDto registerDto) {
-		List<Org> org = profileRepository.findOrgByUserName(registerDto.getUserName());
-		Team team = org.get(0).getTeam();
+	@Transactional
+	public void registerProject(ProjectRegisterReqDto registerDto) {
+		Optional<Profile> profile = profileRepository.findByUserName(registerDto.getUserName());
+		Team team = profile.get().getOrg().get(0).getTeam();
+
 		OrgType teamType = team.getTeamType();
 
 		Project project = Project.builder()
@@ -42,21 +43,37 @@ public class ProjectService {
 			.projectType(teamType)
 			.build();
 
-		Project savedProject = projectRepository.save(project);
-		return project.toProjectRegisterResDto(savedProject);
+		projectRepository.save(project);
+
+	}
+
+	public ProjectUpdateDetailDto showProjectDetail(ProjectUpdateReqDto projectUpdateReqDto) {
+		Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
+
+		return ProjectUpdateDetailDto.builder()
+			.userName(projectUpdateReqDto.getUserName())
+			.projectName(updateProject.get().getProjectName())
+			.projectDesc(updateProject.get().getProjectDesc())
+			.projectTech(updateProject.get().getProjectTech())
+			.projectStartDt(updateProject.get().getProjectStartDt())
+			.projectEndDt(updateProject.get().getProjectEndDt())
+			.build();
 
 	}
 
 	@Transactional
-	public ProjectRegisterResDto updateProject(ProjectUpdateReqDto project) {
-		Optional<Project> updatedProject = projectRepository.findByProjectName(project.getProjectName());
-
-		updatedProject.get().updateProject(project);
-
-		return ProjectRegisterResDto.builder()
-			.projectName(updatedProject.get().getProjectName())
-			.projectStatus(updatedProject.get().getProjectStatus())
-			.build();
+	public void updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
+		Optional<Project> project = projectRepository.findByProjectName(projectUpdateDto.getProjectName());
+		project.get().updateProject(projectUpdateDto);
 
 	}
+
+	// public List<ProjectSummaryDto> getProjectList() {
+	//
+	// }
+	//
+	// public Project getProjectDetail(String ProjectName) {
+	//
+	// }
 }
+
