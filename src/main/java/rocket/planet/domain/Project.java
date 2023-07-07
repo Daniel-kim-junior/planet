@@ -123,6 +123,6 @@ public class Project {
 		this.projectStartDt = project.getProjectStartDt();
 		this.projectEndDt = project.getProjectEndDt();
 		this.projectTech = project.getProjectTech();
-		this.projectLastModifiedBy = project.getUserName();
+		this.projectLastModifiedBy = project.getUserNickName();
 	}
 }

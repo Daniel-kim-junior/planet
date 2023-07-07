@@ -39,6 +39,7 @@ public class ProjectController {
 	@GetMapping("/projects/{teamName}")
 	public ProjectUpdateDetailDto projectUpdate(@PathVariable("teamName") String teamName,
 		ProjectUpdateReqDto projectUpdateDto) {
+		// 프로젝트 팀 안에 속해 있는 리스트 불러오기
 
 		ProjectUpdateDetailDto selectedProject = projectService.showProjectDetail(projectUpdateDto);
 		return selectedProject;

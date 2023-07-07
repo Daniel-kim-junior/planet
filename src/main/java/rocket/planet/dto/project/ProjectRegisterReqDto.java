@@ -4,12 +4,11 @@ import java.time.LocalDate;
 
 import lombok.Builder;
 import lombok.Getter;
-import rocket.planet.domain.ProjectStatus;
 
 @Getter
 @Builder
 public class ProjectRegisterReqDto {
-	private String userName;
+	private String userNickName;
 	private String projectName;
 	private String projectDesc;
 	private String projectTech;

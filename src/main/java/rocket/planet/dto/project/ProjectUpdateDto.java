@@ -11,13 +11,13 @@ public class ProjectUpdateDto {
 	@Builder
 	public static class ProjectUpdateReqDto {
 		private String projectName;
-		private String userName;
+		private String userNickName;
 	}
 
 	@Getter
 	@Builder
 	public static class ProjectUpdateDetailDto {
-		private String userName;
+		private String userNickName;
 		private String projectName;
 		private String projectDesc;
 		private String projectTech;

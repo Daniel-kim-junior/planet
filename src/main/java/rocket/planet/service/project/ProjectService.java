@@ -25,7 +25,7 @@ public class ProjectService {
 
 	@Transactional
 	public void registerProject(ProjectRegisterReqDto registerDto) {
-		Optional<Profile> profile = profileRepository.findByUserName(registerDto.getUserName());
+		Optional<Profile> profile = profileRepository.findByUserNickName(registerDto.getUserNickName());
 		Team team = profile.get().getOrg().get(0).getTeam();
 
 		OrgType teamType = team.getTeamType();
@@ -36,10 +36,9 @@ public class ProjectService {
 			.projectTech(registerDto.getProjectTech())
 			.projectStartDt(registerDto.getProjectStartDt())
 			.projectEndDt(registerDto.getProjectEndDt())
-			.projectLastModifiedBy(registerDto.getUserName())
+			.projectLastModifiedBy(registerDto.getUserNickName())
 			.projectStatus(ProjectStatus.WAITING)
 			.team(team)
-			.projectLastModifiedBy(registerDto.getUserName())
 			.projectType(teamType)
 			.build();
 
@@ -51,7 +50,7 @@ public class ProjectService {
 		Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
 
 		return ProjectUpdateDetailDto.builder()
-			.userName(projectUpdateReqDto.getUserName())
+			.userNickName(projectUpdateReqDto.getUserNickName())
 			.projectName(updateProject.get().getProjectName())
 			.projectDesc(updateProject.get().getProjectDesc())
 			.projectTech(updateProject.get().getProjectTech())

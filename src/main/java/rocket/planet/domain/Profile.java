@@ -55,6 +55,7 @@ public class Profile extends BaseTime {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+
 	@Column
 	private boolean profileDisplay;
 

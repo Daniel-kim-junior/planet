@@ -30,7 +30,7 @@ class ProjectControllerTest {
 	@Rollback(false)
 	void 프로젝트_생성_테스트() {
 		ProjectRegisterReqDto project1 = ProjectRegisterReqDto.builder()
-			.userName("강캡틴")
+			.userNickName("captain")
 			.projectName("스마트 시티 TF")
 			.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
 			.projectTech("Spring, Java, Computer Vision")
@@ -39,7 +39,7 @@ class ProjectControllerTest {
 			.build();
 
 		ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
-			.userName("파일럿")
+			.userNickName("pilot")
 			.projectName("스마트 챗봇을 이용한 의료 시스템")
 			.projectDesc("의료 시스템에 스마트 챗봇을 이용하여 효율적으로 진료를 할 수 있게 합니다.")
 			.projectTech("C++, Python, NLP")
@@ -48,7 +48,7 @@ class ProjectControllerTest {
 			.build();
 
 		ProjectRegisterReqDto project3 = ProjectRegisterReqDto.builder()
-			.userName("레이더")
+			.userNickName("radar")
 			.projectName("스마트 솔루션 TF")
 			.projectDesc("스마트 솔루션의 전반적인 목표를 달성하기 위한 프로젝트입니다.")
 			.projectTech("Python, PyTorch, C++, TensorFlow, MySQL")
@@ -57,7 +57,7 @@ class ProjectControllerTest {
 			.build();
 
 		ProjectRegisterReqDto project4 = ProjectRegisterReqDto.builder()
-			.userName("강캡틴")
+			.userNickName("captain")
 			.projectName("스마트 건설 TF")
 			.projectDesc("건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
 			.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
@@ -66,7 +66,7 @@ class ProjectControllerTest {
 			.build();
 
 		ProjectRegisterReqDto project5 = ProjectRegisterReqDto.builder()
-			.userName("파일럿")
+			.userNickName("pilot")
 			.projectName("카카오톡 IT 솔루션")
 			.projectDesc("카카오톡의 내부 기능을 추가하기 위한 프로젝트입니다.")
 			.projectTech("iOS, Android, Kotlin, Swift, React Native")
@@ -88,7 +88,7 @@ class ProjectControllerTest {
 	@Transactional
 	void 프로젝트_수정_테스트() {
 		ProjectUpdateDetailDto project1Detail = ProjectUpdateDetailDto.builder()
-			.userName("강캡틴")
+			.userNickName("captain")
 			.projectName("스마트 건설 TF")
 			.projectDesc("(수정) 건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
 			.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
