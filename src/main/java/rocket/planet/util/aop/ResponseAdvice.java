@@ -1,5 +1,7 @@
 package rocket.planet.util.aop;
 
+import java.util.LinkedHashMap;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -25,6 +27,15 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 		Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
 		ServerHttpResponse response) {
+
+		if(body instanceof String) {
+			return body;
+		}
+		if(body instanceof LinkedHashMap) {
+			if(((LinkedHashMap<?, ?>)body).get("path").equals("/api/auth/email-verify")) {
+				return "이메일 인증이 이미 완료된 이메일입니다";
+			}
+		}
 
 		if (body instanceof CommonErrorDto) {
 			return ResponseUtil.error((CommonErrorDto)body);

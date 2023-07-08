@@ -1,7 +1,11 @@
 package rocket.planet.controller.email;
 
+import static rocket.planet.dto.email.EmailDto.*;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +17,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.dto.common.CommonResponse;
-import rocket.planet.dto.email.EmailDto.EmailDuplicateCheckAndSendEmailDto;
-import rocket.planet.dto.email.EmailDto.EmailVerifyCheckDto;
 import rocket.planet.service.email.EmailVerifyService;
 import rocket.planet.util.exception.NoSuchEmailException;
 
@@ -29,8 +31,9 @@ public class EmailVerifyController {
 	private final EmailVerifyService emailVerifyService;
 
 	@PostMapping(value = "/email-verify", headers = "Accept=application/json", produces = "application/json")
-	public CompletableFuture<CommonResponse<String>> emailVerify(@RequestBody EmailDuplicateCheckAndSendEmailDto dto) {
-		String email = dto.getEmail();
+	public CompletableFuture<CommonResponse<String>> emailVerify(
+		@Valid @RequestBody EmailDuplicateCheckAndSendEmailReqDto dto) {
+		String email = dto.getId();
 		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email)
 			.exceptionally(throwable -> {
 				throw new NoSuchEmailException();
@@ -44,9 +47,8 @@ public class EmailVerifyController {
 	}
 
 	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
-	public CommonResponse<String> emailVerifyCheck(@RequestBody EmailVerifyCheckDto dto) throws
-		JsonProcessingException {
-		return emailVerifyService.confirmByRedisEmailTokenAndSaveToken(dto.getEmail(), dto.getCode());
+	public CommonResponse<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) {
+		return emailVerifyService.confirmByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode());
 	}
 
 }
