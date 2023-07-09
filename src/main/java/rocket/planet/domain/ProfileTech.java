@@ -39,7 +39,6 @@ public class ProfileTech {
 
 	@Builder
 	public ProfileTech(Profile profile, Tech tech) {
-		this.id = id;
 		this.profile = profile;
 		this.tech = tech;
 	}
