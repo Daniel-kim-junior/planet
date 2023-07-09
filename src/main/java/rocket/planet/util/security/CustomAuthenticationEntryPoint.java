@@ -35,7 +35,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		response.setStatus(exceptionEnum.getHttpStatus().value());
 		try (OutputStream os = response.getOutputStream()) {
 			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writeValue(os, exceptionEnum);
+			objectMapper.writeValue(os, exceptionEnum.getMessage());
 			os.flush();
 		}
 	}

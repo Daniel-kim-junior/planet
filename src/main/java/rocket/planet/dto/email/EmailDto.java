@@ -1,6 +1,10 @@
 package rocket.planet.dto.email;
 
+import static lombok.AccessLevel.*;
+
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,31 +14,32 @@ import lombok.NoArgsConstructor;
 
 public class EmailDto {
 	@Getter
-	@AllArgsConstructor(access = AccessLevel.PROTECTED)
-	@Builder
-	public static class SendMailDto {
+	@NoArgsConstructor(access = PROTECTED)
+	public static class SendMailReqDto {
 		private String address;
 		private String title;
 		private String message;
 	}
 
 	@Getter
-	@AllArgsConstructor(access = AccessLevel.PROTECTED)
-	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	@Builder
-	public static class EmailDuplicateCheckAndSendEmailDto {
+	@NoArgsConstructor(access = PROTECTED)
+	public static class EmailDuplicateCheckAndSendEmailReqDto {
 		@Email
-		private String email;
+		@NotBlank
+		@NotEmpty
+		private String id;
 	}
 
 	@Getter
-	@AllArgsConstructor(access = AccessLevel.PROTECTED)
-	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	@Builder
-	public static class EmailVerifyCheckDto {
+	@NoArgsConstructor(access = PROTECTED)
+	public static class EmailVerifyCheckReqDto {
 		@Email
-		private String email;
+		@NotBlank
+		@NotEmpty
+		private String id;
 
+		@NotBlank
+		@NotEmpty
 		private String code;
 	}
 }

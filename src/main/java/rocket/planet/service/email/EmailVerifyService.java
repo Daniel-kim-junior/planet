@@ -1,11 +1,10 @@
 package rocket.planet.service.email;
 
+
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -13,12 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import rocket.planet.domain.redis.EmailConfirm;
+import rocket.planet.domain.redis.EmailToken;
 import rocket.planet.dto.common.CommonResponse;
-import rocket.planet.dto.email.EmailToken;
 import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.repository.redis.EmailConfirmRepository;
+import rocket.planet.repository.redis.EmailTokenRepository;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 
@@ -27,7 +28,7 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
  * 1. 이메일 인증번호를 생성하고, 이메일로 전송한다.
  * 2. 이메일 인증번호를 redis에 저장한다.
  * 3. 이메일 인증번호를 입력받아 redis에 저장된 인증번호와 일치하는지 확인한다.
- * 4. 인증번호가 일치하면 이메일 인증여부를 true로 변경한다.
+ * 4. 인증번호가 일치하면 이메일 확인 객체를 저장한다
  */
 @Service
 @RequiredArgsConstructor
@@ -37,11 +38,12 @@ public class EmailVerifyService {
 	private static final Long EXPIRE_TIME = 3L;
 	private final UserRepository userRepository;
 	private final JavaMailSender mailSender;
-	private String tokenToJson;
+
+	private final EmailTokenRepository emailTokenRepository;
+
+	private final EmailConfirmRepository emailConfirmRepository;
+
 	private EmailToken token;
-	private HashOperations<String, Object, Object> hashOperations;
-	private final ObjectMapper objectMapper;
-	private final RedisTemplate<String, String> redisTemplate;
 
 	@Async
 	public CompletableFuture<String> saveLimitTimeAndSendEmail(String email) {
@@ -61,18 +63,13 @@ public class EmailVerifyService {
 		return future;
 	}
 
-	public CommonResponse<String> redisSaveToken(String email, String generateRandomString) throws
+	public CommonResponse<String> redisSaveToken(String email, String generatedRandomString) throws
 		JsonProcessingException {
-		redisTemplate.expire("emailToken:" + email, EXPIRE_TIME, TimeUnit.MINUTES);
-		hashOperations = redisTemplate.opsForHash();
 		token = EmailToken.builder()
-			.isVerified(false)
-			.id(email)
-			.randomString(generateRandomString)
+			.email(email)
+			.token(generatedRandomString)
 			.build();
-		// TODO: send email
-		tokenToJson = objectMapper.writeValueAsString(token);
-		hashOperations.put("emailToken:" + email, email, tokenToJson);
+		emailTokenRepository.save(token);
 		return new CommonResponse<>(true, "email 인증번호를 보냈습니다", null);
 	}
 
@@ -84,15 +81,12 @@ public class EmailVerifyService {
 		mailSender.send(message);
 	}
 
-	public CommonResponse<String> confirmByRedisEmailTokenAndSaveToken(String email, String reqToken) throws
-		JsonProcessingException {
-		redisTemplate.expire("emailToken:" + email, EXPIRE_TIME, TimeUnit.MINUTES);
-		hashOperations = redisTemplate.opsForHash();
-		String tokenJson = (String)hashOperations.get("emailToken:" + email, email);
-		token = objectMapper.readValue(tokenJson, EmailToken.class);
-		if (token != null && token.getRandomString().equals(reqToken)) {
-			tokenToJson = objectMapper.writeValueAsString(token.verifiedToken());
-			hashOperations.put("emailToken:" + email, email, tokenToJson);
+	public CommonResponse<String> confirmByRedisEmailTokenAndSaveToken(String email, String reqToken) {
+
+		Optional<EmailToken> findToken = emailTokenRepository.findById(email);
+		if (findToken.isPresent() && findToken.get().getToken().equals(reqToken)) {
+			emailTokenRepository.delete(findToken.get());
+			emailConfirmRepository.save(EmailConfirm.builder().email(email).build());
 			return new CommonResponse<>(true, "email 인증이 완료되었습니다", null);
 		}
 		throw new NoValidEmailTokenException();

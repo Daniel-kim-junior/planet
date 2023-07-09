@@ -70,6 +70,16 @@ public class Org extends BaseTime {
 		this.belongStatus = belongStatus;
 	}
 
+	public static Org joinDefaultOrg(Company company, Profile profile ,Department department, Team team, boolean belongStatus) {
+		return builder()
+				.company(company)
+				.profile(profile)
+				.department(department)
+				.team(team)
+				.belongStatus(belongStatus)
+				.build();
+	}
+
 	@Override
 	public String toString() {
 		return "소속{" +

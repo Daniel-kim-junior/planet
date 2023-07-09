@@ -20,6 +20,8 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.auth.AuthDto;
+import rocket.planet.dto.auth.AuthDto.BasicInputReqDto;
 
 @Entity
 @Getter
@@ -59,11 +61,14 @@ public class Profile extends BaseTime {
 	@Column
 	private boolean profileDisplay;
 
-	@Column
+	@Column(nullable = false)
 	private String userName;
 
 	@Column
 	private int profileCareer;
+
+	@Column(nullable = false, unique = true)
+	private String userNickName;
 
 	@Column
 	private LocalDate profileStartDate;
@@ -74,8 +79,7 @@ public class Profile extends BaseTime {
 	@Column(nullable = false, unique = true)
 	private String userId;
 
-	@Column(nullable = false, unique = true)
-	private String userNickName;
+
 
 	@Builder
 	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
@@ -84,17 +88,35 @@ public class Profile extends BaseTime {
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
-		this.userNickName = userNickName;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;
 		this.profileAnnualStatus = profileAnnualStatus;
+		this.userNickName = userNickName;
+	}
+
+	public static Profile BasicInsertDtoToProfile(BasicInputReqDto dto) {
+		return builder()
+				.profileBirthDt(dto.getUserBirth())
+				.userId(dto.getId())
+				.role(Role.CREW)
+				.profileDisplay(dto.isProfileDisplay())
+				.profileCareer(dto.getCareer())
+				.profileAnnualStatus(false)
+				.userName(dto.getUserName())
+				.userNickName(idToUserNickName(dto.getId()))
+				.build();
+	}
+
+	public static String idToUserNickName(String id) {
+		return id.split("@")[0];
 	}
 
 	@Override
 	public String toString() {
 		return "Profile{" +
 			"id=" + id +
+			", 유저 닉네임" + userNickName +
 			"유저 id=" + userId +
 			"유저이름=" + userName +
 			", 생년월일 =" + profileBirthDt +

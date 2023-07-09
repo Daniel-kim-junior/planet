@@ -13,7 +13,7 @@ import lombok.ToString;
 public enum ExceptionEnum {
 
 	// Security Exception
-	SECURITY_AUTH_EXCEPTION(HttpStatus.UNAUTHORIZED, "SE001", "인증되지 않은 사용자입니다"),
+	SECURITY_AUTH_EXCEPTION(HttpStatus.UNAUTHORIZED, "SE001", "등록되지 않은 사용자입니다"),
 	SECURITY_ACCESS_EXCEPTION(HttpStatus.UNAUTHORIZED, "SE002", "권한이 없는 사용자입니다"),
 
 	// Common Exception
@@ -33,7 +33,13 @@ public enum ExceptionEnum {
 	// Request Exception
 	REQUEST_NOT_VALID_EXCEPTION("UE006", "요청이 올바르지 않습니다"),
 	EMAIL_TOKEN_NOT_FOUND_EXCEPTION("UE007", "이메일 토큰이 만료되었습니다"),
-	EMAIL_TOKEN_NOT_VALID_EXCEPTION("UE008", "이메일 토큰이 유효하지 않습니다");
+	EMAIL_TOKEN_NOT_VALID_EXCEPTION("UE008", "이메일 토큰이 유효하지 않습니다"),
+
+	// 이메일이 이미 인증된 경우
+	EMAIL_ALREADY_AUTHORIZED_EXCEPTION("UE009", "이메일이 이미 인증되었습니다"),
+
+	TEMP_LOCK_EXCEPTION("UE010", "5회 비밀번호 실패 이유로 30분간 계정 잠금");
+
 
 	private HttpStatus httpStatus;
 	private final String code;
