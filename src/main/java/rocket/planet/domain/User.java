@@ -1,5 +1,6 @@
 package rocket.planet.domain;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class User extends BaseTime {
 	@Column(name = "user_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@OneToOne
+	@OneToOne(fetch = LAZY)
 	@JoinColumn(name = "profile_uid")
 	private Profile profile;
 

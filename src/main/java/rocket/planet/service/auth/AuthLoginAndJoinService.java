@@ -58,7 +58,7 @@ import rocket.planet.util.exception.Temp30MinuteLockException;
 public class AuthLoginAndJoinService {
 	private static final String GRANT_TYPE = "Bearer";
 
-	private static final String COMPLETE_JOIN = "회원 가입이 완료 되었습니다.";
+	private static final String COMPLETE_JOIN = "기본 정보 입력 완료";
 
 	private final UserRepository userRepository;
 
@@ -143,7 +143,7 @@ public class AuthLoginAndJoinService {
 		return responseDto;
 	}
 
-	public static String makeUserNickName(String email) {
+	private static String makeUserNickName(String email) {
 		return email.split("@")[0];
 	}
 
@@ -164,6 +164,7 @@ public class AuthLoginAndJoinService {
 			.authRole(authority)
 			// 소속있는지 확인해서 기본 소속 추가 및 작업해야함
 			.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(makeUserNickName(userName))
 			.grantType(GRANT_TYPE)
 			.accessToken(jwtIssuer.createAccessToken(userName, authority))
 			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))

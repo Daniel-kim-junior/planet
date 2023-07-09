@@ -1,5 +1,6 @@
 package rocket.planet.domain;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class PjtRecord {
 	@Column(name = "profile_pjt_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = LAZY)
 	@JoinColumn(name = "profile_uid", nullable = false)
 	private Profile profile;
 
