@@ -156,6 +156,10 @@ public class AuthLoginAndJoinService {
 		} else {
 			authority = user.getProfile().getRole().name();
 		}
+		return getResponseDtoByOrg(user, userName, authority);
+	}
+
+	private LoginResponseDto getResponseDtoByOrg(User user, String userName, String authority) {
 		return LoginResponseDto.builder()
 			.authRole(authority)
 			// 소속있는지 확인해서 기본 소속 추가 및 작업해야함
@@ -182,7 +186,34 @@ public class AuthLoginAndJoinService {
 	public LoginResponseDto reissue(String bearerToken) {
 
 		String refreshToken = resolveToken(bearerToken);
+		Claims claims = getClaimsWithValidCheck(refreshToken);
 
+		RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(claims.getSubject())
+			.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
+
+		if (refreshTokenInRedis(refreshToken, redisRefreshToken)) {
+			return getReissueResponseDto(refreshToken, claims);
+		}
+
+		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
+			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+
+		return createJsonWebTokenAndRoleDto(findUserByJwtSubject);
+	}
+
+	private LoginResponseDto getReissueResponseDto(String refreshToken, Claims claims) {
+		return LoginResponseDto.builder()
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
+			.refreshToken(refreshToken)
+			.build();
+	}
+
+	private boolean refreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) {
+		return redisRefreshToken.getToken().equals(refreshToken) ? true : false;
+	}
+
+	private Claims getClaimsWithValidCheck(String refreshToken) {
 		if (!StringUtils.hasText(refreshToken)) {
 			throw new JwtInvalidException("not exists refresh token");
 		}
@@ -191,11 +222,7 @@ public class AuthLoginAndJoinService {
 		if (claims == null) {
 			throw new JwtInvalidException("not exists claims in token");
 		}
-
-		User user = userRepository.findByUserId(claims.getSubject())
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
-
-		return createJsonWebTokenAndRoleDto(user);
+		return claims;
 	}
 
 	@Transactional
@@ -219,11 +246,7 @@ public class AuthLoginAndJoinService {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
 		Team team = teamRepository.findByTeamName(dto.getTeamName());
 		Department department = deptRepository.findByDeptName(dto.getDeptName());
-		Org org = Org.builder().profile(profile)
-			.company(dkTechIn)
-			.team(team)
-			.department(department)
-			.belongStatus(true).build();
+		Org org = Org.joinDefaultOrg(dkTechIn, profile, department, team, true);
 
 		profileRepository.save(profile);
 		user.updateProfile(profile);
