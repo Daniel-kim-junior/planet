@@ -1,6 +1,8 @@
 package rocket.planet.domain.redis;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -18,5 +20,5 @@ public class RefreshToken {
 
 	private String token;
 
-	private Collection<? extends GrantedAuthority> authorities;
+	private List<RedisCacheAuth> authorities;
 }

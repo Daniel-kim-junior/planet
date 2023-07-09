@@ -20,6 +20,8 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.auth.AuthDto;
+import rocket.planet.dto.auth.AuthDto.BasicInputReqDto;
 
 @Entity
 @Getter
@@ -58,11 +60,14 @@ public class Profile extends BaseTime {
 	@Column
 	private boolean profileDisplay;
 
-	@Column
+	@Column(nullable = false)
 	private String userName;
 
 	@Column
 	private int profileCareer;
+
+	@Column(nullable = false)
+	private String userNickName;
 
 	@Column
 	private boolean profileAnnualStatus;
@@ -71,9 +76,9 @@ public class Profile extends BaseTime {
 	private String userId;
 
 	@Builder
-	public Profile(Org org, LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
+	public Profile(LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
 				   int profileCareer,
-				   boolean profileAnnualStatus, String userName) {
+				   boolean profileAnnualStatus, String userName, String userNickName) {
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
@@ -81,6 +86,24 @@ public class Profile extends BaseTime {
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;
 		this.profileAnnualStatus = profileAnnualStatus;
+		this.userNickName = userNickName;
+	}
+
+	public static Profile BasicInsertDtoToProfile(BasicInputReqDto dto) {
+		return builder()
+				.profileBirthDt(dto.getUserBirth())
+				.userId(dto.getId())
+				.role(Role.CREW)
+				.profileDisplay(dto.isProfileDisplay())
+				.profileCareer(dto.getCareer())
+				.profileAnnualStatus(false)
+				.userName(dto.getUserName())
+				.userNickName(idToUserNickName(dto.getId()))
+				.build();
+	}
+
+	public static String idToUserNickName(String id) {
+		return id.split("@")[0];
 	}
 
 	@Override
@@ -93,6 +116,7 @@ public class Profile extends BaseTime {
 				", 프로필 노출여부 =" + profileDisplay +
 				", 경력 =" + profileCareer +
 				", 휴가 여부 =" + profileAnnualStatus +
+				", 닉네임 =" + userNickName +
 				'}';
 	}
 }

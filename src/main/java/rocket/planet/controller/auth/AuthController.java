@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.auth.AuthDto;
 import rocket.planet.service.auth.AuthLoginAndJoinService;
 
 @RestController
@@ -23,15 +22,15 @@ public class AuthController {
 	private final AuthLoginAndJoinService authLoginAndJoinService;
 
 	@PostMapping("/account-register")
-	public String accountRegister(@Valid @RequestBody JoinReqDto dto) {
+	public LoginResponseDto accountRegister(@Valid @RequestBody JoinReqDto dto) {
 		return authLoginAndJoinService.authJoin(dto);
 	}
 
 
-	// @PostMapping("/basic-input")
-	// public LoginResponseDto basicInputAndJoinAndLogin(@Valid @RequestBody BasicInputReqDto dto) {
-	// 	return authLoginAndJoinService.joinAndLogin(dto);
-	// }
+	@PostMapping("/basic-profile-register")
+	public String basicProfileRegister(@Valid @RequestBody BasicInputReqDto dto) {
+		return authLoginAndJoinService.authBasicProfileAndAutoLogin(dto);
+	}
 
 
 	@PostMapping("/login")

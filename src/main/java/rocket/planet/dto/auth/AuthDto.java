@@ -47,20 +47,12 @@ public class AuthDto {
 		@NotBlank
 		private String teamName;
 
-		@NotEmpty
-		@NotBlank
 		private int career;
 
-		@NotEmpty
-		@NotBlank
 		private LocalDate companyJoinDate;
 
-		@NotEmpty
-		@NotBlank
 		private LocalDate userBirth;
 
-		@NotEmpty
-		@NotBlank
 		private boolean profileDisplay;
 
 	}
@@ -77,7 +69,7 @@ public class AuthDto {
 		private String accessToken;
 		private String refreshToken;
 
-		private String isThreeMonth;
+		private boolean isThreeMonth;
 
 		@Builder
 		@Getter

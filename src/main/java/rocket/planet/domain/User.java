@@ -43,14 +43,18 @@ public class User extends BaseTime {
 	@Column
 	private boolean userLock;
 
+	@Column
+	private LocalDate lastPwdModifiedDate;
+
 
 	@Column(nullable = false, unique = true)
 	private String userId;
 
 	@Builder
 	public User(Profile profile, String userPwd, boolean userLock,
-		String userId) {
+		String userId, LocalDate lastPwdModifiedDate) {
 		this.profile = profile;
+		this.lastPwdModifiedDate = lastPwdModifiedDate;
 		this.userPwd = userPwd;
 		this.userLock = userLock;
 		this.userId = userId;
@@ -63,6 +67,7 @@ public class User extends BaseTime {
 			", 유저 잠금 여부=" + userLock +
 			", 유저 id='" + userId + '\'' +
 			", 유저 잠금=" + userLock +
+			", 유저 비밀번호 변경 날짜=" + lastPwdModifiedDate +
 			'}';
 	}
 
@@ -74,6 +79,7 @@ public class User extends BaseTime {
 	public static User defaultUser(String userId, String userPwd) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		return builder().userLock(false)
+			.lastPwdModifiedDate(LocalDate.now())
 			.userId(userId).userPwd(passwordEncoder.encode(userPwd)).build();
 	}
 
