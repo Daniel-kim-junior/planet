@@ -1,30 +1,28 @@
 package rocket.planet.domain;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
-
 import org.springframework.transaction.annotation.Transactional;
-import rocket.planet.repository.jpa.AuthRepository;
+
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.UserRepository;
 
 @SpringBootTest
 public class UserTest {
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private ProfileRepository profileRepository;
+	@Autowired
+	private ProfileRepository profileRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 
     @Test
     @Transactional

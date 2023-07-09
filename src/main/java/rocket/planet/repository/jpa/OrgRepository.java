@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import rocket.planet.domain.Org;
 
 public interface OrgRepository extends JpaRepository<Org, UUID> {
-
 	Optional<Org> findByProfileUserId(String userId);
 }

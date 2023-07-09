@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import rocket.planet.domain.Department;
 
 public interface DeptRepository extends JpaRepository<Department, UUID> {
-    Department findByDeptName(String deptName);
-
 	List<String> findDeptNameBy();
+
+	Department findByDeptName(String deptName);
+
 }

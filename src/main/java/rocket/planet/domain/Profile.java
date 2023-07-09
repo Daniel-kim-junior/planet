@@ -57,6 +57,7 @@ public class Profile extends BaseTime {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+
 	@Column
 	private boolean profileDisplay;
 
@@ -66,8 +67,11 @@ public class Profile extends BaseTime {
 	@Column
 	private int profileCareer;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String userNickName;
+
+	@Column
+	private LocalDate profileStartDate;
 
 	@Column
 	private boolean profileAnnualStatus;
@@ -75,10 +79,12 @@ public class Profile extends BaseTime {
 	@Column(nullable = false, unique = true)
 	private String userId;
 
+
+
 	@Builder
-	public Profile(LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
-				   int profileCareer,
-				   boolean profileAnnualStatus, String userName, String userNickName) {
+	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
+		boolean profileDisplay, int profileCareer, boolean profileAnnualStatus, String userName, String userNickName) {
+		this.profileStartDate = profileStartDate;
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
@@ -109,14 +115,14 @@ public class Profile extends BaseTime {
 	@Override
 	public String toString() {
 		return "Profile{" +
-				"id=" + id +
-				"유저 id=" + userId +
-				"유저이름=" + userName +
-				", 생년월일 =" + profileBirthDt +
-				", 프로필 노출여부 =" + profileDisplay +
-				", 경력 =" + profileCareer +
-				", 휴가 여부 =" + profileAnnualStatus +
-				", 닉네임 =" + userNickName +
-				'}';
+			"id=" + id +
+			", 유저 닉네임" + userNickName +
+			"유저 id=" + userId +
+			"유저이름=" + userName +
+			", 생년월일 =" + profileBirthDt +
+			", 프로필 노출여부 =" + profileDisplay +
+			", 경력 =" + profileCareer +
+			", 휴가 여부 =" + profileAnnualStatus +
+			'}';
 	}
 }
