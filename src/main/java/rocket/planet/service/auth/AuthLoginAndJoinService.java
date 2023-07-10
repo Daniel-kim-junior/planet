@@ -85,6 +85,7 @@ public class AuthLoginAndJoinService {
 
 	private final JsonWebTokenIssuer jwtIssuer;
 
+	@Transactional
 	public LoginResDto authLogin(LoginReqDto dto) {
 
 		User user = userRepository.findByUserId(dto.getId())
