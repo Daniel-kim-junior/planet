@@ -6,6 +6,7 @@ import static rocket.planet.dto.auth.AuthDto.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.domain.redis.RedisCacheAuth;
 import rocket.planet.domain.redis.RefreshToken;
+import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
@@ -109,7 +111,6 @@ public class AuthLoginAndJoinService {
 	}
 
 	private LoginResDto completeLogin(User user) {
-
 		limitLoginRepository.deleteById(user.getUserId());
 		authChangeRepository.deleteById(user.getUserId());
 
@@ -118,27 +119,44 @@ public class AuthLoginAndJoinService {
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPwd());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		if (user.isExistProfile()) {
-			List<RedisCacheAuth> userAuthorities = authRepository.findAllByProfileAuthority_ProfileUserId(
-					user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
-					.authorityTargetUid(e.getAuthTargetId()).build())
-				.collect(
-					Collectors.toList());
-			responseDto = createJsonWebTokenAndRoleDto(user);
-			refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-				.email(user.getUserId()).authorities(userAuthorities).build());
+			responseDto = getLoginResDtoByCompleteJoinUser(user);
 		} else {
-			responseDto = createJsonWebTokenAndRoleDto(user);
-			Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
-			lastLogin.get().add(String.valueOf(LocalDateTime.now()));
-			lastLoginRepository.save(lastLogin.get());
-			refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-				.email(user.getUserId()).build());
+			responseDto = getLoginResDtoByNotCompleteJoinUser(user);
 		}
+
+		lastLoginLogDataSave(user);
 		return responseDto;
 	}
 
+	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) {
+		LoginResDto responseDto;
+		responseDto = createJsonWebTokenAndRoleDto(user);
+		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
+			.email(user.getUserId()).build());
+		return responseDto;
+	}
+
+	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) {
+		LoginResDto responseDto;
+		List<RedisCacheAuth> userAuthorities = authRepository.findAllByProfileAuthority_ProfileUserId(
+				user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
+				.authorityTargetUid(e.getAuthTargetId()).build())
+			.collect(
+				Collectors.toList());
+		responseDto = createJsonWebTokenAndRoleDto(user);
+		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
+			.email(user.getUserId()).authorities(userAuthorities).build());
+		return responseDto;
+	}
+
+	private void lastLoginLogDataSave(User user) {
+		Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
+		lastLogin.get().add(String.valueOf(LocalDateTime.now()));
+		lastLoginRepository.save(lastLogin.get());
+	}
+
 	private static String makeUserNickName(String email) {
-		return email.split("@")[0];
+		return StringUtils.split(email, "@")[0];
 	}
 
 	private LoginResDto createJsonWebTokenAndRoleDto(User user) {
@@ -154,15 +172,47 @@ public class AuthLoginAndJoinService {
 	}
 
 	private LoginResDto getResponseDtoByOrg(User user, String userName, String authority) {
+		LoginResDto loginResDto;
+		Profile profile = user.getProfile();
+		if (Objects.isNull(profile)) {
+			loginResDto = loginResBuilder(user, userName, authority);
+		} else {
+			loginResDto = loginResBuilder(user, userName, authority, profile);
+		}
+		return loginResDto;
+	}
+
+	private LoginResDto loginResBuilder(User user, String userName, String authority) {
 		return LoginResDto.builder()
 			.authRole(authority)
-			// 소속있는지 확인해서 기본 소속 추가 및 작업해야함
 			.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.userNickName(makeUserNickName(userName))
 			.grantType(GRANT_TYPE)
 			.accessToken(jwtIssuer.createAccessToken(userName, authority))
 			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
 			.build();
+	}
+
+	private LoginResDto loginResBuilder(User user, String userName, String authority, Profile profile) {
+		AuthOrg authOrg = profileToAuthOrg(profile);
+		return LoginResDto.builder()
+			.authRole(authority)
+			.authOrg(authOrg)
+			.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(makeUserNickName(userName))
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(userName, authority))
+			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+			.build();
+	}
+
+	private AuthOrg profileToAuthOrg(Profile profile) {
+		List<Org> org = profile.getOrg();
+		AuthOrg authOrg = AuthOrg.builder()
+			.companyName(org.get(0).getCompany().getCompanyName())
+			.deptName(org.get(0).getDepartment().getDeptName())
+			.teamName(org.get(0).getTeam().getTeamName()).build();
+		return authOrg;
 	}
 
 	private boolean hasItBeenThreeMonthsSinceTheLastPasswordChange(User user) {
