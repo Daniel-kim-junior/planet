@@ -59,7 +59,7 @@ public class AuthDto {
 
 	@Getter
 	@Builder
-	public static class LoginResponseDto {
+	public static class LoginResDto {
 		private String authRole;
 
 		private String grantType;
