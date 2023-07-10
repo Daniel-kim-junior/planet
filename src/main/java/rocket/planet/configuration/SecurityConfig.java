@@ -60,6 +60,7 @@ public class SecurityConfig {
 			.sessionCreationPolicy(STATELESS); // 세션을 사용하지 않음 (JWT 사용 시 필요 없음)
 
 		http.authorizeRequests()
+			.antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated();

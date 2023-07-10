@@ -1,5 +1,6 @@
 package rocket.planet.domain;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class Department {
 	@Column(name = "dept_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = LAZY)
 	@JoinColumn(name = "company_uid", nullable = false, updatable = false)
 	private Company company;
 

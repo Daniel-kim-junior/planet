@@ -71,6 +71,8 @@ public class AuthDto {
 
 		private boolean isThreeMonth;
 
+		private String userNickName;
+
 		@Builder
 		@Getter
 		public static class AuthOrg {

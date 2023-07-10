@@ -1,5 +1,6 @@
 package rocket.planet.domain;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class Team extends BaseTime {
 	@Column(name = "team_uid", columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = LAZY)
 	@JoinColumn(name = "dept_uid", nullable = false, updatable = false)
 	private Department department;
 

@@ -5,16 +5,13 @@ import static rocket.planet.dto.auth.AuthDto.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Company;
 import rocket.planet.domain.Department;
 import rocket.planet.domain.Org;
@@ -36,6 +32,7 @@ import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.domain.redis.RedisCacheAuth;
 import rocket.planet.domain.redis.RefreshToken;
+import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
@@ -58,7 +55,7 @@ import rocket.planet.util.exception.Temp30MinuteLockException;
 public class AuthLoginAndJoinService {
 	private static final String GRANT_TYPE = "Bearer";
 
-	private static final String COMPLETE_JOIN = "회원 가입이 완료 되었습니다.";
+	private static final String COMPLETE_JOIN = "기본 정보 입력 완료";
 
 	private final UserRepository userRepository;
 
@@ -72,7 +69,6 @@ public class AuthLoginAndJoinService {
 
 	private final DeptRepository deptRepository;
 
-
 	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
 	private final LimitLoginRepository limitLoginRepository;
@@ -85,22 +81,23 @@ public class AuthLoginAndJoinService {
 
 	private final AuthRepository authRepository;
 
-
 	private final PasswordEncoder passwordEncoder;
 
 	private final JsonWebTokenIssuer jwtIssuer;
 
-	public LoginResponseDto authLogin(LoginReqDto dto) {
+	@Transactional
+	public LoginResDto authLogin(LoginReqDto dto) {
 
 		User user = userRepository.findByUserId(dto.getId())
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			int count;
-			if(limitLoginRepository.findById(user.getUserId()).isPresent() && limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
+			if (limitLoginRepository.findById(user.getUserId()).isPresent()
+				&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
 				throw new Temp30MinuteLockException();
 			}
 
-			if(limitLoginRepository.findById(user.getUserId()).isPresent()) {
+			if (limitLoginRepository.findById(user.getUserId()).isPresent()) {
 				LimitLogin limitLogin = limitLoginRepository.findById(user.getUserId()).get();
 				count = limitLogin.add();
 				limitLoginRepository.save(limitLogin);
@@ -114,44 +111,60 @@ public class AuthLoginAndJoinService {
 		return completeLogin(user);
 	}
 
-	private LoginResponseDto completeLogin(User user) {
-
+	private LoginResDto completeLogin(User user) {
 		limitLoginRepository.deleteById(user.getUserId());
 		authChangeRepository.deleteById(user.getUserId());
 
-		LoginResponseDto responseDto;
+		LoginResDto responseDto;
 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPwd());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		if(user.isExistProfile()) {
-			List<RedisCacheAuth> userAuthorities = authRepository.findAllByProfileAuthority_ProfileUserId(
-					user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
-					.authorityTargetUid(e.getAuthTargetId()).build())
-				.collect(
-					Collectors.toList());
-			responseDto = createJsonWebTokenAndRoleDto(user);
-			refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-					.email(user.getUserId()).authorities(userAuthorities).build());
+		if (user.isExistProfile()) {
+			responseDto = getLoginResDtoByCompleteJoinUser(user);
 		} else {
-			responseDto = createJsonWebTokenAndRoleDto(user);
-			Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
-			lastLogin.get().add(String.valueOf(LocalDateTime.now()));
-			lastLoginRepository.save(lastLogin.get());
-			refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-				.email(user.getUserId()).build());
+			responseDto = getLoginResDtoByNotCompleteJoinUser(user);
 		}
+
+		lastLoginLogDataSave(user);
 		return responseDto;
 	}
 
-	public static String makeUserNickName(String email) {
-		return email.split("@")[0];
+	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) {
+		LoginResDto responseDto;
+		responseDto = createJsonWebTokenAndRoleDto(user);
+		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
+			.email(user.getUserId()).build());
+		return responseDto;
 	}
 
-	private LoginResponseDto createJsonWebTokenAndRoleDto(User user) {
+	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) {
+		LoginResDto responseDto;
+		List<RedisCacheAuth> userAuthorities = authRepository.findAllByProfileAuthority_ProfileUserId(
+				user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
+				.authorityTargetUid(e.getAuthTargetId()).build())
+			.collect(
+				Collectors.toList());
+		responseDto = createJsonWebTokenAndRoleDto(user);
+		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
+			.email(user.getUserId()).authorities(userAuthorities).build());
+		return responseDto;
+	}
+
+	private void lastLoginLogDataSave(User user) {
+		Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
+		lastLogin.get().add(String.valueOf(LocalDateTime.now()));
+		lastLoginRepository.save(lastLogin.get());
+	}
+
+	private static String makeUserNickName(String email) {
+		return StringUtils.split(email, "@")[0];
+	}
+
+	private LoginResDto createJsonWebTokenAndRoleDto(User user) {
 
 		String userName = user.getUserId();
 		String authority;
-		if(user.getProfile() == null) {
+		if (user.getProfile() == null) {
 			authority = Role.CREW.name();
 		} else {
 			authority = user.getProfile().getRole().name();
@@ -159,19 +172,52 @@ public class AuthLoginAndJoinService {
 		return getResponseDtoByOrg(user, userName, authority);
 	}
 
-	private LoginResponseDto getResponseDtoByOrg(User user, String userName, String authority) {
-		return LoginResponseDto.builder()
+	private LoginResDto getResponseDtoByOrg(User user, String userName, String authority) {
+		LoginResDto loginResDto;
+		Profile profile = user.getProfile();
+		if (Objects.isNull(profile)) {
+			loginResDto = loginResBuilder(user, userName, authority);
+		} else {
+			loginResDto = loginResBuilder(user, userName, authority, profile);
+		}
+		return loginResDto;
+	}
+
+	private LoginResDto loginResBuilder(User user, String userName, String authority) {
+		return LoginResDto.builder()
 			.authRole(authority)
-			// 소속있는지 확인해서 기본 소속 추가 및 작업해야함
 			.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(makeUserNickName(userName))
 			.grantType(GRANT_TYPE)
 			.accessToken(jwtIssuer.createAccessToken(userName, authority))
 			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
 			.build();
 	}
 
+	private LoginResDto loginResBuilder(User user, String userName, String authority, Profile profile) {
+		AuthOrg authOrg = profileToAuthOrg(profile);
+		return LoginResDto.builder()
+			.authRole(authority)
+			.authOrg(authOrg)
+			.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(makeUserNickName(userName))
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(userName, authority))
+			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+			.build();
+	}
+
+	private AuthOrg profileToAuthOrg(Profile profile) {
+		List<Org> org = profile.getOrg();
+		AuthOrg authOrg = AuthOrg.builder()
+			.companyName(org.get(0).getCompany().getCompanyName())
+			.deptName(org.get(0).getDepartment().getDeptName())
+			.teamName(org.get(0).getTeam().getTeamName()).build();
+		return authOrg;
+	}
+
 	private boolean hasItBeenThreeMonthsSinceTheLastPasswordChange(User user) {
-		return user.getLastPwdModifiedDate().isBefore(LocalDate.now().minusDays(90));
+		return user.getLastPwdModifiedDt().isBefore(LocalDate.now().minusDays(90));
 	}
 
 	private String resolveToken(String bearerToken) {
@@ -183,7 +229,7 @@ public class AuthLoginAndJoinService {
 		return null;
 	}
 
-	public LoginResponseDto reissue(String bearerToken) {
+	public LoginResDto reissue(String bearerToken) {
 
 		String refreshToken = resolveToken(bearerToken);
 		Claims claims = getClaimsWithValidCheck(refreshToken);
@@ -201,8 +247,8 @@ public class AuthLoginAndJoinService {
 		return createJsonWebTokenAndRoleDto(findUserByJwtSubject);
 	}
 
-	private LoginResponseDto getReissueResponseDto(String refreshToken, Claims claims) {
-		return LoginResponseDto.builder()
+	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) {
+		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
 			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
 			.refreshToken(refreshToken)
@@ -226,7 +272,7 @@ public class AuthLoginAndJoinService {
 	}
 
 	@Transactional
-	public LoginResponseDto authJoin(JoinReqDto dto) {
+	public LoginResDto authJoin(JoinReqDto dto) {
 		emailConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
@@ -241,7 +287,6 @@ public class AuthLoginAndJoinService {
 
 		User user = userRepository.findByUserId(dto.getId())
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
-
 
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
 		Team team = teamRepository.findByTeamName(dto.getTeamName());

@@ -22,24 +22,22 @@ public class AuthController {
 	private final AuthLoginAndJoinService authLoginAndJoinService;
 
 	@PostMapping("/account-register")
-	public LoginResponseDto accountRegister(@Valid @RequestBody JoinReqDto dto) {
+	public LoginResDto accountRegister(@Valid @RequestBody JoinReqDto dto) {
 		return authLoginAndJoinService.authJoin(dto);
 	}
-
 
 	@PostMapping("/basic-profile-register")
 	public String basicProfileRegister(@Valid @RequestBody BasicInputReqDto dto) {
 		return authLoginAndJoinService.authBasicProfileAndAutoLogin(dto);
 	}
 
-
 	@PostMapping("/login")
-	public LoginResponseDto login(@Valid @RequestBody LoginReqDto loginReqDto) {
+	public LoginResDto login(@Valid @RequestBody LoginReqDto loginReqDto) {
 		return authLoginAndJoinService.authLogin(loginReqDto);
 	}
 
 	@PostMapping("/reissue")
-	public LoginResponseDto reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
+	public LoginResDto reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
 		return authLoginAndJoinService.reissue(bearerToken);
 	}
 
