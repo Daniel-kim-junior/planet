@@ -68,22 +68,17 @@ public class Org extends BaseTime {
 		this.orgEndDate = orgEndDate;
 		this.orgInviter = orgInviter;
 		this.orgStatus = orgStatus;
-
-	}
-
-
+  }
+  
 	public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
 		boolean orgStatus) {
 		return builder()
-
 			.company(company)
 			.profile(profile)
 			.department(department)
 			.team(team)
 			.orgStatus(orgStatus)
 			.build();
-
-
 	}
 
 	@Override

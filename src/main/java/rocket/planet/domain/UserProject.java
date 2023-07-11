@@ -41,7 +41,7 @@ public class UserProject {
 	@ManyToOne(fetch = LAZY, optional = false)
 	@JoinColumn(name = "project_uid", updatable = false, nullable = false)
 	private Project project;
-	
+
 	@Column(nullable = false)
 	private String userPjtInviter;
 

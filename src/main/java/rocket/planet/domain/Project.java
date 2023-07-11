@@ -23,7 +23,6 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -110,7 +109,6 @@ public class Project {
 			"}";
 	}
 
-	@Transactional
 	public void toUpdateProjectStatusDto(Project project) {
 		ProjectRegisterResDto.builder()
 			.projectName(project.getProjectName())

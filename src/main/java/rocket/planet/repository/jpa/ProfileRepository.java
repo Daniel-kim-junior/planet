@@ -12,6 +12,6 @@ import rocket.planet.repository.jpa.profile.ProfileRepositoryCustom;
 public interface ProfileRepository extends JpaRepository<Profile, UUID>, ProfileRepositoryCustom {
 
 	Optional<Profile> findByUserNickName(String userNickName);
-
-
+  
+	UUID findIdByUserNickName(String userNickName);
 }

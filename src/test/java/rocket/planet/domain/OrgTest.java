@@ -44,7 +44,6 @@ public class OrgTest {
 		Team smartCityTeam = teamRepository.findByTeamName("스마트시티");
 		Team itConsultingTeam = teamRepository.findByTeamName("IT컨설팅");
 
-
 		Profile admin = profileRepository.findByUserNickName("admin").get();
 		Profile crew = profileRepository.findByUserNickName("crew").get();
 		Profile pilot = profileRepository.findByUserNickName("pilot").get();

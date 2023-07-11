@@ -64,7 +64,6 @@ public class Authority extends BaseTime {
 			", 권한 테이블 타입=" + authType +
 			", 부여 권한 target 테이블 uuid='" + authTargetId + '\'' +
 			", 권한 부여자 id='" + authorizerId + '\'' +
-			", 권한 사용자 id=' " + userUid + '\'' +
 			'}';
 	}
 }
