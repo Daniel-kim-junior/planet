@@ -88,7 +88,6 @@ public class Profile extends BaseTime {
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
-		this.userNickName = userNickName;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;

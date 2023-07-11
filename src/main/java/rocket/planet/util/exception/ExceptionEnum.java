@@ -39,7 +39,9 @@ public enum ExceptionEnum {
 	// 이메일이 이미 인증된 경우
 	EMAIL_ALREADY_AUTHORIZED_EXCEPTION("UE009", "이메일이 이미 인증되었습니다"),
 
-	TEMP_LOCK_EXCEPTION("UE010", "5회 비밀번호 실패 이유로 30분간 계정 잠금");
+	TEMP_LOCK_EXCEPTION("UE010", "5회 비밀번호 실패 이유로 30분간 계정 잠금"),
+
+	AUTH_CHANGE_EXCEPTION("UE011", "인증 변경 중입니다. 잠시 후 다시 시도해주세요");
 
 	private HttpStatus httpStatus;
 	private final String code;
