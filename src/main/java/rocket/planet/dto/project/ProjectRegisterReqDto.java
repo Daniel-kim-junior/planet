@@ -17,4 +17,5 @@ public class ProjectRegisterReqDto {
 	private LocalDate projectEndDt;
 	private String projectLeader;
 	private List<String> projectMember;
+	private String authType;
 }
