@@ -86,4 +86,9 @@ public class UserProject {
 			", 유저 프로젝트 상세정보 설명='" + userPjtDesc + '\'' +
 			'}';
 	}
+
+	public void toUserProjectCloseApprove() {
+		this.userPjtCloseApply = false;
+		this.userPjtCloseDt = LocalDate.now();
+	}
 }

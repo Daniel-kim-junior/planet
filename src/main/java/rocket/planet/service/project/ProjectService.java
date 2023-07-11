@@ -105,6 +105,18 @@ public class ProjectService {
 
 	}
 
+	@Transactional
+	public void closeProject(String projectName, String userNickName) {
+		Project requestedProject = projectRepository.findByProjectName(projectName).get();
+		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
+
+		// 프로젝트에 대한 마감 요청이 있다면 요청 수락으로 변경
+		userProjects.stream().filter(UserProject::isUserPjtCloseApply).forEach(UserProject::toUserProjectCloseApprove);
+		// 프로젝트 상태 변경
+		requestedProject.close(userNickName);
+
+	}
+
 	// public List<ProjectSummaryDto> getProjectList(String teamName) {
 	//
 	// }

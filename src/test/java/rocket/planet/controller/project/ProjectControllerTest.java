@@ -159,4 +159,12 @@ class ProjectControllerTest {
 
 		assertThat(projectRepository.findAllByProjectStatusIs(ProjectStatus.DELETED).size()).isEqualTo(1);
 	}
+
+	@Test
+	@Transactional
+	void 프로젝트_마감_테스트() {
+		String projectName = "스마트 시티 TF";
+		String userNickName = "plpl";
+		projectService.closeProject(projectName, userNickName);
+	}
 }
