@@ -1,11 +1,7 @@
-package rocket.planet.service.auth;
+package rocket.planet.util.security;
 
-import java.security.SignatureException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,8 +11,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import rocket.planet.domain.Authority;
-import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.util.exception.JwtInvalidException;
 
 @Component
@@ -36,19 +30,17 @@ public class JsonWebTokenIssuer {
 
 	private final int refreshExpireMin;
 
-	private final AuthRepository authRepository;
-
 	public JsonWebTokenIssuer(
 		@Value("${jwt.secret}") String secretKey,
 		@Value("${jwt.refresh-secret}") String refreshSecretKey,
 		@Value("${jwt.expire-min:10}") int expireMin,
-		@Value("${jwt.refresh-expire-min:30}") int refreshExpireMin, AuthRepository authRepository) {
+		@Value("${jwt.refresh-expire-min:30}") int refreshExpireMin) {
 		this.secretKeyBytes = secretKey.getBytes();
 		this.refreshSecretKeyBytes = refreshSecretKey.getBytes();
 		this.expireMin = expireMin;
 		this.refreshExpireMin = refreshExpireMin;
-		this.authRepository = authRepository;
 	}
+
 	private String createToken(String userName, String role, byte[] secretKeyBytes, int expireMin) {
 		Date now = new Date();
 		Claims claims = Jwts.claims().setSubject(userName);

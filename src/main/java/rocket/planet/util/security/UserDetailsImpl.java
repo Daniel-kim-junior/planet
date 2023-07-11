@@ -1,47 +1,16 @@
 package rocket.planet.util.security;
 
-import java.util.Collection;
+import java.util.Optional;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-public class UserDetailsImpl implements UserDetails {
+import rocket.planet.util.exception.IdVerifiedException;
 
-	private String username;
-	private Collection<? extends GrantedAuthority> authorities;
+public class UserDetailsImpl {
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
-
-	@Override
-	public String getPassword() {
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		return username;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return false;
+	public static String getLoginUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return (String)Optional.ofNullable(authentication.getPrincipal()).orElseThrow(IdVerifiedException::new);
 	}
 }

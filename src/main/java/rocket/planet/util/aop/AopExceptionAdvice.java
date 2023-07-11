@@ -23,4 +23,5 @@ public class AopExceptionAdvice {
 		log.error("이미 인증된 아이디입니다", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.EMAIL_ALREADY_AUTHORIZED_EXCEPTION);
 	}
+
 }
