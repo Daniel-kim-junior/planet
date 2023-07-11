@@ -3,6 +3,7 @@ package rocket.planet.controller.auth;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,14 +22,15 @@ public class JoinFormController {
 	private final TeamRepository teamRepository;
 
 	@GetMapping("/join-dept")
-	public List<String> joinFormDeptData() {
-		return deptRepository.findDeptNameAll();
+	public ResponseEntity<List<String>> joinFormDeptList() {
+
+		return ResponseEntity.ok().body(deptRepository.findDeptNameAll());
 	}
 
 	@GetMapping("/join-team")
-	public List<String> joinFormTeamData(String deptName) {
-		return teamRepository.findTeamNameByDeptName(deptName).stream()
-			.map(e -> e.getTeamName()).collect(Collectors.toList());
+	public ResponseEntity<List<String>> joinFormTeamList(String deptName) {
+		return ResponseEntity.ok().body(teamRepository.findTeamNameByDeptName(deptName).stream()
+			.map(e -> e.getTeamName()).collect(Collectors.toList()));
 	}
 
 }

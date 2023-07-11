@@ -4,6 +4,8 @@ import static rocket.planet.dto.auth.AuthDto.*;
 
 import javax.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,24 +23,29 @@ public class AuthController {
 
 	private final AuthLoginAndJoinService authLoginAndJoinService;
 
+	@GetMapping
+	public ResponseEntity<LoginResDto> test() {
+		return ResponseEntity.ok().body(LoginResDto.builder().authOrg(LoginResDto.AuthOrg.builder().build()).build());
+	}
+
 	@PostMapping("/account-register")
-	public LoginResDto accountRegister(@Valid @RequestBody JoinReqDto dto) {
-		return authLoginAndJoinService.authJoin(dto);
+	public ResponseEntity<LoginResDto> accountAdd(@Valid @RequestBody JoinReqDto dto) {
+		return ResponseEntity.ok().body(authLoginAndJoinService.checkJoin(dto));
 	}
 
 	@PostMapping("/basic-profile-register")
-	public String basicProfileRegister(@Valid @RequestBody BasicInputReqDto dto) {
-		return authLoginAndJoinService.authBasicProfileAndAutoLogin(dto);
+	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto) {
+		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfileAndAutoLogin(dto));
 	}
 
 	@PostMapping("/login")
-	public LoginResDto login(@Valid @RequestBody LoginReqDto loginReqDto) {
-		return authLoginAndJoinService.authLogin(loginReqDto);
+	public ResponseEntity<LoginResDto> login(@Valid @RequestBody LoginReqDto loginReqDto) {
+		return ResponseEntity.ok().body(authLoginAndJoinService.checkLogin(loginReqDto));
 	}
 
 	@PostMapping("/reissue")
-	public LoginResDto reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
-		return authLoginAndJoinService.reissue(bearerToken);
+	public ResponseEntity<LoginResDto> reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
+		return ResponseEntity.ok().body(authLoginAndJoinService.makeReissue(bearerToken));
 	}
 
 }

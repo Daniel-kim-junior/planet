@@ -4,14 +4,11 @@ import static rocket.planet.dto.login.LoginDto.*;
 
 import javax.validation.Valid;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import rocket.planet.dto.common.CommonResponse;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
 
@@ -21,11 +18,11 @@ import rocket.planet.util.exception.PasswordMismatchException;
 @RestController
 @RequestMapping("/test/error")
 public class ExceptionController {
-	@GetMapping(produces = "application/json", consumes = "application/json")
-	public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
-		CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
-		return response;
-	}
+	// @GetMapping(produces = "application/json", consumes = "application/json")
+	// public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
+	// 	CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
+	// 	return response;
+	// }
 
 	@PostMapping(value = "/id-mismatch", produces = "application/json", consumes = "application/json")
 	public String idMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {

@@ -87,21 +87,21 @@ public class AuthLoginAndJoinService {
 	private final JsonWebTokenIssuer jwtIssuer;
 
 	@Transactional
-	public LoginResDto authLogin(LoginReqDto dto) {
+	public LoginResDto checkLogin(LoginReqDto dto) {
 
 		User user = userRepository.findByUserId(dto.getId())
-				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
-		passwordTryFiveValidationCheck(dto, user);
+		checkPasswordTryFiveValidation(dto, user);
 
 		return completeLogin(user);
 	}
 
-	private void passwordTryFiveValidationCheck(LoginReqDto dto, User user) {
+	private void checkPasswordTryFiveValidation(LoginReqDto dto, User user) {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			int count;
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()
-					&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
+				&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
 				throw new Temp30MinuteLockException();
 			}
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()) {
@@ -131,12 +131,12 @@ public class AuthLoginAndJoinService {
 			responseDto = getLoginResDtoByNotCompleteJoinUser(user);
 		}
 
-		lastLoginLogDataSaveInRedis(user);
+		saveLastLoginLogDataInRedis(user);
 
 		return responseDto;
 	}
 
-	private void lastLoginLogDataSaveInRedis(User user) {
+	private void saveLastLoginLogDataInRedis(User user) {
 		Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
 		if (lastLogin.isEmpty()) {
 			lastLogin = Optional.of(LastLogin.builder().email(user.getUserId()).build());
@@ -146,19 +146,19 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) {
 		LoginResDto responseDto;
-		responseDto = createJsonWebTokenAndRoleDto(user);
+		responseDto = makeJsonWebTokenAndRoleDto(user);
 		saveAuthInRedisForNotCompleteJoinUser(user, responseDto);
 		return responseDto;
 	}
 
 	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) {
 		LoginResDto responseDto;
-		responseDto = createJsonWebTokenAndRoleDto(user);
+		responseDto = makeJsonWebTokenAndRoleDto(user);
 		saveAuthInRedisForCompleteJoinUser(user, responseDto, getUserAuthoritiesByDb(user));
 		return responseDto;
 	}
 
-	private LoginResDto createJsonWebTokenAndRoleDto(User user) {
+	private LoginResDto makeJsonWebTokenAndRoleDto(User user) {
 
 		String userName = user.getUserId();
 
@@ -174,24 +174,24 @@ public class AuthLoginAndJoinService {
 
 	private List<RedisCacheAuth> getUserAuthoritiesByDb(User user) {
 		return authRepository.findAllByProfileAuthority_ProfileUserId(
-						user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
-						.authorityTargetUid(e.getAuthTargetId()).build())
-				.collect(
-						Collectors.toList());
+				user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
+				.authorityTargetUid(e.getAuthTargetId()).build())
+			.collect(
+				Collectors.toList());
 	}
 
 	private void saveAuthInRedisForNotCompleteJoinUser(User user, LoginResDto responseDto) {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-				.email(user.getUserId())
-				.build());
+			.email(user.getUserId())
+			.build());
 	}
 
 	private void saveAuthInRedisForCompleteJoinUser(User user, LoginResDto responseDto,
-													List<RedisCacheAuth> userAuthorities) {
+		List<RedisCacheAuth> userAuthorities) {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-				.email(user.getUserId())
-				.authorities(userAuthorities)
-				.build());
+			.email(user.getUserId())
+			.authorities(userAuthorities)
+			.build());
 	}
 
 	private LoginResDto getResponseDtoByOrg(User user, String userName, String authority) {
@@ -200,51 +200,52 @@ public class AuthLoginAndJoinService {
 		Profile profile = user.getProfile();
 
 		if (Objects.isNull(profile)) {
-			loginResDto = loginResBuilderNoProfile(user, userName, authority);
+			loginResDto = makeLoginResBuilderNoProfile(user, userName, authority);
 		} else {
-			loginResDto = loginResBuilderProfile(user, userName, authority, profile);
+			loginResDto = makeLoginResBuilderProfile(user, userName, authority, profile);
 		}
 
 		return loginResDto;
 	}
 
-	private LoginResDto loginResBuilderNoProfile(User user, String userName, String authority) {
+	private LoginResDto makeLoginResBuilderNoProfile(User user, String userName, String authority) {
 		return LoginResDto.builder()
-				.authRole(authority)
-				.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
-				.userNickName(idToUserNickName(userName))
-				.grantType(GRANT_TYPE)
-				.accessToken(jwtIssuer.createAccessToken(userName, authority))
-				.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
-				.build();
+			.authRole(authority)
+			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(idToUserNickName(userName))
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(userName, authority))
+			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+			.build();
 	}
 
-	private LoginResDto loginResBuilderProfile(User user, String userName, String authority, Profile profile) {
-		AuthOrg authOrg = profileToAuthOrg(profile);
+	private LoginResDto makeLoginResBuilderProfile(User user, String userName, String authority, Profile profile) {
+
+		AuthOrg authOrg = getProfileToAuthOrg(profile);
 		return LoginResDto.builder()
-				.authRole(authority)
-				.authOrg(authOrg)
-				.isThreeMonth(hasItBeenThreeMonthsSinceTheLastPasswordChange(user))
-				.userNickName(idToUserNickName(userName))
-				.grantType(GRANT_TYPE)
-				.accessToken(jwtIssuer.createAccessToken(userName, authority))
-				.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
-				.build();
+			.authRole(authority)
+			.authOrg(authOrg)
+			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.userNickName(idToUserNickName(userName))
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(userName, authority))
+			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+			.build();
 	}
 
-	private AuthOrg profileToAuthOrg(Profile profile) {
+	private AuthOrg getProfileToAuthOrg(Profile profile) {
 		List<Org> org = profile.getOrg();
 		return AuthOrg.builder()
-				.companyName(org.get(0).getCompany().getCompanyName())
-				.deptName(org.get(0).getDepartment().getDeptName())
-				.teamName(org.get(0).getTeam().getTeamName()).build();
+			.companyName(org.get(0).getCompany().getCompanyName())
+			.deptName(org.get(0).getDepartment().getDeptName())
+			.teamName(org.get(0).getTeam().getTeamName()).build();
 	}
 
-	private boolean hasItBeenThreeMonthsSinceTheLastPasswordChange(User user) {
+	private boolean checkHasItBeenThreeMonthsSinceTheLastPasswordChange(User user) {
 		return user.getLastPwdModifiedDt().isBefore(LocalDate.now().minusDays(90));
 	}
 
-	private String resolveToken(String bearerToken) {
+	private String makeResolveToken(String bearerToken) {
 
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(GRANT_TYPE)) {
 			return bearerToken.substring(7);
@@ -253,33 +254,33 @@ public class AuthLoginAndJoinService {
 		return null;
 	}
 
-	public LoginResDto reissue(String bearerToken) {
+	public LoginResDto makeReissue(String bearerToken) {
 
-		String refreshToken = resolveToken(bearerToken);
+		String refreshToken = makeResolveToken(bearerToken);
 		Claims claims = getClaimsWithValidCheck(refreshToken);
 
 		RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(claims.getSubject())
-				.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
+			.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
 
-		if (isExistRefreshTokenInRedis(refreshToken, redisRefreshToken)) {
+		if (checkRefreshTokenInRedis(refreshToken, redisRefreshToken)) {
 			return getReissueResponseDto(refreshToken, claims);
 		}
 
 		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
-				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
-		return createJsonWebTokenAndRoleDto(findUserByJwtSubject);
+		return makeJsonWebTokenAndRoleDto(findUserByJwtSubject);
 	}
 
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) {
 		return LoginResDto.builder()
-				.grantType(GRANT_TYPE)
-				.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
-				.refreshToken(refreshToken)
-				.build();
+			.grantType(GRANT_TYPE)
+			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
+			.refreshToken(refreshToken)
+			.build();
 	}
 
-	private boolean isExistRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) {
+	private boolean checkRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) {
 		return redisRefreshToken.getToken().equals(refreshToken) ? true : false;
 	}
 
@@ -296,9 +297,9 @@ public class AuthLoginAndJoinService {
 	}
 
 	@Transactional
-	public LoginResDto authJoin(JoinReqDto dto) {
+	public LoginResDto checkJoin(JoinReqDto dto) {
 		emailConfirmRepository.findById(dto.getId())
-				.orElseThrow(() -> new NoValidEmailTokenException());
+			.orElseThrow(() -> new NoValidEmailTokenException());
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
 		emailConfirmRepository.deleteById(dto.getId());
@@ -306,27 +307,36 @@ public class AuthLoginAndJoinService {
 	}
 
 	@Transactional
-	public String authBasicProfileAndAutoLogin(BasicInputReqDto dto) {
+	public BasicInputResDto saveBasicProfileAndAutoLogin(BasicInputReqDto dto) {
 
 		Profile profile = BasicInsertDtoToProfile(dto);
 
 		User user = userRepository.findByUserId(dto.getId())
-				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
-
+			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+		profile = profileRepository.save(profile);
+		user.updateProfile(profile);
 		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);
 
-		profileRepository.save(profile);
-		user.updateProfile(profile);
-		orgRepository.save(org);
-
-		return COMPLETE_JOIN;
+		return makeBasicInputResDto(dto, profile, user, org);
 	}
 
+	private BasicInputResDto makeBasicInputResDto(BasicInputReqDto dto, Profile profile, User user, Org org) {
+		return BasicInputResDto
+			.builder().authOrg(AuthOrg.builder().teamName(org.getTeam().getTeamName())
+				.deptName(org.getDepartment().getDeptName())
+				.companyName(org.getCompany().getCompanyName()).build())
+			.userNickName(idToUserNickName(dto.getId()))
+			.authRole(profile.getRole().name())
+			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+			.build();
+	}
+
+	@Transactional
 	private Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
 		Team team = teamRepository.findByTeamName(dto.getTeamName());
 		Department department = deptRepository.findByDeptName(dto.getDeptName());
 		Org org = Org.joinDefaultOrg(dkTechIn, profile, department, team, true);
-		return org;
+		return orgRepository.save(org);
 	}
 }
