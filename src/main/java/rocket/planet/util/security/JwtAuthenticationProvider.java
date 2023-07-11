@@ -16,17 +16,12 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import rocket.planet.domain.Authority;
 import rocket.planet.util.exception.JwtInvalidException;
-import rocket.planet.util.exception.NoValidEmailTokenException;
 
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private final String KEY_ROLES = "roles";
-
-	private final String KEY_AUTHORITIES = "authorities";
-
 
 	private final byte[] secretKey;
 
@@ -35,10 +30,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 	}
 
 	private Collection<? extends GrantedAuthority> createGrantedAuthorities(Claims claims) {
-		List<String> roles = (List) claims.get(KEY_ROLES);
+		List<String> roles = (List)claims.get(KEY_ROLES);
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-		for(String role : roles) {
-			grantedAuthorities.add(() -> "ROLE_" + role);
+		for (String role : roles) {
+			grantedAuthorities.add(() -> role);
 		}
 		return grantedAuthorities;
 	}

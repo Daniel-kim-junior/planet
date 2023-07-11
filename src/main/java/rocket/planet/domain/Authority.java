@@ -41,7 +41,8 @@ public class Authority extends BaseTime {
 	@Column(columnDefinition = "BINARY(16)", nullable = false)
 	private UUID authTargetId;
 
-	@Column(columnDefinition = "BINARY(16)", nullable = false)
+	// 삭제 예정
+	@Column(columnDefinition = "BINARY(16)")
 	private UUID userUid;
 
 	@Column(nullable = false)

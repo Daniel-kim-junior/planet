@@ -2,7 +2,6 @@ package rocket.planet.dto.auth;
 
 import java.time.LocalDate;
 
-import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -84,6 +83,7 @@ public class AuthDto {
 		}
 
 	}
+
 	@Getter
 	@NoArgsConstructor
 	public static class LoginReqDto {

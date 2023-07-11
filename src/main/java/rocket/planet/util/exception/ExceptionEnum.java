@@ -15,6 +15,7 @@ public enum ExceptionEnum {
 	// Security Exception
 	SECURITY_AUTH_EXCEPTION(HttpStatus.UNAUTHORIZED, "SE001", "등록되지 않은 사용자입니다"),
 	SECURITY_ACCESS_EXCEPTION(HttpStatus.UNAUTHORIZED, "SE002", "권한이 없는 사용자입니다"),
+	SECURITY_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "ST001", "토큰이 유효하지 않습니다"),
 
 	// Common Exception
 	UNKNOWN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "CE001", "서버에 문제가 발생했습니다"),
@@ -39,7 +40,6 @@ public enum ExceptionEnum {
 	EMAIL_ALREADY_AUTHORIZED_EXCEPTION("UE009", "이메일이 이미 인증되었습니다"),
 
 	TEMP_LOCK_EXCEPTION("UE010", "5회 비밀번호 실패 이유로 30분간 계정 잠금");
-
 
 	private HttpStatus httpStatus;
 	private final String code;
