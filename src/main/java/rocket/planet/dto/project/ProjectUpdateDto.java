@@ -13,6 +13,7 @@ public class ProjectUpdateDto {
 	public static class ProjectUpdateReqDto {
 		private String projectName;
 		private String userNickName;
+		private String authType;
 	}
 
 	@Getter
@@ -26,6 +27,7 @@ public class ProjectUpdateDto {
 		private LocalDate projectEndDt;
 		private String projectLeader;
 		private List<String> projectMember;
+		private String authType;
 	}
 
 }

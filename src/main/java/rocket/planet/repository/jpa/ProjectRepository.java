@@ -16,4 +16,5 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
 	List<Project> findAllByProjectDescIsContaining(String keyword);
 
+	List<Project> findAllByProjectStatusIs(ProjectStatus projectStatus);
 }

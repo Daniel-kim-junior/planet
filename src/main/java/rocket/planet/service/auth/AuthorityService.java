@@ -41,7 +41,6 @@ public class AuthorityService {
 			.userUid(userId)
 			.build());
 
-		// add 프로필-권한
 		return addProfileAuthority(newAuth, projectLeaderProfile.get());
 	}
 

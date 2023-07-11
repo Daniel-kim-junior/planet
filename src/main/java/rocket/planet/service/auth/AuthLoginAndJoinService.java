@@ -332,7 +332,7 @@ public class AuthLoginAndJoinService {
 	}
 
 	@Transactional
-	private Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) {
+	public Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
 		Team team = teamRepository.findByTeamName(dto.getTeamName());
 		Department department = deptRepository.findByDeptName(dto.getDeptName());
