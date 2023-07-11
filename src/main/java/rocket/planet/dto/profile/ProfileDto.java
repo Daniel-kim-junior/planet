@@ -59,7 +59,7 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class OrgReqDto {
-        private boolean belongStatus;
+        private boolean orgStatus;
         private String deptName;
         private String teamName;
     }
