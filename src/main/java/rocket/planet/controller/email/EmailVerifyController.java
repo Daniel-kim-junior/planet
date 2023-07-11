@@ -16,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.common.CommonResponse;
 import rocket.planet.service.email.EmailVerifyService;
 import rocket.planet.util.exception.NoSuchEmailException;
 
@@ -31,7 +30,7 @@ public class EmailVerifyController {
 	private final EmailVerifyService emailVerifyService;
 
 	@PostMapping(value = "/email-verify", headers = "Accept=application/json", produces = "application/json")
-	public CompletableFuture<CommonResponse<String>> emailVerify(
+	public CompletableFuture<String> emailVerify(
 		@Valid @RequestBody EmailDuplicateCheckAndSendEmailReqDto dto) {
 		String email = dto.getId();
 		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email)
@@ -40,14 +39,14 @@ public class EmailVerifyController {
 			});
 		try {
 			emailVerifyService.saveRedisToken(email, gen.get().toString());
-			return CompletableFuture.completedFuture(new CommonResponse<>(true, "이메일 전송을 완료했습니다", null));
+			return CompletableFuture.completedFuture("이메일 전송을 완료했습니다");
 		} catch (InterruptedException | ExecutionException | JsonProcessingException e) {
 			throw new RedisException("Redis 서버 오류입니다");
 		}
 	}
 
 	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
-	public CommonResponse<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) {
+	public String emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) {
 		return emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode());
 	}
 
