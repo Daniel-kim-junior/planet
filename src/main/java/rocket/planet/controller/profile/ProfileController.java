@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rocket.planet.dto.profile.ProfileDto;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/profiles")
 @RequiredArgsConstructor
@@ -20,9 +22,9 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/{userNickName}")
-    public ResponseEntity<String> profileDetails(@PathVariable("userNickName") String userNickName) {
-        profileService.getProfileDetailByUserNickName(userNickName);
-        return ResponseEntity.ok().body(userNickName + "님의 프로필입니다.");
+    public ResponseEntity<List<ProfileDto.ProfileReqDto>> profileDetails(@PathVariable("userNickName") String userNickName) {
+        List<ProfileDto.ProfileReqDto> profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
+        return ResponseEntity.ok().body(profileDetail);
     }
 
 
