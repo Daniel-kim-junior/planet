@@ -158,6 +158,21 @@ public class AuthLoginAndJoinService {
 		return responseDto;
 	}
 
+<<<<<<< HEAD
+=======
+	private void lastLoginLogDataSave(User user) {
+			Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
+			if (lastLogin.isEmpty()) {
+				lastLogin = Optional.of(LastLogin.builder().email(user.getUserId()).build());
+			}
+			lastLoginRepository.save(lastLogin.get());
+	}
+
+	private static String makeUserNickName(String email) {
+		return StringUtils.split(email, "@")[0];
+	}
+
+>>>>>>> b99ab51 ([PN-65] feat: 프로필 상세보기)
 	private LoginResDto createJsonWebTokenAndRoleDto(User user) {
 
 		String userName = user.getUserId();
