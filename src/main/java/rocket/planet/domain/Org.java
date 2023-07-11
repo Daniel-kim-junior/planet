@@ -68,21 +68,27 @@ public class Org extends BaseTime {
 		this.orgEndDate = orgEndDate;
 		this.orgInviter = orgInviter;
 		this.orgStatus = orgStatus;
+
 	}
+
 
 	public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
 		boolean orgStatus) {
 		return builder()
+
 			.company(company)
 			.profile(profile)
 			.department(department)
 			.team(team)
 			.orgStatus(orgStatus)
 			.build();
+
+
 	}
 
 	@Override
 	public String toString() {
+
 		return "소속{" +
 			"내 uuid=" + id +
 			", 소속 할당 담당자='" + orgInviter + '\'' +
@@ -92,3 +98,4 @@ public class Org extends BaseTime {
 	}
 
 }
+
