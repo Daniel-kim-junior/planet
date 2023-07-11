@@ -79,12 +79,15 @@ public class Profile extends BaseTime {
 	private String userId;
 
 	@Builder
-	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
-		boolean profileDisplay, int profileCareer, boolean profileAnnualStatus, String userName, String userNickName) {
+	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
+				   int profileCareer,
+				   boolean profileAnnualStatus, String userName, String userNickName) {
+
 		this.profileStartDate = profileStartDate;
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
+		this.userNickName = userNickName;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;
@@ -122,4 +125,6 @@ public class Profile extends BaseTime {
 			", 휴가 여부 =" + profileAnnualStatus +
 			'}';
 	}
+
+
 }
