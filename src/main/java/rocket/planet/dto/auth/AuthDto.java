@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
+import rocket.planet.util.annotation.ValidPassword;
 
 public class AuthDto {
 
@@ -23,6 +24,7 @@ public class AuthDto {
 
 		@NotEmpty
 		@NotBlank
+		@ValidPassword
 		private String password;
 
 	}
