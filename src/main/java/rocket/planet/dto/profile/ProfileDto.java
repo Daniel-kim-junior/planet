@@ -74,18 +74,6 @@ public class ProfileDto {
         private String pjtUserTech;
 
     }
-    @Getter
-    @Builder
-    public static class OutsideProjectRegisterResDto {
-        private UUID profileUid;
-        private String pjtName;
-        private String pjtDesc;
-        private LocalDate pjtStartDt;
-        private LocalDate pjtEndDt;
-        private String pjtTech;
-        private String pjtUserTech;
-    }
-
 
 
 
