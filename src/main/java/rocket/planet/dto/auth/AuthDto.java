@@ -2,7 +2,6 @@ package rocket.planet.dto.auth;
 
 import java.time.LocalDate;
 
-import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -10,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 
 public class AuthDto {
 
@@ -59,6 +59,18 @@ public class AuthDto {
 
 	@Getter
 	@Builder
+	public static class BasicInputResDto {
+		private String authRole;
+
+		private AuthOrg authOrg;
+
+		private boolean isThreeMonth;
+
+		private String userNickName;
+	}
+
+	@Getter
+	@Builder
 	public static class LoginResDto {
 		private String authRole;
 
@@ -84,6 +96,7 @@ public class AuthDto {
 		}
 
 	}
+
 	@Getter
 	@NoArgsConstructor
 	public static class LoginReqDto {

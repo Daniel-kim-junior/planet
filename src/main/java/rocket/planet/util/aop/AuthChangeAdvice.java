@@ -1,6 +1,9 @@
 package rocket.planet.util.aop;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -13,15 +16,13 @@ public class AuthChangeAdvice {
 
 	private final AuthChangeRepository authChangeRepository;
 
-	// @Pointcut("execution(* rocket.planet.service(..))")
-	// private void onService() {}
+	@Pointcut("within(rocket.planet.service..*)")
+	public void onService() {
+	}
 
-	// @Pointcut("within(rocket.planet.service..*)")
-	// public void onService() {}
-	//
-	// @Around("onService()")
-	// public void onAuthChange(ProceedingJoinPoint joinPoint) throws Throwable {
-	//
-	// }
+	@Before("onService()")
+	public void onAuthChange(JoinPoint joinPoint) throws Throwable {
+		System.out.println(joinPoint);
+	}
 
 }

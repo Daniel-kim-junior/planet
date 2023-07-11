@@ -10,7 +10,6 @@ import rocket.planet.domain.Department;
 
 public interface DeptRepository extends JpaRepository<Department, UUID> {
 
-
 	Department findByDeptName(String deptName);
 
 	@Query("SELECT d.deptName FROM Department d")

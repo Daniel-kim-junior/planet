@@ -19,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+// 수정함
 @Entity
 @Getter
 @Table(name = "profile_cert")
@@ -44,7 +44,8 @@ public class Certification {
 	@Column(nullable = false)
 	private String certAgency;
 
-	private String certExpireDate;
+	@Column
+	private LocalDate certExpireDate;
 
 	@Column(nullable = false)
 	private String certType;
@@ -53,7 +54,7 @@ public class Certification {
 	private String certNumber;
 
 	@Builder
-	public Certification(Profile profile, String certName, LocalDate certDt, String certAgency, String certExpireDate,
+	public Certification(Profile profile, String certName, LocalDate certDt, String certAgency, LocalDate certExpireDate,
 		String certType, String certNumber) {
 		this.profile = profile;
 		this.certName = certName;

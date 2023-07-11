@@ -1,6 +1,5 @@
 package rocket.planet.service.email;
 
-
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.redis.EmailConfirm;
 import rocket.planet.domain.redis.EmailToken;
-import rocket.planet.dto.common.CommonResponse;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.EmailConfirmRepository;
 import rocket.planet.repository.redis.EmailTokenRepository;
@@ -55,7 +53,7 @@ public class EmailVerifyService {
 			future.completeExceptionally(new NoSuchEmailException());
 			return future;
 		}
-		String generateRandomString = generateRandomString(6);
+		String generateRandomString = makeRandomString(6);
 		sendMail(email, generateRandomString);
 
 		CompletableFuture<String> future = new CompletableFuture<>();
@@ -63,14 +61,14 @@ public class EmailVerifyService {
 		return future;
 	}
 
-	public CommonResponse<String> redisSaveToken(String email, String generatedRandomString) throws
+	public String saveRedisToken(String email, String generatedRandomString) throws
 		JsonProcessingException {
 		token = EmailToken.builder()
 			.email(email)
 			.token(generatedRandomString)
 			.build();
 		emailTokenRepository.save(token);
-		return new CommonResponse<>(true, "email 인증번호를 보냈습니다", null);
+		return "email 인증번호를 보냈습니다";
 	}
 
 	public void sendMail(String email, String sendEmailToken) {
@@ -81,18 +79,18 @@ public class EmailVerifyService {
 		mailSender.send(message);
 	}
 
-	public CommonResponse<String> confirmByRedisEmailTokenAndSaveToken(String email, String reqToken) {
+	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken) {
 
 		Optional<EmailToken> findToken = emailTokenRepository.findById(email);
 		if (findToken.isPresent() && findToken.get().getToken().equals(reqToken)) {
 			emailTokenRepository.delete(findToken.get());
 			emailConfirmRepository.save(EmailConfirm.builder().email(email).build());
-			return new CommonResponse<>(true, "email 인증이 완료되었습니다", null);
+			return "email 인증이 완료되었습니다";
 		}
 		throw new NoValidEmailTokenException();
 	}
 
-	public String generateRandomString(int length) {
+	public String makeRandomString(int length) {
 		Random random = new Random();
 		StringBuilder sb = new StringBuilder(length);
 

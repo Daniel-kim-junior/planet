@@ -5,14 +5,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class TestController {
-
 	private final String AUTHORIZATION_HEADER = "Authorization";
+
 	@GetMapping("/admin/test")
 	public String test(@RequestHeader(AUTHORIZATION_HEADER) String token) {
-		System.out.println(token);
+
 		return "admin/test";
 	}
 }

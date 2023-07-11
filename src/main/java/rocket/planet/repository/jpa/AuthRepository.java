@@ -5,12 +5,12 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import org.springframework.stereotype.Repository;
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Authority;
+
 public interface AuthRepository extends JpaRepository<Authority, UUID> {
 
-    Authority findByAuthType(AuthType authType);
+	Authority findByAuthType(AuthType authType);
 
-    List<Authority> findAllByProfileAuthority_ProfileUserId(String userId);
+	List<Authority> findAllByProfileAuthority_ProfileUserId(String userId);
 }

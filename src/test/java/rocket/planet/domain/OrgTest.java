@@ -44,12 +44,12 @@ public class OrgTest {
 		Team smartCityTeam = teamRepository.findByTeamName("스마트시티");
 		Team itConsultingTeam = teamRepository.findByTeamName("IT컨설팅");
 
-		Profile admin = profileRepository.findByUserIdContaining("admin");
-		Profile crew = profileRepository.findByUserIdContaining("crew");
-		Profile pilot = profileRepository.findByUserIdContaining("pilot");
-		Profile captain = profileRepository.findByUserIdContaining("captain");
-		Profile radar = profileRepository.findByUserIdContaining("radar");
-		Profile pl = profileRepository.findByUserIdContaining("pl");
+		Profile admin = profileRepository.findByUserNickName("admin").get();
+		Profile crew = profileRepository.findByUserNickName("crew").get();
+		Profile pilot = profileRepository.findByUserNickName("pilot").get();
+		Profile captain = profileRepository.findByUserNickName("captain").get();
+		Profile radar = profileRepository.findByUserNickName("radar").get();
+		Profile pl = profileRepository.findByUserNickName("plpl").get();
 
 		System.out.println(admin);
 		Org adminOrg = Org.builder()
@@ -112,6 +112,7 @@ public class OrgTest {
 			.orgStatus(true)
 			.build();
 		orgRepository.save(plOrg);
+
 
 	}
 

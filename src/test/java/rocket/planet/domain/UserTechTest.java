@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import rocket.planet.repository.jpa.*;
-
-import java.util.Optional;
-import java.util.UUID;
+import rocket.planet.repository.jpa.ProfileRepository;
 
 @SpringBootTest
 public class UserTechTest {
@@ -42,7 +40,7 @@ public class UserTechTest {
 
 
 
-        Profile crewProfile = profileRepository.findByUserIdContaining("crew");
+        Profile crewProfile = profileRepository.findByUserNickName("crew").get();
         ProfileTech crewPfT1 = ProfileTech.builder()
                 .tech(lang1)
                 .profile(crewProfile)
@@ -71,7 +69,7 @@ public class UserTechTest {
 
 
 
-        Profile pilotProfile = profileRepository.findByUserIdContaining("pilot");
+        Profile pilotProfile = profileRepository.findByUserNickName("pilot").get();
         ProfileTech pilotPfT1 = ProfileTech.builder()
                 .tech(lang2)
                 .profile(pilotProfile)
@@ -100,7 +98,7 @@ public class UserTechTest {
 
 
 
-        Profile captainProfile = profileRepository.findByUserIdContaining("captain");
+        Profile captainProfile = profileRepository.findByUserNickName("captain").get();
         ProfileTech captainPfT1 = ProfileTech.builder()
                 .tech(lang3)
                 .profile(captainProfile)
@@ -129,7 +127,7 @@ public class UserTechTest {
 
 
 
-        Profile radarProfile = profileRepository.findByUserIdContaining("radar");
+        Profile radarProfile = profileRepository.findByUserNickName("radar").get();
         ProfileTech radarPfT1 = ProfileTech.builder()
                 .tech(lang5)
                 .profile(radarProfile)
@@ -158,7 +156,7 @@ public class UserTechTest {
 
 
 
-        Profile plProfile = profileRepository.findByUserIdContaining("pl");
+        Profile plProfile = profileRepository.findByUserNickName("plpl").get();
         ProfileTech plPfT1 = ProfileTech.builder()
                 .tech(lang1)
                 .profile(plProfile)
