@@ -35,7 +35,7 @@ public class ProfileController {
     @PatchMapping("/outside")
     public ResponseEntity<String> outsideProjectModify(@RequestBody ProfileDto.OutsideProjectUpdateResDto updateResDto) {
         log.info("updateResDto : {}", updateResDto);
-        profileService.updateOusideProject(updateResDto);
+        profileService.modifyOusideProject(updateResDto);
         return ResponseEntity.ok().body("외부프로젝트 수정이 완료되었습니다.");
     }
     @DeleteMapping("/outside")

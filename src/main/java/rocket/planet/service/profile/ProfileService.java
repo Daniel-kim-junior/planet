@@ -122,7 +122,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateOusideProject(ProfileDto.OutsideProjectUpdateResDto updateResDto) {
+    public void modifyOusideProject(ProfileDto.OutsideProjectUpdateResDto updateResDto) {
         Optional<PjtRecord> updatePjt = pjtRecordRepository.findByPjtName(updateResDto.getPjtName());
         log.info("pjtRecord : {}", updatePjt);
         updatePjt.get().updatePjtRecord(updateResDto);
