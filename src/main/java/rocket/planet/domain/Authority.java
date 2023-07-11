@@ -41,7 +41,8 @@ public class Authority extends BaseTime {
 	@Column(columnDefinition = "BINARY(16)", nullable = false)
 	private UUID authTargetId;
 
-	@Column(columnDefinition = "BINARY(16)", nullable = false)
+	// 삭제 예정 column
+	@Column(columnDefinition = "BINARY(16)")
 	private UUID userUid;
 
 	@Column(nullable = false)
@@ -63,7 +64,6 @@ public class Authority extends BaseTime {
 			", 권한 테이블 타입=" + authType +
 			", 부여 권한 target 테이블 uuid='" + authTargetId + '\'' +
 			", 권한 부여자 id='" + authorizerId + '\'' +
-			", 권한 사용자 id=' " + userUid + '\'' +
 			'}';
 	}
 }

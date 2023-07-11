@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.ProjectStatus;
@@ -15,6 +16,7 @@ public class SchedulerService {
 	private final ProjectRepository projectRepository;
 
 	@Scheduled(cron = "0 0 0 * * ?")
+	@Transactional
 	public void updateProjectStatus() {
 		projectRepository.findByProjectStatusIs(ProjectStatus.WAITING)
 			.stream()

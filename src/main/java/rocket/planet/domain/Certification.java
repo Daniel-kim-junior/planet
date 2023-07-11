@@ -44,7 +44,6 @@ public class Certification {
 	@Column(nullable = false)
 	private String certAgency;
 
-	@Column(nullable = false)
 	private String certExpireDate;
 
 	@Column(nullable = false)

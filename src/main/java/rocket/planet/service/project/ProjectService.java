@@ -2,32 +2,42 @@ package rocket.planet.service.project;
 
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.OrgType;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
+import rocket.planet.domain.UserProject;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
+import rocket.planet.repository.jpa.UserPjtRepository;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProjectService {
 	private final ProjectRepository projectRepository;
 	private final ProfileRepository profileRepository;
+	private final UserPjtRepository userPjtRepository;
 
+	// 프로젝트 생성
 	@Transactional
-	public void registerProject(ProjectRegisterReqDto registerDto) {
+	public Project registerProject(ProjectRegisterReqDto registerDto) {
+		// nickname to profile
 		Optional<Profile> profile = profileRepository.findByUserNickName(registerDto.getUserNickName());
+		// Team
 		Team team = profile.get().getOrg().get(0).getTeam();
-
+		// Team Type
 		OrgType teamType = team.getTeamType();
 
 		Project project = Project.builder()
@@ -42,10 +52,32 @@ public class ProjectService {
 			.projectType(teamType)
 			.build();
 
-		projectRepository.save(project);
+		log.info("Input project : {} => ", project);
+
+		return projectRepository.save(project);
 
 	}
 
+	@Transactional
+	public void registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
+		List<String> membersList = registerDto.getProjectMember();
+
+		for (String member : membersList) {
+			UserProject newProject = UserProject.builder()
+				.profile(profileRepository.findByUserNickName(member).get())
+				.project(project)
+				.userPjtInviter(registerDto.getUserNickName())
+				.userPjtCloseDt(LocalDate.of(2999, 12, 31))
+				.userPjtCloseApply(false)
+				.userPjtDesc("")
+				.build();
+			UserProject newUserProject = userPjtRepository.save(newProject);
+			log.info("newUserProject {} => ", newUserProject);
+		}
+
+	}
+
+	// 프로젝트 조회
 	public ProjectUpdateDetailDto showProjectDetail(ProjectUpdateReqDto projectUpdateReqDto) {
 		Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
 

@@ -45,47 +45,48 @@ public class Org extends BaseTime {
 	@JoinColumn(name = "team_uid", nullable = false)
 	private Team team;
 
-	@Column(name = "belong_start_date")
-	private LocalDate belongStartDate;
+	@Column(name = "org_start_date")
+	private LocalDate orgStartDate;
 
-	@Column(name = "belong_end_date")
-	private LocalDate belongEndDate;
+	@Column(name = "org_end_date")
+	private LocalDate orgEndDate;
 
-	@Column(name = "belong_inviter")
-	private String belongInviter;
+	@Column(name = "org_inviter")
+	private String orgInviter;
 
-	@Column(name = "belong_status")
-	private boolean belongStatus;
+	@Column(name = "org_status")
+	private boolean orgStatus;
 
 	@Builder
-	public Org(Company company, Profile profile, Department department, Team team, LocalDate belongStartDate,
-		LocalDate belongEndDate, String belongInviter, boolean belongStatus) {
+	public Org(Company company, Profile profile, Department department, Team team, LocalDate orgStartDate,
+		LocalDate orgEndDate, String orgInviter, boolean orgStatus) {
 		this.company = company;
 		this.department = department;
 		this.team = team;
 		this.profile = profile;
-		this.belongStartDate = belongStartDate;
-		this.belongEndDate = belongEndDate;
-		this.belongInviter = belongInviter;
-		this.belongStatus = belongStatus;
+		this.orgStartDate = orgStartDate;
+		this.orgEndDate = orgEndDate;
+		this.orgInviter = orgInviter;
+		this.orgStatus = orgStatus;
 	}
 
-	public static Org joinDefaultOrg(Company company, Profile profile ,Department department, Team team, boolean belongStatus) {
+	public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
+		boolean orgStatus) {
 		return builder()
-				.company(company)
-				.profile(profile)
-				.department(department)
-				.team(team)
-				.belongStatus(belongStatus)
-				.build();
+			.company(company)
+			.profile(profile)
+			.department(department)
+			.team(team)
+			.orgStatus(orgStatus)
+			.build();
 	}
 
 	@Override
 	public String toString() {
 		return "소속{" +
 			"내 uuid=" + id +
-			", 소속 할당 담당자='" + belongInviter + '\'' +
-			", 현재 소속 여부=" + belongStatus +
+			", 소속 할당 담당자='" + orgInviter + '\'' +
+			", 현재 소속 여부=" + orgStatus +
 			'}';
 
 	}
