@@ -30,10 +30,6 @@ public class AuthDto {
 	@Getter
 	@NoArgsConstructor
 	public static class BasicInputReqDto {
-		@Email
-		@NotEmpty
-		@NotBlank
-		private String id;
 
 		@NotEmpty
 		@NotBlank

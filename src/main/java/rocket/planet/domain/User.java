@@ -47,7 +47,6 @@ public class User extends BaseTime {
 	@Column
 	private LocalDate lastPwdModifiedDt;
 
-
 	@Column(nullable = false, unique = true)
 	private String userId;
 
@@ -74,6 +73,11 @@ public class User extends BaseTime {
 
 	public User updateProfile(Profile profile) {
 		this.profile = profile;
+		return this;
+	}
+
+	public User updatePassword(String userPwd) {
+		this.userPwd = userPwd;
 		return this;
 	}
 

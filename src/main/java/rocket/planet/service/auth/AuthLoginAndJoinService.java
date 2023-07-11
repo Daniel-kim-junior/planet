@@ -49,6 +49,7 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.security.JsonWebTokenIssuer;
+import rocket.planet.util.security.UserDetailsImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -308,31 +309,31 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public BasicInputResDto saveBasicProfileAndAutoLogin(BasicInputReqDto dto) {
+		String id = UserDetailsImpl.getLoginUserId();
+		Profile profile = BasicInsertDtoToProfile(dto, id);
 
-		Profile profile = BasicInsertDtoToProfile(dto);
-
-		User user = userRepository.findByUserId(dto.getId())
+		User user = userRepository.findByUserId(id)
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 		profile = profileRepository.save(profile);
 		user.updateProfile(profile);
 		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);
 
-		return makeBasicInputResDto(dto, profile, user, org);
+		return makeBasicInputResDto(profile, user, org, id);
 	}
 
-	private BasicInputResDto makeBasicInputResDto(BasicInputReqDto dto, Profile profile, User user, Org org) {
+	private BasicInputResDto makeBasicInputResDto(Profile profile, User user, Org org, String id) {
 		return BasicInputResDto
 			.builder().authOrg(AuthOrg.builder().teamName(org.getTeam().getTeamName())
 				.deptName(org.getDepartment().getDeptName())
 				.companyName(org.getCompany().getCompanyName()).build())
-			.userNickName(idToUserNickName(dto.getId()))
+			.userNickName(idToUserNickName(id))
 			.authRole(profile.getRole().name())
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.build();
 	}
 
 	@Transactional
-	private Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) {
+	public Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
 		Team team = teamRepository.findByTeamName(dto.getTeamName());
 		Department department = deptRepository.findByDeptName(dto.getDeptName());

@@ -18,11 +18,6 @@ import rocket.planet.util.exception.PasswordMismatchException;
 @RestController
 @RequestMapping("/test/error")
 public class ExceptionController {
-	// @GetMapping(produces = "application/json", consumes = "application/json")
-	// public CommonResponse<String> getTest(@Parameter(description = "사용자 id") String userId) {
-	// 	CommonResponse<String> response = new CommonResponse<>(true, "Success", null);
-	// 	return response;
-	// }
 
 	@PostMapping(value = "/id-mismatch", produces = "application/json", consumes = "application/json")
 	public String idMismatch(@Valid @RequestBody LoginRequestDto loginRequest) {

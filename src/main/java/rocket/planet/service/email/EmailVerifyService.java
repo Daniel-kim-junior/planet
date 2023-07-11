@@ -33,6 +33,11 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 public class EmailVerifyService {
 	private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String EMAIL_TITLE = "ROCKET PLANET 회원가입 인증번호입니다.";
+
+	private static final String EMAIL_CONFIRM_TITLE = "ROCKET PLANET 회원가입 인증이 완료되었습니다.";
+
+	private static final String SEND_EMAIL_MESSAGE = "이메일 인증번호 전송을 완료했습니다";
+
 	private static final Long EXPIRE_TIME = 3L;
 	private final UserRepository userRepository;
 	private final JavaMailSender mailSender;
@@ -68,7 +73,7 @@ public class EmailVerifyService {
 			.token(generatedRandomString)
 			.build();
 		emailTokenRepository.save(token);
-		return "email 인증번호를 보냈습니다";
+		return SEND_EMAIL_MESSAGE;
 	}
 
 	public void sendMail(String email, String sendEmailToken) {
@@ -85,7 +90,7 @@ public class EmailVerifyService {
 		if (findToken.isPresent() && findToken.get().getToken().equals(reqToken)) {
 			emailTokenRepository.delete(findToken.get());
 			emailConfirmRepository.save(EmailConfirm.builder().email(email).build());
-			return "email 인증이 완료되었습니다";
+			return EMAIL_CONFIRM_TITLE;
 		}
 		throw new NoValidEmailTokenException();
 	}
