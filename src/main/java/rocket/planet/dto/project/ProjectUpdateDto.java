@@ -30,4 +30,12 @@ public class ProjectUpdateDto {
 		private String authType;
 	}
 
+	@Getter
+	@Builder
+	public static class ProjectUpdateStatusDto {
+		private String projectName;
+		private String userNickName;
+		private String authType;
+	}
+
 }

@@ -27,7 +27,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterResDto;
 
 @Entity
@@ -125,7 +124,7 @@ public class Project {
 		this.projectLastModifiedBy = project.getUserNickName();
 	}
 
-	public void deleteProject(ProjectDeleteDto projectDeleteDto) {
+	public void deleteProject(ProjectUpdateStatusDto projectDeleteDto) {
 		this.projectStatus = ProjectStatus.DELETED;
 		this.projectLastModifiedBy = projectDeleteDto.getUserNickName();
 	}
