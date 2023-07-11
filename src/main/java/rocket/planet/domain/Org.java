@@ -71,6 +71,7 @@ public class Org extends BaseTime {
 
 	}
 
+
 	public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
 		boolean orgStatus) {
 		return builder()
@@ -81,6 +82,7 @@ public class Org extends BaseTime {
 			.team(team)
 			.orgStatus(orgStatus)
 			.build();
+
 
 	}
 

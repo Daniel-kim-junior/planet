@@ -41,6 +41,7 @@ public class ProfileService {
 
                     List<ProfileDto.OrgReqDto> orgDtoList = orgList.stream()
                             .map(org -> OrgReqDto.builder()
+                                    .orgStatus(org.isOrgStatus())
                                     .deptName(org.getDepartment().getDeptName())
                                     .teamName(org.getTeam().getTeamName())
                                     .build())
