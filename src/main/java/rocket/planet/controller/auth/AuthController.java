@@ -5,7 +5,6 @@ import static rocket.planet.dto.auth.AuthDto.*;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,11 +21,6 @@ public class AuthController {
 	private final String AUTHORIZATION_HEADER = "Authorization";
 
 	private final AuthLoginAndJoinService authLoginAndJoinService;
-
-	@GetMapping
-	public ResponseEntity<LoginResDto> test() {
-		return ResponseEntity.ok().body(LoginResDto.builder().authOrg(LoginResDto.AuthOrg.builder().build()).build());
-	}
 
 	@PostMapping("/account-register")
 	public ResponseEntity<LoginResDto> accountAdd(@Valid @RequestBody JoinReqDto dto) {
