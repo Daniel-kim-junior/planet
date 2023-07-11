@@ -11,11 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
+import rocket.planet.domain.ProjectStatus;
+import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
@@ -141,5 +144,19 @@ class ProjectControllerTest {
 
 		assertThat(projectRepository.findAllByProjectDescIsContaining("수정").size()).isEqualTo(1);
 
+	}
+
+	@Test
+	@Transactional
+	@Rollback(false)
+	void 프로젝트_삭제_테스트() {
+		ProjectDeleteDto projectDeleteDto = ProjectDeleteDto.builder()
+			.authType("PILOT")
+			.projectName("카카오톡 IT 솔루션")
+			.userNickName("pilot")
+			.build();
+		projectService.deleteProject(projectDeleteDto);
+
+		assertThat(projectRepository.findAllByProjectStatusIs(ProjectStatus.DELETED).size()).isEqualTo(1);
 	}
 }

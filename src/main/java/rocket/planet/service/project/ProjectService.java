@@ -17,6 +17,7 @@ import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
@@ -33,11 +34,8 @@ public class ProjectService {
 	// 프로젝트 생성
 	@Transactional
 	public Project registerProject(ProjectRegisterReqDto registerDto) {
-		// nickname to profile
 		Optional<Profile> profile = profileRepository.findByUserNickName(registerDto.getUserNickName());
-		// Team
 		Team team = profile.get().getOrg().get(0).getTeam();
-		// Team Type
 		OrgType teamType = team.getTeamType();
 
 		Project project = Project.builder()
@@ -51,8 +49,6 @@ public class ProjectService {
 			.team(team)
 			.projectType(teamType)
 			.build();
-
-		log.info("Input project : {} => ", project);
 
 		return projectRepository.save(project);
 
@@ -71,26 +67,25 @@ public class ProjectService {
 				.userPjtCloseApply(false)
 				.userPjtDesc("")
 				.build();
-			UserProject newUserProject = userPjtRepository.save(newProject);
-			log.info("newUserProject {} => ", newUserProject);
+			userPjtRepository.save(newProject);
 		}
 
 	}
 
 	// 프로젝트 조회
-	public ProjectUpdateDetailDto showProjectDetail(ProjectUpdateReqDto projectUpdateReqDto) {
-		Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
-
-		return ProjectUpdateDetailDto.builder()
-			.userNickName(projectUpdateReqDto.getUserNickName())
-			.projectName(updateProject.get().getProjectName())
-			.projectDesc(updateProject.get().getProjectDesc())
-			.projectTech(updateProject.get().getProjectTech())
-			.projectStartDt(updateProject.get().getProjectStartDt())
-			.projectEndDt(updateProject.get().getProjectEndDt())
-			.build();
-
-	}
+	// public ProjectUpdateDetailDto showProjectDetail(ProjectUpdateReqDto projectUpdateReqDto) {
+	// 	Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
+	//
+	// 	return ProjectUpdateDetailDto.builder()
+	// 		.userNickName(projectUpdateReqDto.getUserNickName())
+	// 		.projectName(updateProject.get().getProjectName())
+	// 		.projectDesc(updateProject.get().getProjectDesc())
+	// 		.projectTech(updateProject.get().getProjectTech())
+	// 		.projectStartDt(updateProject.get().getProjectStartDt())
+	// 		.projectEndDt(updateProject.get().getProjectEndDt())
+	// 		.build();
+	//
+	// }
 
 	@Transactional
 	public void updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
@@ -101,6 +96,13 @@ public class ProjectService {
 
 	public boolean checkUser(String userNickName) {
 		return profileRepository.findByUserNickName(userNickName).isPresent();
+	}
+
+	@Transactional
+	public void deleteProject(ProjectDeleteDto projectDeleteDto) {
+		Optional<Project> project = projectRepository.findByProjectName(projectDeleteDto.getProjectName());
+		project.get().deleteProject(projectDeleteDto);
+
 	}
 
 	// public List<ProjectSummaryDto> getProjectList(String teamName) {
