@@ -21,12 +21,12 @@ public class JoinFormController {
 	private final TeamRepository teamRepository;
 
 	@GetMapping("/join-dept")
-	public List<String> joinFormDeptData() {
+	public List<String> joinFormDeptList() {
 		return deptRepository.findDeptNameAll();
 	}
 
 	@GetMapping("/join-team")
-	public List<String> joinFormTeamData(String deptName) {
+	public List<String> joinFormTeamList(String deptName) {
 		return teamRepository.findTeamNameByDeptName(deptName).stream()
 			.map(e -> e.getTeamName()).collect(Collectors.toList());
 	}

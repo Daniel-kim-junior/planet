@@ -39,7 +39,7 @@ public class EmailVerifyController {
 				throw new NoSuchEmailException();
 			});
 		try {
-			emailVerifyService.redisSaveToken(email, gen.get().toString());
+			emailVerifyService.saveRedisToken(email, gen.get().toString());
 			return CompletableFuture.completedFuture(new CommonResponse<>(true, "이메일 전송을 완료했습니다", null));
 		} catch (InterruptedException | ExecutionException | JsonProcessingException e) {
 			throw new RedisException("Redis 서버 오류입니다");
@@ -48,7 +48,7 @@ public class EmailVerifyController {
 
 	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
 	public CommonResponse<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) {
-		return emailVerifyService.confirmByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode());
+		return emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode());
 	}
 
 }

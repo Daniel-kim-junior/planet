@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 
 public class AuthDto {
 
@@ -54,6 +55,18 @@ public class AuthDto {
 
 		private boolean profileDisplay;
 
+	}
+
+	@Getter
+	@Builder
+	public static class BasicInputResDto {
+		private String authRole;
+
+		private AuthOrg authOrg;
+
+		private boolean isThreeMonth;
+
+		private String userNickName;
 	}
 
 	@Getter
