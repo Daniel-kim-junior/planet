@@ -91,7 +91,7 @@ public class AuthLoginAndJoinService {
 	public LoginResDto checkLogin(LoginReqDto dto) {
 
 		User user = userRepository.findByUserId(dto.getId())
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
 		checkPasswordTryFiveValidation(dto, user);
 
@@ -102,7 +102,7 @@ public class AuthLoginAndJoinService {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			int count;
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()
-				&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
+					&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
 				throw new Temp30MinuteLockException();
 			}
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()) {
@@ -175,24 +175,24 @@ public class AuthLoginAndJoinService {
 
 	private List<RedisCacheAuth> getUserAuthoritiesByDb(User user) {
 		return authRepository.findAllByProfileAuthority_ProfileUserId(
-				user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
-				.authorityTargetUid(e.getAuthTargetId()).build())
-			.collect(
-				Collectors.toList());
+						user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
+						.authorityTargetUid(e.getAuthTargetId()).build())
+				.collect(
+						Collectors.toList());
 	}
 
 	private void saveAuthInRedisForNotCompleteJoinUser(User user, LoginResDto responseDto) {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-			.email(user.getUserId())
-			.build());
+				.email(user.getUserId())
+				.build());
 	}
 
 	private void saveAuthInRedisForCompleteJoinUser(User user, LoginResDto responseDto,
-		List<RedisCacheAuth> userAuthorities) {
+													List<RedisCacheAuth> userAuthorities) {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
-			.email(user.getUserId())
-			.authorities(userAuthorities)
-			.build());
+				.email(user.getUserId())
+				.authorities(userAuthorities)
+				.build());
 	}
 
 	private LoginResDto getResponseDtoByOrg(User user, String userName, String authority) {
@@ -211,35 +211,35 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto makeLoginResBuilderNoProfile(User user, String userName, String authority) {
 		return LoginResDto.builder()
-			.authRole(authority)
-			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
-			.userNickName(idToUserNickName(userName))
-			.grantType(GRANT_TYPE)
-			.accessToken(jwtIssuer.createAccessToken(userName, authority))
-			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
-			.build();
+				.authRole(authority)
+				.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+				.userNickName(idToUserNickName(userName))
+				.grantType(GRANT_TYPE)
+				.accessToken(jwtIssuer.createAccessToken(userName, authority))
+				.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+				.build();
 	}
 
 	private LoginResDto makeLoginResBuilderProfile(User user, String userName, String authority, Profile profile) {
 
 		AuthOrg authOrg = getProfileToAuthOrg(profile);
 		return LoginResDto.builder()
-			.authRole(authority)
-			.authOrg(authOrg)
-			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
-			.userNickName(idToUserNickName(userName))
-			.grantType(GRANT_TYPE)
-			.accessToken(jwtIssuer.createAccessToken(userName, authority))
-			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
-			.build();
+				.authRole(authority)
+				.authOrg(authOrg)
+				.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+				.userNickName(idToUserNickName(userName))
+				.grantType(GRANT_TYPE)
+				.accessToken(jwtIssuer.createAccessToken(userName, authority))
+				.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
+				.build();
 	}
 
 	private AuthOrg getProfileToAuthOrg(Profile profile) {
 		List<Org> org = profile.getOrg();
 		return AuthOrg.builder()
-			.companyName(org.get(0).getCompany().getCompanyName())
-			.deptName(org.get(0).getDepartment().getDeptName())
-			.teamName(org.get(0).getTeam().getTeamName()).build();
+				.companyName(org.get(0).getCompany().getCompanyName())
+				.deptName(org.get(0).getDepartment().getDeptName())
+				.teamName(org.get(0).getTeam().getTeamName()).build();
 	}
 
 	private boolean checkHasItBeenThreeMonthsSinceTheLastPasswordChange(User user) {
@@ -261,24 +261,24 @@ public class AuthLoginAndJoinService {
 		Claims claims = getClaimsWithValidCheck(refreshToken);
 
 		RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(claims.getSubject())
-			.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
+				.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
 
 		if (checkRefreshTokenInRedis(refreshToken, redisRefreshToken)) {
 			return getReissueResponseDto(refreshToken, claims);
 		}
 
 		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
 		return makeJsonWebTokenAndRoleDto(findUserByJwtSubject);
 	}
 
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) {
 		return LoginResDto.builder()
-			.grantType(GRANT_TYPE)
-			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
-			.refreshToken(refreshToken)
-			.build();
+				.grantType(GRANT_TYPE)
+				.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles", String.class)))
+				.refreshToken(refreshToken)
+				.build();
 	}
 
 	private boolean checkRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) {
@@ -300,7 +300,7 @@ public class AuthLoginAndJoinService {
 	@Transactional
 	public LoginResDto checkJoin(JoinReqDto dto) {
 		emailConfirmRepository.findById(dto.getId())
-			.orElseThrow(() -> new NoValidEmailTokenException());
+				.orElseThrow(() -> new NoValidEmailTokenException());
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
 		emailConfirmRepository.deleteById(dto.getId());
@@ -313,7 +313,7 @@ public class AuthLoginAndJoinService {
 		Profile profile = BasicInsertDtoToProfile(dto, id);
 
 		User user = userRepository.findByUserId(id)
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 		profile = profileRepository.save(profile);
 		user.updateProfile(profile);
 		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);
@@ -323,13 +323,13 @@ public class AuthLoginAndJoinService {
 
 	private BasicInputResDto makeBasicInputResDto(Profile profile, User user, Org org, String id) {
 		return BasicInputResDto
-			.builder().authOrg(AuthOrg.builder().teamName(org.getTeam().getTeamName())
-				.deptName(org.getDepartment().getDeptName())
-				.companyName(org.getCompany().getCompanyName()).build())
-			.userNickName(idToUserNickName(id))
-			.authRole(profile.getRole().name())
-			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
-			.build();
+				.builder().authOrg(AuthOrg.builder().teamName(org.getTeam().getTeamName())
+						.deptName(org.getDepartment().getDeptName())
+						.companyName(org.getCompany().getCompanyName()).build())
+				.userNickName(idToUserNickName(id))
+				.authRole(profile.getRole().name())
+				.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
+				.build();
 	}
 
 	@Transactional

@@ -78,6 +78,7 @@ public class Profile extends BaseTime {
 	@Column(nullable = false, unique = true)
 	private String userId;
 
+
 	@Builder
 	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
 		boolean profileDisplay,

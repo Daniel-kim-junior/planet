@@ -105,6 +105,33 @@ public class ProfileService {
         return profileDetails;
     }
 
+    @Transactional
+    public void addOusideProject(ProfileDto.OutsideProjectRegisterResDto registerResDto) {
+        Optional<Profile> profile = profileRepository.findByUserNickName(registerResDto.getUserNickName());
+        PjtRecord pjtRecord = PjtRecord.builder()
+                .profile(profile.get())
+                .pjtName(registerResDto.getPjtName())
+                .pjtTech(registerResDto.getPjtTech())
+                .pjtDesc(registerResDto.getPjtDesc())
+                .pjtStartDt(registerResDto.getPjtStartDt())
+                .pjtEndDt(registerResDto.getPjtEndDt())
+                .pjtUserTech(registerResDto.getPjtUserTech())
+                .build();
+        pjtRecordRepository.save(pjtRecord);
+
+    }
+
+    @Transactional
+    public void updateOusideProject(ProfileDto.OutsideProjectUpdateResDto updateResDto) {
+        Optional<PjtRecord> updatePjt = pjtRecordRepository.findByPjtName(updateResDto.getPjtName());
+        log.info("pjtRecord : {}", updatePjt);
+        updatePjt.get().updatePjtRecord(updateResDto);
+
+    }
+    @Transactional
+    public void removeOutsideProject(String pjtName) {
+        pjtRecordRepository.deletePjtRecordByPjtName(pjtName);
+    }
 
 }
 

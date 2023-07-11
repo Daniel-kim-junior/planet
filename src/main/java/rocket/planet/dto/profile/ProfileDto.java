@@ -11,6 +11,8 @@ import java.util.UUID;
 
 
 public class ProfileDto {
+
+    private final String AUTHORIZATION_HEADER = "Authorization";
     @Getter
     @Builder
     public static class ProfileReqDto {
@@ -60,6 +62,7 @@ public class ProfileDto {
     @Builder
     public static class OrgReqDto {
         private boolean orgStatus;
+        private boolean belongStatus;
         private String deptName;
         private String teamName;
     }
@@ -74,6 +77,33 @@ public class ProfileDto {
         private String pjtUserTech;
 
     }
+
+    @Getter
+    @Builder
+    public static class OutsideProjectRegisterResDto {
+        private String userNickName;
+        private String pjtName;
+        private String pjtDesc;
+        private LocalDate pjtStartDt;
+        private LocalDate pjtEndDt;
+        private String pjtTech;
+        private String pjtUserTech;
+    }
+
+    @Getter
+    @Builder
+    public static class OutsideProjectUpdateResDto {
+        private String userNickName;
+        private String pjtName;
+        private String pjtDesc;
+        private LocalDate pjtStartDt;
+        private LocalDate pjtEndDt;
+        private String pjtTech;
+        private String pjtUserTech;
+    }
+
+
+
 
 
 
