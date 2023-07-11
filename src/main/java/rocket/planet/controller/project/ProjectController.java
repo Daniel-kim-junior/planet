@@ -2,6 +2,7 @@ package rocket.planet.controller.project;
 
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,14 +30,15 @@ public class ProjectController {
 	private final AuthorityService authorityService;
 
 	@GetMapping("/projects/{userNickName}")
-	public String userNickName(@PathVariable("userNickName") String userNickName) {
+	public ResponseEntity<String> userNickName(@PathVariable("userNickName") String userNickName) {
 		boolean isPresent = projectService.checkUser(userNickName);
 
-		return isPresent ? userNickName + "를 팀원으로 등록하였습니다." : userNickName + "는 팀원으로 등록할 수 없습니다.";
+		return ResponseEntity.ok()
+			.body(isPresent ? userNickName + "를 팀원으로 등록하였습니다." : userNickName + "는 팀원으로 등록할 수 없습니다.");
 	}
 
 	@PostMapping("/projects")
-	public String projectRegister(@RequestBody ProjectRegisterReqDto registerReqDto) {
+	public ResponseEntity<String> projectRegister(@RequestBody ProjectRegisterReqDto registerReqDto) {
 		Project newProject = projectService.registerProject(registerReqDto);
 		log.info("newProject : {}=> ", newProject);
 
@@ -47,14 +49,14 @@ public class ProjectController {
 			registerReqDto.getUserNickName(), registerReqDto.getProjectLeader());
 		log.info("newPfAuth {} => ", newPfAuth);
 
-		return "프로젝트 생성이 완료되었습니다.";
+		return ResponseEntity.ok().body("프로젝트 생성이 완료되었습니다.");
 	}
 
 	@PatchMapping("/projects/{projectName}")
-	public String projectDetailUpdate(@PathVariable("projectName") String projectName,
+	public ResponseEntity<String> projectDetailUpdate(@PathVariable("projectName") String projectName,
 		ProjectUpdateDetailDto projectDetailDto) {
 		projectService.updateProjectDetail(projectDetailDto);
-		return "프로젝트 수정이 완료되었습니다.";
+		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
 
 	}
 
