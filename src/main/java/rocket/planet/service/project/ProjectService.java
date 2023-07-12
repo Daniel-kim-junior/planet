@@ -20,8 +20,9 @@ import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
-import rocket.planet.dto.project.ProjectSummaryDto;
+import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
@@ -159,11 +160,9 @@ public class ProjectService {
 		}
 	}
 
-	public List<ProjectSummaryDto> getProjectList(String teamName) {
-		List<ProjectSummaryDto> projectSummaryList = new ArrayList<>();
+	public List<ProjectSummaryResDto> getProjectList(String teamName) {
+		List<ProjectSummaryResDto> projectSummaryList = new ArrayList<>();
 
-		// 팀이름으로 프로젝트 이름 리스트 확인
-		// 프로젝트 이름으로 서머리 불러오기
 		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);
 		for (Project project : projectsList) {
 			Authority auth = authRepository.findByAuthTargetId(project.getId());
@@ -175,7 +174,7 @@ public class ProjectService {
 				.map(user -> user.getProfile().getUserNickName())
 				.collect(Collectors.toList());
 
-			ProjectSummaryDto projectSummary = ProjectSummaryDto.builder()
+			ProjectSummaryResDto projectSummary = ProjectSummaryResDto.builder()
 				.projectName(project.getProjectName())
 				.projectLeader(projectLeader.getUserNickName())
 				.projectMember(projectMember)
@@ -190,8 +189,35 @@ public class ProjectService {
 		return projectSummaryList;
 	}
 
-	// public Project getProjectDetail(String ProjectName) {
-	//
-	// }
+	public List<ProjectCloseResDto> getProjecReqtList(String teamName) {
+		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
+
+		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);
+
+		for (Project project : projectsList) {
+
+			List<UserProject> userProjectList = userPjtRepository.findAllByProject(Optional.ofNullable(project));
+
+			Authority auth = authRepository.findByAuthTargetId(project.getId());
+			Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
+
+			for (UserProject userProject : userProjectList) {
+				if (userProject.isUserPjtCloseApply()) {
+					ProjectCloseResDto requestedProject = ProjectCloseResDto.builder()
+						.projectName(project.getProjectName())
+						.projectLeader(projectLeader.getUserNickName())
+						.userName(userProject.getProfile().getUserName())
+						.projectStartDt(project.getProjectStartDt())
+						.projectEndDt(project.getProjectEndDt())
+						.build();
+
+					projectCloseResDto.add(requestedProject);
+				}
+			}
+		}
+
+		return projectCloseResDto;
+	}
+
 }
 

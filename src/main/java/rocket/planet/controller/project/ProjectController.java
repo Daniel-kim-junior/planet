@@ -17,8 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Project;
+import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
-import rocket.planet.dto.project.ProjectSummaryDto;
+import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
@@ -85,8 +86,15 @@ public class ProjectController {
 	}
 
 	@GetMapping("/projects")
-	public ResponseEntity<List<ProjectSummaryDto>> projectUpdate(String teamName, String userNickName, String role) {
-		List<ProjectSummaryDto> projectList = projectService.getProjectList(teamName);
+	public ResponseEntity<List<ProjectSummaryResDto>> projectList(String teamName, String userNickName, String role) {
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList(teamName);
+
+		return ResponseEntity.ok().body(projectList);
+	}
+
+	@GetMapping("/projects/request")
+	private ResponseEntity<List<ProjectCloseResDto>> projectReqList(String teamName, String userNickName, String role) {
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqtList(teamName);
 
 		return ResponseEntity.ok().body(projectList);
 	}

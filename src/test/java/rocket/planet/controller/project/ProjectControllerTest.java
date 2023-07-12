@@ -18,8 +18,9 @@ import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
+import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
-import rocket.planet.dto.project.ProjectSummaryDto;
+import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
@@ -206,9 +207,18 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_목록_조회_테스트() {
-		List<ProjectSummaryDto> projectList = projectService.getProjectList("스마트팩토리");
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트팩토리");
 
-		for (ProjectSummaryDto project : projectList)
+		for (ProjectSummaryResDto project : projectList)
+			System.out.println("==================final =========\n" + project);
+	}
+
+	@Test
+	@Transactional
+	void 프로젝트_완수_인증_요청_테스트() {
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqtList("스마트팩토리");
+
+		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);
 	}
 
