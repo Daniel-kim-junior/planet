@@ -117,6 +117,24 @@ public class ProjectService {
 
 	}
 
+	@Transactional
+	public void closeProjectApprove(String projectName,
+		String userNickName, String role) {
+		// todo: error 처리 -> 권한 확인
+
+		List<UserProject> userProject = userPjtRepository.findAllByProject(
+			projectRepository.findByProjectName(projectName));
+		Optional<Profile> profile = profileRepository.findByUserNickName(userNickName);
+
+		// 프로젝트 목록에서 사용자가 마감 요청한 프로젝트가 있는 row를 찾아서 변경
+		for (UserProject updateProject : userProject) {
+			if (updateProject.getProfile().getId().equals(profile.get().getId())) {
+				updateProject.toUserProjectCloseApprove();
+			}
+		}
+
+	}
+
 	// public List<ProjectSummaryDto> getProjectList(String teamName) {
 	//
 	// }

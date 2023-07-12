@@ -69,6 +69,15 @@ public class ProjectController {
 		return ResponseEntity.ok().body("프로젝트를 마감하였습니다.");
 	}
 
+	//todo: 마감요청 테스트 후 마감 요청 승인 테스트
+	@PatchMapping("/projects/confirm")
+	public ResponseEntity<String> projectCloseApprove(String projectName,
+		String userNickName, String role) {
+		projectService.closeProjectApprove(projectName,
+			userNickName, role);
+		return ResponseEntity.ok().body("프로젝트를 마감 요청을 승인하였습니다.");
+	}
+
 	// @GetMapping("/projects/{teamName}")
 	// public List<ProjectSummaryDto> projectUpdate(@PathVariable("teamName") String teamName, String userNickName) {
 	// 	// 프로젝트 팀 안에 속해 있는 프로젝트 리스트 불러오기
