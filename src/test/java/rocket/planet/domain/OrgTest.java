@@ -51,67 +51,69 @@ public class OrgTest {
 		Profile radar = profileRepository.findByUserNickName("radar").get();
 		Profile pl = profileRepository.findByUserNickName("plpl").get();
 
-		System.out.println(admin);
-		Org adminOrg = Org.builder()
-			.profile(admin)
-			.company(company)
-			.department(hrDept)
-			.team(hrTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(adminOrg);
-		Org crewOrg = Org.builder()
-			.profile(crew)
-			.company(company)
-			.department(smartDept)
-			.team(smartCityTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(crewOrg);
-		Org pilotOrg = Org.builder()
-			.profile(pilot)
-			.company(company)
-			.department(aiChatbotDept)
-			.team(aiChatbotTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(pilotOrg);
-		Org captainOrg = Org.builder()
-			.profile(captain)
-			.company(company)
-			.department(smartDept)
-			.team(smartFactoryTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(captainOrg);
-		Org radarOrg = Org.builder()
-			.profile(radar)
-			.company(company)
-			.department(internalSysDept)
-			.team(internalSysTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(radarOrg);
-		Org plOrg = Org.builder()
-			.profile(pl)
-			.company(company)
-			.department(itConsultingDept)
-			.team(itConsultingTeam)
-			.orgStartDate(LocalDate.now())
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(plOrg);
+        System.out.println(admin);
+        Org adminOrg = Org.builder()
+                .profile(admin)
+                .company(company)
+                .department(hrDept)
+                .team(hrTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(adminOrg);
+        Org crewOrg = Org.builder()
+                .profile(crew)
+                .company(company)
+                .department(smartDept)
+                .team(smartCityTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(crewOrg);
+        Org pilotOrg = Org.builder()
+                .profile(pilot)
+                .company(company)
+                .department(aiChatbotDept)
+                .team(aiChatbotTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(pilotOrg);
+        Org captainOrg = Org.builder()
+                .profile(captain)
+                .company(company)
+                .department(smartDept)
+                .team(smartFactoryTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(captainOrg);
+        Org radarOrg = Org.builder()
+                .profile(radar)
+                .company(company)
+                .department(internalSysDept)
+                .team(internalSysTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(radarOrg);
+        Org plOrg = Org.builder()
+                .profile(pl)
+                .company(company)
+                .department(itConsultingDept)
+                .team(itConsultingTeam)
+                .orgStartDate(LocalDate.now())
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(plOrg);
+
+
 
 
 	}

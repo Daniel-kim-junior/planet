@@ -11,9 +11,11 @@ import java.util.UUID;
 
 
 public class ProfileDto {
+
+    private final String AUTHORIZATION_HEADER = "Authorization";
     @Getter
     @Builder
-    public static class ProfileReqDto {
+    public static class ProfileResDto {
         private String userId;
         private String userNickName;
         private String role;
@@ -23,16 +25,16 @@ public class ProfileDto {
         private LocalDate profileStartDate;
         private boolean profileAnnualStatus;
 
-        private List<OrgReqDto> org;
-        private List<InsideProjectReqDto> userProject;
-        private List<ProfileTechReqDto> profileTech;
-        private List<OutsideProjectReqDto> extPjtRecord;
-        private List<CertReqDto> certification;
+        private List<OrgResDto> org;
+        private List<InsideProjectResDto> userProject;
+        private List<ProfileTechResDto> profileTech;
+        private List<OutsideProjectResDto> extPjtRecord;
+        private List<CertResDto> certification;
     }
 
     @Getter
     @Builder
-    public static class CertReqDto {
+    public static class CertResDto {
         private String certName;
         private LocalDate certDt;
         private String certAgency;
@@ -43,13 +45,13 @@ public class ProfileDto {
 
     @Getter
     @Builder
-    public static class ProfileTechReqDto {
+    public static class ProfileTechResDto {
         private String techName;
     }
 
     @Getter
     @Builder
-    public static class InsideProjectReqDto {
+    public static class InsideProjectResDto {
         private String projectName;
         private String projectDesc;
         private LocalDate projectStartDt;
@@ -58,14 +60,15 @@ public class ProfileDto {
 
     @Getter
     @Builder
-    public static class OrgReqDto {
+    public static class OrgResDto {
         private boolean orgStatus;
+        private boolean belongStatus;
         private String deptName;
         private String teamName;
     }
     @Getter
     @Builder
-    public static class OutsideProjectReqDto {
+    public static class OutsideProjectResDto {
         private String pjtName;
         private String pjtDesc;
         private LocalDate pjtStartDt;
@@ -74,6 +77,33 @@ public class ProfileDto {
         private String pjtUserTech;
 
     }
+
+    @Getter
+    @Builder
+    public static class OutsideProjectRegisterReqDto {
+        private String userNickName;
+        private String pjtName;
+        private String pjtDesc;
+        private LocalDate pjtStartDt;
+        private LocalDate pjtEndDt;
+        private String pjtTech;
+        private String pjtUserTech;
+    }
+
+    @Getter
+    @Builder
+    public static class OutsideProjectUpdateReqDto {
+        private String userNickName;
+        private String pjtName;
+        private String pjtDesc;
+        private LocalDate pjtStartDt;
+        private LocalDate pjtEndDt;
+        private String pjtTech;
+        private String pjtUserTech;
+    }
+
+
+
 
 
 

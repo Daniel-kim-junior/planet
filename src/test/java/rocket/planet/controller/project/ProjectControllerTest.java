@@ -64,6 +64,8 @@ class ProjectControllerTest {
 			.projectMember(memberList)
 			.projectStartDt(LocalDate.of(2023, 7, 5))
 			.projectEndDt(LocalDate.of(2023, 8, 14))
+			.projectStartDt(LocalDate.of(2023,7,5))
+			.projectEndDt(LocalDate.of(2023,8,14))
 			.build();
 
 		// ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
