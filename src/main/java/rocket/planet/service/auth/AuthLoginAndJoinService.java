@@ -95,7 +95,7 @@ public class AuthLoginAndJoinService {
 	 * @패스워드 5회 틀릴 시 30분간 잠금
 	 */
 	@Transactional
-	public LoginResDto checkLogin(LoginReqDto dto) throws RedisException, Exception {
+	public LoginResDto checkLogin(LoginReqDto dto) throws Exception {
 
 		User user = userRepository.findByUserId(dto.getId())
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다"));
@@ -110,7 +110,7 @@ public class AuthLoginAndJoinService {
 	 * @param user
 	 * @패스워드 5회 틀릴 시 30분간 잠금
 	 */
-	private void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException {
+	public void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			int count;
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()
@@ -138,7 +138,7 @@ public class AuthLoginAndJoinService {
 	 * @마지막 로그인 시간 Redis에 저장
 	 */
 
-	private LoginResDto completeLogin(User user) throws RedisException, Exception {
+	private LoginResDto completeLogin(User user) throws Exception {
 		limitLoginRepository.deleteById(user.getUserId());
 		authChangeRepository.deleteById(user.getUserId());
 
@@ -180,7 +180,7 @@ public class AuthLoginAndJoinService {
 	 */
 
 	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) throws
-		RedisException, Exception {
+		Exception {
 		LoginResDto responseDto;
 		responseDto = makeJsonWebTokenAndRoleDto(user);
 		saveAuthInRedisForJoinUser(user, responseDto);

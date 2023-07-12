@@ -9,7 +9,9 @@ import lombok.Getter;
 @Getter
 @Builder
 @RedisHash(value = "profile-visitant", timeToLive = 60 * 60 * 24 * 15)
-public class ProfileVisitant {
+public class ProfileVisitor {
 	@Id
 	private String id;
+
+	private String role;
 }

@@ -19,7 +19,7 @@ public class AuthFindPasswordService {
 	private final static String SUCCESS = "비밀번호가 변경되었습니다";
 
 	@Transactional
-	public String modifyPassword(PasswordModifyReqDto dto) {
+	public String modifyPassword(PasswordModifyReqDto dto) throws Exception {
 		userRepository.findByUserId(dto.getId()).ifPresent(user -> {
 			user.updatePassword(passwordEncoder.encode(dto.getPassword()));
 		});

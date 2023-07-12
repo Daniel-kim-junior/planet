@@ -22,12 +22,12 @@ public class JoinFormController {
 	private final TeamRepository teamRepository;
 
 	@GetMapping("/join-dept")
-	public ResponseEntity<List<String>> joinFormDeptList() {
+	public ResponseEntity<List<String>> joinFormDeptList() throws Exception {
 		return ResponseEntity.ok().body(deptRepository.findDeptNameAll());
 	}
 
 	@GetMapping("/join-team")
-	public ResponseEntity<List<String>> joinFormTeamList(String deptName) {
+	public ResponseEntity<List<String>> joinFormTeamList(String deptName) throws Exception {
 		return ResponseEntity.ok().body(teamRepository.findTeamNameByDeptName(deptName).stream()
 			.map(e -> e.getTeamName()).collect(Collectors.toList()));
 	}
