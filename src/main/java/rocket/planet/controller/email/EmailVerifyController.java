@@ -46,7 +46,7 @@ public class EmailVerifyController {
 	public ResponseEntity<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) throws
 		RedisException {
 		return ResponseEntity.ok()
-			.body(emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode()));
+			.body(emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode(), dto.getType()));
 	}
 
 }

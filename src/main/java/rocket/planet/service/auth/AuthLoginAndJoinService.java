@@ -29,6 +29,7 @@ import rocket.planet.domain.Profile;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
+import rocket.planet.domain.redis.EmailConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.domain.redis.RedisCacheAuth;
@@ -52,6 +53,7 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.security.JsonWebTokenIssuer;
+import rocket.planet.util.security.UserDetailsImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -461,7 +463,9 @@ public class AuthLoginAndJoinService {
 
 	private void saveLastLoginDataAndDeleteConfirmDataInRedis(JoinReqDto dto) throws RedisException {
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
-		emailConfirmRepository.deleteById(dto.getId());
+		EmailConfirm emailConfirm = emailConfirmRepository.findById(dto.getId())
+			.orElseThrow(() -> new NoValidEmailTokenException());
+		emailConfirmRepository.delete(emailConfirm);
 	}
 
 	/**
@@ -472,12 +476,15 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public BasicInputResDto saveBasicProfile(BasicInputReqDto dto) throws Exception {
-		// String id = UserDetailsImpl.getLoginUserId();
-		String id = "test20412041@gmail.com";
+
+		String id = Optional.of(UserDetailsImpl.getLoginUserId())
+			.orElseThrow(() -> new UsernameNotFoundException("토큰이 만료되어 다시 로그인 해주세요"));
+
 		Profile profile = BasicInsertDtoToProfile(dto, id);
 
 		User user = userRepository.findByUserId(id)
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+
 		profile = profileRepository.save(profile);
 		user.updateProfile(profile);
 		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);

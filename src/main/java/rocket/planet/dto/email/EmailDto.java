@@ -42,5 +42,9 @@ public class EmailDto {
 		@NotBlank
 		@NotEmpty
 		private String code;
+
+		@NotBlank
+		@NotEmpty
+		private String type;
 	}
 }

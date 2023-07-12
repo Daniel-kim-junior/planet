@@ -14,8 +14,9 @@ import org.springframework.util.StringUtils;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import rocket.planet.domain.redis.EmailConfirm;
+import rocket.planet.domain.redis.EmailFindConfirm;
 import rocket.planet.domain.redis.EmailFindToken;
+import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.EmailJoinToken;
 import rocket.planet.domain.redis.EmailToken;
 import rocket.planet.repository.jpa.UserRepository;
@@ -92,13 +93,23 @@ public class EmailVerifyService {
 		mailSender.send(message);
 	}
 
-	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken) throws RedisException {
+	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken, String type) throws RedisException {
 
 		Optional<EmailToken> findToken = emailTokenRepository.findById(email);
 		if (findToken.isPresent()) {
 			if (StringUtils.pathEquals(findToken.get().getToken(), reqToken)) {
 				emailTokenRepository.delete(findToken.get());
-				emailConfirmRepository.save(EmailConfirm.builder().email(email).build());
+				if (StringUtils.pathEquals(type, "join")) {
+					emailConfirmRepository.save(EmailJoinConfirm
+						.builder()
+						.email(email)
+						.build());
+				} else if (StringUtils.pathEquals(type, "find")) {
+					emailConfirmRepository.save(EmailFindConfirm
+						.builder()
+						.email(email)
+						.build());
+				}
 				return EMAIL_CONFIRM_TITLE;
 			}
 		}
