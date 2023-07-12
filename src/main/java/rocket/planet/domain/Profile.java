@@ -79,15 +79,15 @@ public class Profile extends BaseTime {
 	private String userId;
 
 	@Builder
-	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role, boolean profileDisplay,
-				   int profileCareer,
-				   boolean profileAnnualStatus, String userName, String userNickName) {
+	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
+		boolean profileDisplay,
+		int profileCareer,
+		boolean profileAnnualStatus, String userName, String userNickName) {
 
 		this.profileStartDate = profileStartDate;
 		this.profileBirthDt = profileBirthDt;
 		this.userName = userName;
 		this.userId = userId;
-		this.userNickName = userNickName;
 		this.role = role;
 		this.profileDisplay = profileDisplay;
 		this.profileCareer = profileCareer;
@@ -95,16 +95,17 @@ public class Profile extends BaseTime {
 		this.userNickName = userNickName;
 	}
 
-	public static Profile BasicInsertDtoToProfile(BasicInputReqDto dto) {
+	public static Profile BasicInsertDtoToProfile(BasicInputReqDto dto, String id) {
 		return builder()
 			.profileBirthDt(dto.getUserBirth())
-			.userId(dto.getId())
+			.userId(id)
+			.profileStartDate(dto.getCompanyJoinDate())
 			.role(Role.CREW)
 			.profileDisplay(dto.isProfileDisplay())
 			.profileCareer(dto.getCareer())
 			.profileAnnualStatus(false)
 			.userName(dto.getUserName())
-			.userNickName(idToUserNickName(dto.getId()))
+			.userNickName(idToUserNickName(id))
 			.build();
 	}
 
@@ -125,6 +126,5 @@ public class Profile extends BaseTime {
 			", 휴가 여부 =" + profileAnnualStatus +
 			'}';
 	}
-
 
 }

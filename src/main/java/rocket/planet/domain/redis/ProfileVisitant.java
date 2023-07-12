@@ -6,12 +6,10 @@ import org.springframework.data.redis.core.RedisHash;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
-@RedisHash(value = "email-token", timeToLive = 60 * 60 * 3)
-public class EmailToken {
+@Builder
+@RedisHash(value = "profile-visitant", timeToLive = 60 * 60 * 24 * 15)
+public class ProfileVisitant {
 	@Id
-	private String email;
-
-	private String token;
+	private String id;
 }

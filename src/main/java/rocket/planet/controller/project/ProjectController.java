@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Project;
-import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
@@ -48,16 +47,15 @@ public class ProjectController {
 		return ResponseEntity.ok().body("프로젝트 생성이 완료되었습니다.");
 	}
 
-	@PatchMapping("/projects/{projectName}")
-	public ResponseEntity<String> projectDetailUpdate(@PathVariable("projectName") String projectName,
-		ProjectUpdateDetailDto projectDetailDto) {
+	@PatchMapping("/projects")
+	public ResponseEntity<String> projectDetailUpdate(String projectName, ProjectUpdateDetailDto projectDetailDto) {
 		projectService.updateProjectDetail(projectDetailDto);
 		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
 
 	}
 
 	@PatchMapping("/projects/disable")
-	public ResponseEntity<String> projectDelete(ProjectDeleteDto projectDeleteDto) {
+	public ResponseEntity<String> projectDelete(ProjectUpdateStatusDto projectDeleteDto) {
 		projectService.deleteProject(projectDeleteDto);
 		return ResponseEntity.ok().body("프로젝트 삭제가 완료되었습니다.");
 	}
@@ -76,6 +74,16 @@ public class ProjectController {
 		projectService.closeProjectApprove(projectName,
 			userNickName, role);
 		return ResponseEntity.ok().body("프로젝트를 마감 요청을 승인하였습니다.");
+  }
+  
+	@PostMapping("/projects/confirm")
+	public ResponseEntity<String> projectCloseRequest(@RequestBody String projectName,
+		@RequestBody String userNickName) {
+
+		projectService.requestClose(projectName, userNickName);
+
+		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
+    
 	}
 
 	// @GetMapping("/projects/{teamName}")

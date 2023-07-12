@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import javax.validation.constraints.Email;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSendException;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -13,11 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
+import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.ExceptionEnum;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.NoSuchEmailException;
@@ -88,7 +88,14 @@ public class ExceptionAdvice {
 		return getCommonErrorDto(ExceptionEnum.EMAIL_TOKEN_NOT_VALID_EXCEPTION);
 	}
 
-	@ExceptionHandler({RedisException.class, JsonProcessingException.class})
+	@ExceptionHandler(MailSendException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public CommonErrorDto handleMailSendException(MailSendException e) {
+		log.error("MailSendException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_VALID_EXCEPTION);
+	}
+
+	@ExceptionHandler(RedisException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public CommonErrorDto handleRedisException(RedisException e) {
 		log.error("RedisException", e.getClass().getSimpleName(), e.getMessage());
@@ -100,6 +107,20 @@ public class ExceptionAdvice {
 	public CommonErrorDto handleTemp30MinuteLockException(Temp30MinuteLockException e) {
 		log.error("Temp30MinuteLockException", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.TEMP_LOCK_EXCEPTION);
+	}
+
+	@ExceptionHandler(AlreadyExistsIdException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleAlreadyExistsIdException(AlreadyExistsIdException e) {
+		log.error("AlreadyExistsIdException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_FOUND_EXCEPTION);
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public CommonErrorDto handleException(Exception e) {
+		log.error("Exception", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
 	}
 
 	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {

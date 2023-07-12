@@ -32,19 +32,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String jwt = resolveToken(request);
 
-		if (StringUtils.hasText(jwt)) {
+		if (StringUtils.hasText(jwt) && checkJwtHeaderUrl(request)) {
+
 			try {
+
 				Authentication jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
+
 				Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);
+
 				SecurityContextHolder.getContext().setAuthentication(authentication);
+
 			} catch (JwtInvalidException e) {
 				log.debug("Invalid JWT Token", e);
+
 				throw e;
 			}
 
 		}
 
 		filterChain.doFilter(request, response);
+	}
+
+	private boolean checkJwtHeaderUrl(HttpServletRequest request) {
+		return !request.getRequestURI().equals("/api/auth/reissue") && !request.getRequestURI()
+			.equals("/api/auth/join-dept") && !request.getRequestURI().equals("/api/auth/join-team");
 	}
 
 	private String resolveToken(HttpServletRequest request) {

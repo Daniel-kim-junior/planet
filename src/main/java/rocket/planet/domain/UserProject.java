@@ -82,7 +82,7 @@ public class UserProject {
 			", 유저 프로젝트 조인 일자=" + userPjtJoinDt +
 			", 유저 프로젝트 상세정보 수정일=" + userPjtModifyDt +
 			", 유저 프로젝트 마감일=" + userPjtCloseDt +
-			", 유저 프로젝트 마감 여부=" + userPjtCloseApply +
+			", 유저 프로젝트 마감 신청 여부=" + userPjtCloseApply +
 			", 유저 프로젝트 상세정보 설명='" + userPjtDesc + '\'' +
 			'}';
 	}
@@ -91,4 +91,9 @@ public class UserProject {
 		this.userPjtCloseApply = false;
 		this.userPjtCloseDt = LocalDate.now();
 	}
+  
+	public void requestClose() {
+		this.userPjtCloseApply = true;
+	}
+
 }

@@ -8,5 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import rocket.planet.domain.PjtRecord;
  
 public interface PjtRecordRepository extends JpaRepository<PjtRecord, UUID> {
-    Optional<PjtRecord> findByProfile(UUID profileId);
+
+    Optional<PjtRecord> findByPjtName(String pjtName);
+
+    long deletePjtRecordByPjtName(String pjtName);
+
 }

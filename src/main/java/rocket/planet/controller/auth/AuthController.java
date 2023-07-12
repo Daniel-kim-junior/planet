@@ -5,7 +5,6 @@ import static rocket.planet.dto.auth.AuthDto.*;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,28 +22,24 @@ public class AuthController {
 
 	private final AuthLoginAndJoinService authLoginAndJoinService;
 
-	@GetMapping
-	public ResponseEntity<LoginResDto> test() {
-		return ResponseEntity.ok().body(LoginResDto.builder().authOrg(LoginResDto.AuthOrg.builder().build()).build());
-	}
-
 	@PostMapping("/account-register")
-	public ResponseEntity<LoginResDto> accountAdd(@Valid @RequestBody JoinReqDto dto) {
+	public ResponseEntity<LoginResDto> accountAdd(@Valid @RequestBody JoinReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(authLoginAndJoinService.checkJoin(dto));
 	}
 
 	@PostMapping("/basic-profile-register")
-	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto) {
-		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfileAndAutoLogin(dto));
+	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto) throws Exception {
+		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfile(dto));
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginResDto> login(@Valid @RequestBody LoginReqDto loginReqDto) {
+	public ResponseEntity<LoginResDto> login(@Valid @RequestBody LoginReqDto loginReqDto) throws Exception {
 		return ResponseEntity.ok().body(authLoginAndJoinService.checkLogin(loginReqDto));
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<LoginResDto> reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
+	public ResponseEntity<LoginResDto> reissue(@RequestHeader(AUTHORIZATION_HEADER) String bearerToken) throws
+		Exception {
 		return ResponseEntity.ok().body(authLoginAndJoinService.makeReissue(bearerToken));
 	}
 

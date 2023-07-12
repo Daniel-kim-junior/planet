@@ -23,7 +23,6 @@ public class JoinFormController {
 
 	@GetMapping("/join-dept")
 	public ResponseEntity<List<String>> joinFormDeptList() {
-
 		return ResponseEntity.ok().body(deptRepository.findDeptNameAll());
 	}
 
