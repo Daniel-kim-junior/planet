@@ -18,11 +18,11 @@ import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
-import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
+import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
@@ -37,6 +37,9 @@ class ProjectControllerTest {
 
 	@Autowired
 	private ProjectRepository projectRepository;
+
+	@Autowired
+	private UserPjtRepository userPjtRepository;
 
 	@Autowired
 	private AuthRepository authRepository;
@@ -152,7 +155,7 @@ class ProjectControllerTest {
 	@Transactional
 	@Rollback(false)
 	void 프로젝트_삭제_테스트() {
-		ProjectDeleteDto projectDeleteDto = ProjectDeleteDto.builder()
+		ProjectUpdateStatusDto projectDeleteDto = ProjectUpdateStatusDto.builder()
 			.authType("PILOT")
 			.projectName("카카오톡 IT 솔루션")
 			.userNickName("pilot")
@@ -160,5 +163,15 @@ class ProjectControllerTest {
 		projectService.deleteProject(projectDeleteDto);
 
 		assertThat(projectRepository.findAllByProjectStatusIs(ProjectStatus.DELETED).size()).isEqualTo(1);
+	}
+
+	@Test
+	@Transactional
+	void 프로젝트_마감_요청_테스트() {
+		String projectName = "스마트 시티 TF";
+		String userNickName = "plpl";
+
+		projectService.requestClose(projectName, userNickName);
+		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 	}
 }
