@@ -91,7 +91,7 @@ public class UserProject {
 		this.userPjtCloseApply = false;
 		this.userPjtCloseDt = LocalDate.now();
 	}
-  
+
 	public void requestClose() {
 		this.userPjtCloseApply = true;
 	}

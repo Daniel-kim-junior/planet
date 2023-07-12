@@ -2,6 +2,8 @@ package rocket.planet.controller.project;
 
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,12 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Project;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
+import rocket.planet.dto.project.ProjectSummaryDto;
 import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
 @RestController
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/management")
 @RequiredArgsConstructor
 public class ProjectController {
 
@@ -51,7 +54,6 @@ public class ProjectController {
 	public ResponseEntity<String> projectDetailUpdate(String projectName, ProjectUpdateDetailDto projectDetailDto) {
 		projectService.updateProjectDetail(projectDetailDto);
 		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
-
 	}
 
 	@PatchMapping("/projects/disable")
@@ -67,35 +69,26 @@ public class ProjectController {
 		return ResponseEntity.ok().body("프로젝트를 마감하였습니다.");
 	}
 
-	//todo: 마감요청 테스트 후 마감 요청 승인 테스트
 	@PatchMapping("/projects/confirm")
 	public ResponseEntity<String> projectCloseApprove(String projectName,
 		String userNickName, String role) {
 		projectService.closeProjectApprove(projectName,
 			userNickName, role);
 		return ResponseEntity.ok().body("프로젝트를 마감 요청을 승인하였습니다.");
-  }
-  
+	}
+
 	@PostMapping("/projects/confirm")
 	public ResponseEntity<String> projectCloseRequest(@RequestBody String projectName,
 		@RequestBody String userNickName) {
-
-		projectService.requestClose(projectName, userNickName);
-
+		projectService.requestProjectClose(projectName, userNickName);
 		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
-    
 	}
 
-	// @GetMapping("/projects/{teamName}")
-	// public List<ProjectSummaryDto> projectUpdate(@PathVariable("teamName") String teamName, String userNickName) {
-	// 	// 프로젝트 팀 안에 속해 있는 프로젝트 리스트 불러오기
-	// 	// todo: 유저 닉네임으로 팀/부문에 대한 권한 있는지 확인하기
-	// 	// todo: 팀에 속한 프로젝트 리스트 불러오기
-	// 	// todo: 프로젝트 summary 담아서 보내기
-	//
-	// 	List<ProjectSummaryDto> projectList = projectService.getProjectList(teamName);
-	//
-	// 	return projectList;
-	// }
+	@GetMapping("/projects")
+	public ResponseEntity<List<ProjectSummaryDto>> projectUpdate(String teamName, String userNickName, String role) {
+		List<ProjectSummaryDto> projectList = projectService.getProjectList(teamName);
+
+		return ResponseEntity.ok().body(projectList);
+	}
 
 }

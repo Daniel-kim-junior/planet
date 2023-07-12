@@ -3,14 +3,17 @@ package rocket.planet.service.project;
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.domain.Authority;
 import rocket.planet.domain.OrgType;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.Project;
@@ -18,6 +21,9 @@ import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
+import rocket.planet.dto.project.ProjectSummaryDto;
+import rocket.planet.repository.jpa.AuthRepository;
+import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
@@ -29,6 +35,8 @@ public class ProjectService {
 	private final ProjectRepository projectRepository;
 	private final ProfileRepository profileRepository;
 	private final UserPjtRepository userPjtRepository;
+	private final AuthRepository authRepository;
+	private final PfAuthRepository pfAuthRepository;
 
 	// 프로젝트 생성
 	@Transactional
@@ -113,8 +121,8 @@ public class ProjectService {
 		userProjects.stream().filter(UserProject::isUserPjtCloseApply).forEach(UserProject::toUserProjectCloseApprove);
 		// 프로젝트 상태 변경
 		requestedProject.close(userNickName);
-  }
-  
+	}
+
 	public boolean isInProject(String projectName, String userNickName) {
 		List<UserProject> projectList = userPjtRepository.findAllByProfile_userNickName(
 			userNickName);
@@ -137,10 +145,10 @@ public class ProjectService {
 				updateProject.toUserProjectCloseApprove();
 			}
 		}
-  }
-  
+	}
+
 	@Transactional
-	public void requestClose(String projectName, String userNickName) {
+	public void requestProjectClose(String projectName, String userNickName) {
 		if (isInProject(projectName, userNickName)) {
 			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
 				userNickName);
@@ -151,9 +159,36 @@ public class ProjectService {
 		}
 	}
 
-	// public List<ProjectSummaryDto> getProjectList(String teamName) {
-	//
-	// }
+	public List<ProjectSummaryDto> getProjectList(String teamName) {
+		List<ProjectSummaryDto> projectSummaryList = new ArrayList<>();
+
+		// 팀이름으로 프로젝트 이름 리스트 확인
+		// 프로젝트 이름으로 서머리 불러오기
+		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);
+		for (Project project : projectsList) {
+			Authority auth = authRepository.findByAuthTargetId(project.getId());
+			Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
+
+			List<UserProject> userprojectList = userPjtRepository.findAllByProject(Optional.of(project));
+
+			List<String> projectMember = userprojectList.stream()
+				.map(user -> user.getProfile().getUserNickName())
+				.collect(Collectors.toList());
+
+			ProjectSummaryDto projectSummary = ProjectSummaryDto.builder()
+				.projectName(project.getProjectName())
+				.projectLeader(projectLeader.getUserNickName())
+				.projectMember(projectMember)
+				.projectStartDt(project.getProjectStartDt())
+				.projectEndDt(project.getProjectEndDt())
+				.projectStatus(String.valueOf(project.getProjectStatus()))
+				.build();
+
+			projectSummaryList.add(projectSummary);
+		}
+
+		return projectSummaryList;
+	}
 
 	// public Project getProjectDetail(String ProjectName) {
 	//

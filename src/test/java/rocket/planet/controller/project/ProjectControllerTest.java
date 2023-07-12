@@ -19,6 +19,7 @@ import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
+import rocket.planet.dto.project.ProjectSummaryDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
@@ -50,7 +51,7 @@ class ProjectControllerTest {
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
 	@Test
-		// @Rollback(false)
+	@Rollback(false)
 	void 프로젝트_생성_테스트() {
 
 		List<String> memberList = new ArrayList<>();
@@ -67,8 +68,8 @@ class ProjectControllerTest {
 			.projectMember(memberList)
 			.projectStartDt(LocalDate.of(2023, 7, 5))
 			.projectEndDt(LocalDate.of(2023, 8, 14))
-			.projectStartDt(LocalDate.of(2023,7,5))
-			.projectEndDt(LocalDate.of(2023,8,14))
+			.projectStartDt(LocalDate.of(2023, 7, 5))
+			.projectEndDt(LocalDate.of(2023, 8, 14))
 			.build();
 
 		// ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
@@ -167,20 +168,48 @@ class ProjectControllerTest {
 
 	@Test
 	@Transactional
+	@Rollback(false)
+	void 프로젝트_마감_요청_테스트() {
+		String projectName1 = "스마트 시티 TF";
+		String userNickName1 = "plpl";
+
+		String projectName2 = "스마트 시티 TF";
+		String userNickName2 = "pilot";
+
+		projectService.requestProjectClose(projectName1, userNickName1);
+		projectService.requestProjectClose(projectName2, userNickName2);
+		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(2);
+	}
+
+	@Test
+	@Transactional
+	@Rollback(false)
+	void 프로젝트_마감_승인_테스트() {
+
+		String projectName = "스마트 시티 TF";
+		String userNickName = "pilot";
+		String role = "PILOT";
+
+		projectService.closeProjectApprove(projectName, userNickName, role);
+
+	}
+
+	@Test
+	@Transactional
+	@Rollback(false)
 	void 프로젝트_마감_테스트() {
 		String projectName = "스마트 시티 TF";
 		String userNickName = "plpl";
 		projectService.closeProject(projectName, userNickName);
-  }
-  
-  
+	}
+
 	@Test
 	@Transactional
-	void 프로젝트_마감_요청_테스트() {
-		String projectName = "스마트 시티 TF";
-		String userNickName = "plpl";
+	void 프로젝트_목록_조회_테스트() {
+		List<ProjectSummaryDto> projectList = projectService.getProjectList("스마트팩토리");
 
-		projectService.requestClose(projectName, userNickName);
-		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);]
+		for (ProjectSummaryDto project : projectList)
+			System.out.println("==================final =========\n" + project);
 	}
+
 }

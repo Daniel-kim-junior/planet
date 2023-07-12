@@ -16,7 +16,6 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 
 	List<UserProject> findAllByProject(Optional<Project> byProjectName);
 
-
 	UserProject findByProject_projectNameAndProfile_userNickName(String projectName, String userNickName);
 
 	List<UserProject> findAllByUserPjtCloseApply(boolean apply);
