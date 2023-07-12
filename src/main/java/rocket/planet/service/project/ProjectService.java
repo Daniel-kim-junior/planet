@@ -104,14 +104,41 @@ public class ProjectService {
 
 	}
 
+	@Transactional
+	public void closeProject(String projectName, String userNickName) {
+		Project requestedProject = projectRepository.findByProjectName(projectName).get();
+		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
+
+		// 프로젝트에 대한 마감 요청이 있다면 요청 수락으로 변경
+		userProjects.stream().filter(UserProject::isUserPjtCloseApply).forEach(UserProject::toUserProjectCloseApprove);
+		// 프로젝트 상태 변경
+		requestedProject.close(userNickName);
+  }
+  
 	public boolean isInProject(String projectName, String userNickName) {
 		List<UserProject> projectList = userPjtRepository.findAllByProfile_userNickName(
 			userNickName);
-		log.info("result ===========> {}", projectList);
 		return projectList.stream().anyMatch(project -> project.getProject().getProjectName().equals(projectName));
 
 	}
 
+	@Transactional
+	public void closeProjectApprove(String projectName,
+		String userNickName, String role) {
+		// todo: error 처리 -> 권한 확인
+
+		List<UserProject> userProject = userPjtRepository.findAllByProject(
+			projectRepository.findByProjectName(projectName));
+		Optional<Profile> profile = profileRepository.findByUserNickName(userNickName);
+
+		// 프로젝트 목록에서 사용자가 마감 요청한 프로젝트가 있는 row를 찾아서 변경
+		for (UserProject updateProject : userProject) {
+			if (updateProject.getProfile().getId().equals(profile.get().getId())) {
+				updateProject.toUserProjectCloseApprove();
+			}
+		}
+  }
+  
 	@Transactional
 	public void requestClose(String projectName, String userNickName) {
 		if (isInProject(projectName, userNickName)) {

@@ -129,4 +129,10 @@ public class Project {
 		this.projectLastModifiedBy = projectDeleteDto.getUserNickName();
 	}
 
+	public void close(String userNickName) {
+		this.projectStatus = ProjectStatus.FINISHED;
+		this.projectEndDt = LocalDate.now();
+		this.projectLastModifiedBy = userNickName;
+	}
+
 }

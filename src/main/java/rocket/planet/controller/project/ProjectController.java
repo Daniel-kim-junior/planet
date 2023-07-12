@@ -38,9 +38,6 @@ public class ProjectController {
 
 	@PostMapping("/projects")
 	public ResponseEntity<String> projectRegister(@RequestBody ProjectRegisterReqDto registerReqDto) {
-		if (registerReqDto.getAuthType().equals("CREW")) {
-			// todo: error 코드
-		}
 		Project newProject = projectService.registerProject(registerReqDto);
 
 		projectService.registerMemberToProject(registerReqDto, newProject);
@@ -52,9 +49,6 @@ public class ProjectController {
 
 	@PatchMapping("/projects")
 	public ResponseEntity<String> projectDetailUpdate(String projectName, ProjectUpdateDetailDto projectDetailDto) {
-		if (projectDetailDto.getAuthType().equals("CREW")) {
-			// todo: error 코드
-		}
 		projectService.updateProjectDetail(projectDetailDto);
 		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
 
@@ -62,15 +56,26 @@ public class ProjectController {
 
 	@PatchMapping("/projects/disable")
 	public ResponseEntity<String> projectDelete(ProjectUpdateStatusDto projectDeleteDto) {
-		if (projectDeleteDto.getAuthType().equals("CREW")) {
-			// todo: error code
-			// todo: 담당 부문이 아닌 경우 error
-		}
 		projectService.deleteProject(projectDeleteDto);
-
 		return ResponseEntity.ok().body("프로젝트 삭제가 완료되었습니다.");
 	}
 
+	@PatchMapping("/projects/finish")
+	public ResponseEntity<String> projectClose(String projectName,
+		String userNickName, String role) {
+		projectService.closeProject(projectName, userNickName);
+		return ResponseEntity.ok().body("프로젝트를 마감하였습니다.");
+	}
+
+	//todo: 마감요청 테스트 후 마감 요청 승인 테스트
+	@PatchMapping("/projects/confirm")
+	public ResponseEntity<String> projectCloseApprove(String projectName,
+		String userNickName, String role) {
+		projectService.closeProjectApprove(projectName,
+			userNickName, role);
+		return ResponseEntity.ok().body("프로젝트를 마감 요청을 승인하였습니다.");
+  }
+  
 	@PostMapping("/projects/confirm")
 	public ResponseEntity<String> projectCloseRequest(@RequestBody String projectName,
 		@RequestBody String userNickName) {
@@ -78,6 +83,7 @@ public class ProjectController {
 		projectService.requestClose(projectName, userNickName);
 
 		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
+    
 	}
 
 	// @GetMapping("/projects/{teamName}")

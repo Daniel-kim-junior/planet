@@ -87,6 +87,11 @@ public class UserProject {
 			'}';
 	}
 
+	public void toUserProjectCloseApprove() {
+		this.userPjtCloseApply = false;
+		this.userPjtCloseDt = LocalDate.now();
+	}
+  
 	public void requestClose() {
 		this.userPjtCloseApply = true;
 	}

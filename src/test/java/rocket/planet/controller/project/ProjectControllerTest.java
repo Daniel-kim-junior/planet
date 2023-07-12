@@ -167,11 +167,20 @@ class ProjectControllerTest {
 
 	@Test
 	@Transactional
+	void 프로젝트_마감_테스트() {
+		String projectName = "스마트 시티 TF";
+		String userNickName = "plpl";
+		projectService.closeProject(projectName, userNickName);
+  }
+  
+  
+	@Test
+	@Transactional
 	void 프로젝트_마감_요청_테스트() {
 		String projectName = "스마트 시티 TF";
 		String userNickName = "plpl";
 
 		projectService.requestClose(projectName, userNickName);
-		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
+		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);]
 	}
 }
