@@ -18,7 +18,9 @@ public class AuthChangeAdvice {
 
 	private final AuthChangeRepository authChangeRepository;
 
-	@Pointcut("within(rocket.planet.service..*)")
+	@Pointcut("within(rocket.planet.service..*) && "
+		+ "!within(rocket.planet.service.auth..*) && "
+		+ "!within(rocket.planet.service.email..*)")
 	public void onService() {
 	}
 
