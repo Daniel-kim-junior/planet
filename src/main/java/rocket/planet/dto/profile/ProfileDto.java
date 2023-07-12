@@ -13,6 +13,7 @@ import java.util.UUID;
 public class ProfileDto {
 
     private final String AUTHORIZATION_HEADER = "Authorization";
+
     @Getter
     @Builder
     public static class ProfileResDto {
@@ -30,6 +31,18 @@ public class ProfileDto {
         private List<ProfileTechResDto> profileTech;
         private List<OutsideProjectResDto> extPjtRecord;
         private List<CertResDto> certification;
+    }
+    @Getter
+    @Builder
+    public static class ProfileUpDateResDto {
+        private String userName;
+        private String userNickName;
+        private boolean profileDisplay;
+        private int profileCareer;
+        private LocalDate profileBirthDt;
+        private LocalDate profileStartDate;
+        private boolean profileAnnualStatus;
+
     }
 
     @Getter
@@ -102,7 +115,29 @@ public class ProfileDto {
         private String pjtUserTech;
     }
 
+    @Getter
+    @Builder
+    public static class CertRegisterResDto {
+        private String userNickName;
+        private String certName;
+        private String certAgency;
+        private String certType;
+        private String certNumber;
+        private LocalDate certDt;
+        private LocalDate certExpireDate;
+    }
 
+    @Getter
+    @Builder
+    public static class CertUpdateResDto {
+        private String userNickName;
+        private String certName;
+        private String certAgency;
+        private String certType;
+        private String certNumber;
+        private LocalDate certDt;
+        private LocalDate certExpireDate;
+    }
 
 
 
