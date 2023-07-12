@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
+import rocket.planet.repository.jpa.CertRepository;
 import rocket.planet.repository.jpa.PjtRecordRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
+import rocket.planet.util.security.UserDetailsImpl;
 
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
     private final ProfileRepository profileRepository;
     private final PjtRecordRepository pjtRecordRepository;
+    private final CertRepository certRepository;
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
@@ -127,5 +131,31 @@ public class ProfileService {
         pjtRecordRepository.deletePjtRecordByPjtName(pjtName);
     }
 
+
+    @Transactional
+    public void addCertification(ProfileDto.CertRegisterResDto certRegisterResDto) {
+        Optional<Profile> profile = profileRepository.findByUserNickName(certRegisterResDto.getUserNickName());
+        Certification cert = Certification.builder()
+                .profile(profile.get())
+                .certName(certRegisterResDto.getCertName())
+                .certAgency(certRegisterResDto.getCertAgency())
+                .certType(certRegisterResDto.getCertType())
+                .certNumber(certRegisterResDto.getCertNumber())
+                .certDt(certRegisterResDto.getCertDt())
+                .certExpireDate(certRegisterResDto.getCertExpireDate())
+                .build();
+        certRepository.save(cert);
+
+    }
+    @Transactional
+    public void modifyCertification(ProfileDto.CertUpdateResDto certUpdateResDto) {
+            Optional<Certification> updateCert = certRepository.findByCertNumber(certUpdateResDto.getCertNumber());
+            updateCert.get().updateCert(certUpdateResDto);
+    }
+    @Transactional
+    public void removeCertification(String certNumber) {
+            certRepository.deleteCertificationByCertNumber(certNumber);
+
+    }
 }
 

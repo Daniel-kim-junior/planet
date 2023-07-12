@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import rocket.planet.dto.auth.AuthDto.BasicInputReqDto;
+import rocket.planet.dto.profile.ProfileDto;
 
 @Entity
 @Getter
@@ -127,4 +128,12 @@ public class Profile extends BaseTime {
 			'}';
 	}
 
+	public void updateProfile(ProfileDto.ProfileUpDateResDto updateDto) {
+		this.userName = updateDto.getUserName();
+		this.profileStartDate = updateDto.getProfileStartDate();
+		this.profileBirthDt = updateDto.getProfileBirthDt();
+		this.profileCareer = updateDto.getProfileCareer();
+		this.profileDisplay = updateDto.isProfileDisplay();
+		this.profileAnnualStatus = updateDto.isProfileAnnualStatus();
+	}
 }
