@@ -43,7 +43,7 @@ class PjtRecordControllerTest {
         Profile radar = profileRepository.findByUserNickName("radar").get();
         Profile pl = profileRepository.findByUserNickName("plpl").get();
 
-        ProfileDto.OutsideProjectRegisterResDto outProject1 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject1 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(admin.getUserNickName())
                 .pjtName("2022년 상반기 신입사원 공개채용")
                 .pjtStartDt(LocalDate.of(2021, 1, 3))
@@ -51,7 +51,7 @@ class PjtRecordControllerTest {
                 .pjtTech("HRM")
                 .pjtUserTech("인사팀")
                 .pjtDesc("새롭게 바뀐 채용프로세스를 도입한 공개채용 프로젝트").build();
-        ProfileDto.OutsideProjectRegisterResDto outProject2 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject2 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(pilot.getUserNickName())
                 .pjtName("crewz")
                 .pjtStartDt(LocalDate.of(2023, 3, 3))
@@ -59,7 +59,7 @@ class PjtRecordControllerTest {
                 .pjtTech("Spring, Spring Boot, Java")
                 .pjtUserTech("Back-End 개발자")
                 .pjtDesc("사내 동아리 운영 시스템").build();
-        ProfileDto.OutsideProjectRegisterResDto outProject3 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject3 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(captain.getUserNickName())
                 .pjtName("crewz-admin")
                 .pjtStartDt(LocalDate.of(2023, 5, 3))
@@ -67,7 +67,7 @@ class PjtRecordControllerTest {
                 .pjtTech("Vue, JavaScript, Tailwind")
                 .pjtUserTech("Front-End 개발자")
                 .pjtDesc("사내 동아리 관리 시스템").build();
-        ProfileDto.OutsideProjectRegisterResDto outProject4 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject4 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(radar.getUserNickName())
                 .pjtName("REfresh")
                 .pjtStartDt(LocalDate.of(2023, 3, 3))
@@ -75,7 +75,7 @@ class PjtRecordControllerTest {
                 .pjtTech("Spring, Spring Boot, Java")
                 .pjtUserTech("Back-End 개발자")
                 .pjtDesc("연차 관리 시스템").build();
-        ProfileDto.OutsideProjectRegisterResDto outProject5 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject5 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(pl.getUserNickName())
                 .pjtName("Synergy")
                 .pjtStartDt(LocalDate.of(2023, 3, 3))
@@ -83,7 +83,7 @@ class PjtRecordControllerTest {
                 .pjtTech("Spring, Spring Boot, Java, Vue, JavaScript")
                 .pjtUserTech("Full-Stack 개발자")
                 .pjtDesc("교육 관리 시스템").build();
-        ProfileDto.OutsideProjectRegisterResDto outProject6 = ProfileDto.OutsideProjectRegisterResDto.builder()
+        ProfileDto.OutsideProjectRegisterReqDto outProject6 = ProfileDto.OutsideProjectRegisterReqDto.builder()
                 .userNickName(crew.getUserNickName())
                 .pjtName("dk.log")
                 .pjtStartDt(LocalDate.of(2023, 3, 3))
@@ -103,7 +103,7 @@ class PjtRecordControllerTest {
     @Test
     @Transactional
     void 외부프로젝트_수정_테스트() {
-        ProfileDto.OutsideProjectUpdateResDto updateProject = ProfileDto.OutsideProjectUpdateResDto.builder()
+        ProfileDto.OutsideProjectUpdateReqDto updateProject = ProfileDto.OutsideProjectUpdateReqDto.builder()
                 .pjtName("crewz")
                 .pjtStartDt(LocalDate.of(2024,5,6))
                 .pjtEndDt(LocalDate.of(2024,7,8))

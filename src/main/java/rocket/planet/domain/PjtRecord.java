@@ -79,7 +79,7 @@ public class PjtRecord {
 				'}';
 	}
 
-	public void updatePjtRecord(ProfileDto.OutsideProjectUpdateResDto outsideProject) {
+	public void updatePjtRecord(ProfileDto.OutsideProjectUpdateReqDto outsideProject) {
 		this.pjtDesc = outsideProject.getPjtDesc();
 		this.pjtTech = outsideProject.getPjtTech();
 		this.pjtUserTech = outsideProject.getPjtUserTech();

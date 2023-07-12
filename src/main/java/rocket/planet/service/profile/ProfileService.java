@@ -8,11 +8,6 @@ import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.PjtRecordRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
-import rocket.planet.dto.profile.ProfileDto.OutsideProjectReqDto;
-import rocket.planet.dto.profile.ProfileDto.CertReqDto;
-import rocket.planet.dto.profile.ProfileDto.ProfileReqDto;
-import rocket.planet.dto.profile.ProfileDto.InsideProjectReqDto;
-import rocket.planet.dto.profile.ProfileDto.OrgReqDto;
 
 
 import java.util.List;
@@ -27,7 +22,7 @@ public class ProfileService {
     private final PjtRecordRepository pjtRecordRepository;
 
     @Transactional
-    public ProfileDto.ProfileReqDto getProfileDetailByUserNickName(String userNickName) {
+    public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
 
         Optional<Profile> profile = profileRepository.selectProfileByUserNickName(userNickName);
         return profile.map(profileD -> {
@@ -37,16 +32,16 @@ public class ProfileService {
             List<PjtRecord> extPjtRecordList = profileD.getExtPjtRecord();
             List<Certification> certList = profileD.getCertification();
 
-            List<ProfileDto.OrgReqDto> orgDtoList = orgList.stream()
-                    .map(org -> OrgReqDto.builder()
+            List<ProfileDto.OrgResDto> orgDtoList = orgList.stream()
+                    .map(org -> ProfileDto.OrgResDto.builder()
                             .orgStatus(org.isOrgStatus())
                             .deptName(org.getDepartment().getDeptName())
                             .teamName(org.getTeam().getTeamName())
                             .build())
                     .collect(Collectors.toList());
 
-            List<ProfileDto.InsideProjectReqDto> projectDtoList = projectList.stream()
-                    .map(project -> InsideProjectReqDto.builder()
+            List<ProfileDto.InsideProjectResDto> projectDtoList = projectList.stream()
+                    .map(project -> ProfileDto.InsideProjectResDto.builder()
                             .projectName(project.getProject().getProjectName())
                             .projectDesc(project.getProject().getProjectDesc())
                             .projectStartDt(project.getProject().getProjectStartDt())
@@ -54,14 +49,14 @@ public class ProfileService {
                             .build())
                     .collect(Collectors.toList());
 
-            List<ProfileDto.ProfileTechReqDto> profileTechDtoList = profileTechList.stream()
-                    .map(profileTech -> ProfileDto.ProfileTechReqDto.builder()
+            List<ProfileDto.ProfileTechResDto> profileTechDtoList = profileTechList.stream()
+                    .map(profileTech -> ProfileDto.ProfileTechResDto.builder()
                             .techName(profileTech.getTech().getTechName())
                             .build())
                     .collect(Collectors.toList());
 
-            List<ProfileDto.OutsideProjectReqDto> extPjtRecordDtoList = extPjtRecordList.stream()
-                    .map(extPjtRecord -> OutsideProjectReqDto.builder()
+            List<ProfileDto.OutsideProjectResDto> extPjtRecordDtoList = extPjtRecordList.stream()
+                    .map(extPjtRecord -> ProfileDto.OutsideProjectResDto.builder()
                             .pjtName(extPjtRecord.getPjtName())
                             .pjtDesc(extPjtRecord.getPjtDesc())
                             .pjtStartDt(extPjtRecord.getPjtStartDt())
@@ -71,8 +66,8 @@ public class ProfileService {
                             .build())
                     .collect(Collectors.toList());
 
-            List<ProfileDto.CertReqDto> certReqDtoList = certList.stream()
-                    .map(cert -> CertReqDto.builder()
+            List<ProfileDto.CertResDto> certReqDtoList = certList.stream()
+                    .map(cert -> ProfileDto.CertResDto.builder()
                             .certName(cert.getCertName())
                             .certType(cert.getCertType())
                             .certDt(cert.getCertDt())
@@ -82,7 +77,7 @@ public class ProfileService {
                             .build())
                     .collect(Collectors.toList());
 
-            return ProfileDto.ProfileReqDto.builder()
+            return ProfileDto.ProfileResDto.builder()
                     .userId(profileD.getUserId())
                     .userNickName(profileD.getUserNickName())
                     .org(orgDtoList)
@@ -102,8 +97,9 @@ public class ProfileService {
 
 
     @Transactional
-    public void addOusideProject(ProfileDto.OutsideProjectRegisterResDto registerResDto) {
+    public void addOusideProject(ProfileDto.OutsideProjectRegisterReqDto registerResDto) {
         Optional<Profile> profile = profileRepository.findByUserNickName(registerResDto.getUserNickName());
+//        Optional<PjtRecord> pjtRecord = pjtRecordRepository.findByPjtName()
         PjtRecord pjtRecord = PjtRecord.builder()
                 .profile(profile.get())
                 .pjtName(registerResDto.getPjtName())
@@ -118,10 +114,10 @@ public class ProfileService {
     }
 
     @Transactional
-    public void modifyOusideProject(ProfileDto.OutsideProjectUpdateResDto updateResDto) {
-        Optional<PjtRecord> updatePjt = pjtRecordRepository.findByPjtName(updateResDto.getPjtName());
+    public void modifyOusideProject(ProfileDto.OutsideProjectUpdateReqDto updateReqDto) {
+        Optional<PjtRecord> updatePjt = pjtRecordRepository.findByPjtName(updateReqDto.getPjtName());
         log.info("pjtRecord : {}", updatePjt);
-        updatePjt.get().updatePjtRecord(updateResDto);
+        updatePjt.get().updatePjtRecord(updateReqDto);
 
     }
     @Transactional
