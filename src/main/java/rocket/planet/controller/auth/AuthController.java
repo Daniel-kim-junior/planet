@@ -29,7 +29,7 @@ public class AuthController {
 
 	@PostMapping("/basic-profile-register")
 	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto) {
-		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfileAndAutoLogin(dto));
+		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfile(dto));
 	}
 
 	@PostMapping("/login")
@@ -38,7 +38,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<LoginResDto> reissue(@Valid @RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
+	public ResponseEntity<LoginResDto> reissue(@RequestHeader(AUTHORIZATION_HEADER) String bearerToken) {
 		return ResponseEntity.ok().body(authLoginAndJoinService.makeReissue(bearerToken));
 	}
 

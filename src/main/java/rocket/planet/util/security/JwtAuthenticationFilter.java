@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String jwt = resolveToken(request);
 
-		if (StringUtils.hasText(jwt)) {
+		if (StringUtils.hasText(jwt) && !request.getRequestURI().equals("/api/auth/reissue")) {
 			try {
 				Authentication jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
 				Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);

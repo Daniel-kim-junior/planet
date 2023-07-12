@@ -1,11 +1,11 @@
 package rocket.planet.controller.admin;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import rocket.planet.service.auth.TestService;
 
 @RestController
 @RequestMapping("/api")
@@ -13,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 public class TestController {
 	private final String AUTHORIZATION_HEADER = "Authorization";
 
-	@GetMapping("/admin/test")
-	public String test(@RequestHeader(AUTHORIZATION_HEADER) String token) {
+	private final TestService testService;
 
+	@GetMapping("/auth/test")
+	public String test() {
+		testService.test();
 		return "admin/test";
 	}
 }
