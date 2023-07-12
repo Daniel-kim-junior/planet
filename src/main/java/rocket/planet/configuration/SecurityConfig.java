@@ -59,11 +59,11 @@ public class SecurityConfig {
 			.and().sessionManagement().sessionCreationPolicy(STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/**").permitAll()
+			// .antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated();
-		http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBuilder
+		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
 			.authenticationProvider(
 				jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class);
 		http.exceptionHandling()
