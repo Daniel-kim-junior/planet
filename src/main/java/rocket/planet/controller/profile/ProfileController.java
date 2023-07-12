@@ -22,8 +22,8 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/{userNickName}")
-    public ResponseEntity<List<ProfileDto.ProfileReqDto>> profileDetails(@PathVariable("userNickName") String userNickName) {
-        List<ProfileDto.ProfileReqDto> profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
+    public ResponseEntity<ProfileDto.ProfileReqDto> profileDetails(@PathVariable("userNickName") String userNickName) {
+        ProfileDto.ProfileReqDto profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
         return ResponseEntity.ok().body(profileDetail);
     }
 

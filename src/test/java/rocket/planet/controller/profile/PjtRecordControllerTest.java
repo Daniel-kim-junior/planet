@@ -111,7 +111,7 @@ class PjtRecordControllerTest {
                 .pjtUserTech("백엔드 개발자")
                 .pjtTech("스프링, 자바, 스프링부트")
                 .build();
-        profileService.updateOusideProject(updateProject);
+        profileService.modifyOusideProject(updateProject);
         assertThat(pjtRecordRepository.findByPjtName("crewz"));
     }
     @Test
