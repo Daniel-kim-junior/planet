@@ -19,6 +19,8 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.profile.ProfileDto;
+
 // 수정함
 @Entity
 @Getter
@@ -35,7 +37,7 @@ public class Certification {
 	@JoinColumn(columnDefinition = "BINARY(16)", name = "profile_uid", nullable = false)
 	private Profile profile;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String certName;
 
 	@Column(nullable = false)
@@ -50,7 +52,7 @@ public class Certification {
 	@Column(nullable = false)
 	private String certType;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String certNumber;
 
 	@Builder
@@ -72,4 +74,11 @@ public class Certification {
 			+ certType + '\'' + ", 자격증 번호='" + certNumber + '\'' + '}';
 	}
 
+	public void updateCert(ProfileDto.CertUpdateResDto cert) {
+		this.certName = cert.getCertName();
+		this.certAgency = cert.getCertAgency();
+		this.certType = cert.getCertType();
+		this.certDt = cert.getCertDt();
+		this.certExpireDate = cert.getCertExpireDate();
+	}
 }
