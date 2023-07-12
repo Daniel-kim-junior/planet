@@ -17,7 +17,6 @@ import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
-import rocket.planet.dto.project.ProjectDeleteDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
@@ -99,10 +98,30 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public void deleteProject(ProjectDeleteDto projectDeleteDto) {
+	public void deleteProject(ProjectUpdateStatusDto projectDeleteDto) {
 		Optional<Project> project = projectRepository.findByProjectName(projectDeleteDto.getProjectName());
 		project.get().deleteProject(projectDeleteDto);
 
+	}
+
+	public boolean isInProject(String projectName, String userNickName) {
+		List<UserProject> projectList = userPjtRepository.findAllByProfile_userNickName(
+			userNickName);
+		log.info("result ===========> {}", projectList);
+		return projectList.stream().anyMatch(project -> project.getProject().getProjectName().equals(projectName));
+
+	}
+
+	@Transactional
+	public void requestClose(String projectName, String userNickName) {
+		if (isInProject(projectName, userNickName)) {
+			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
+				userNickName);
+			log.info("newUserProject => {}", newUserProject);
+			newUserProject.requestClose();
+		} else {
+			log.info("isInProject => {}", false);
+		}
 	}
 
 	// public List<ProjectSummaryDto> getProjectList(String teamName) {

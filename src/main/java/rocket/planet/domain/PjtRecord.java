@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.profile.ProfileDto;
 
 @Entity
 @Getter
@@ -49,13 +50,13 @@ public class PjtRecord {
 
 	@Column(name = "profile_pjt_tech", nullable = false)
 	private String pjtTech;
-	
+
 	@Column(name = "profile_pjt_user_tech", nullable = false)
 	private String pjtUserTech;
 
 	@Builder
 	public PjtRecord(Profile profile, String pjtName, String pjtDesc, LocalDate pjtStartDt, LocalDate pjtEndDt,
-		String pjtTech, String pjtUserTech) {
+					 String pjtTech, String pjtUserTech) {
 		this.profile = profile;
 		this.pjtName = pjtName;
 		this.pjtDesc = pjtDesc;
@@ -68,13 +69,23 @@ public class PjtRecord {
 	@Override
 	public String toString() {
 		return "프로젝트 사외 이력{" +
-			"프로필 uuid=" + id +
-			", 프로젝트 이름='" + pjtName + '\'' +
-			", 프로젝트 설명='" + pjtDesc + '\'' +
-			", 프로젝트 시작일=" + pjtStartDt +
-			", 프로젝트 종료일=" + pjtEndDt +
-			", 프로젝트 사용 기술='" + pjtTech + '\'' +
-			", 프로젝트에서 쓴 나의 기술='" + pjtUserTech + '\'' +
-			'}';
+				"프로필 uuid=" + id +
+				", 프로젝트 이름='" + pjtName + '\'' +
+				", 프로젝트 설명='" + pjtDesc + '\'' +
+				", 프로젝트 시작일=" + pjtStartDt +
+				", 프로젝트 종료일=" + pjtEndDt +
+				", 프로젝트 사용 기술='" + pjtTech + '\'' +
+				", 프로젝트에서 쓴 나의 기술='" + pjtUserTech + '\'' +
+				'}';
 	}
+
+	public void updatePjtRecord(ProfileDto.OutsideProjectUpdateReqDto outsideProject) {
+		this.pjtDesc = outsideProject.getPjtDesc();
+		this.pjtTech = outsideProject.getPjtTech();
+		this.pjtUserTech = outsideProject.getPjtUserTech();
+		this.pjtStartDt = outsideProject.getPjtStartDt();
+		this.pjtEndDt = outsideProject.getPjtEndDt();
+	}
+
+
 }
