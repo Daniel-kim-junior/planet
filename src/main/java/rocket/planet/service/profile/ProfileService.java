@@ -26,19 +26,21 @@ public class ProfileService {
 
         Optional<Profile> profile = profileRepository.selectProfileByUserNickName(userNickName);
         return profile.map(profileD -> {
-            List<Org> orgList = profileD.getOrg();
+            List<Org> orgList =  profileD.getOrg();
             List<UserProject> projectList = profileD.getUserProject();
             List<ProfileTech> profileTechList = profileD.getProfileTech();
             List<PjtRecord> extPjtRecordList = profileD.getExtPjtRecord();
             List<Certification> certList = profileD.getCertification();
 
-            List<ProfileDto.OrgResDto> orgDtoList = orgList.stream()
+            ProfileDto.OrgResDto orgDto = orgList.stream()
+                    .findFirst()
                     .map(org -> ProfileDto.OrgResDto.builder()
                             .orgStatus(org.isOrgStatus())
                             .deptName(org.getDepartment().getDeptName())
                             .teamName(org.getTeam().getTeamName())
                             .build())
-                    .collect(Collectors.toList());
+                    .orElse(null);
+
 
             List<ProfileDto.InsideProjectResDto> projectDtoList = projectList.stream()
                     .map(project -> ProfileDto.InsideProjectResDto.builder()
@@ -80,7 +82,7 @@ public class ProfileService {
             return ProfileDto.ProfileResDto.builder()
                     .userId(profileD.getUserId())
                     .userNickName(profileD.getUserNickName())
-                    .org(orgDtoList)
+                    .org(orgDto)
                     .userProject(projectDtoList)
                     .role(profileD.getRole().toString())
                     .profileDisplay(profileD.isProfileDisplay())
