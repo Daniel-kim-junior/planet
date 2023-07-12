@@ -25,7 +25,7 @@ public class ProfileDto {
         private LocalDate profileStartDate;
         private boolean profileAnnualStatus;
 
-        private List<OrgResDto> org;
+        private OrgResDto org;
         private List<InsideProjectResDto> userProject;
         private List<ProfileTechResDto> profileTech;
         private List<OutsideProjectResDto> extPjtRecord;
