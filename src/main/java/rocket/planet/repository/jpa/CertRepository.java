@@ -13,6 +13,4 @@ public interface CertRepository extends JpaRepository<Certification, UUID> {
     UUID findIdByCertNumber(String certNumber);
     Long deleteCertificationByCertNumber(String certNumber);
 
-    Optional<Certification> findByCertName(String certName);
-
 }

@@ -124,7 +124,6 @@ public class ProfileService {
     }
 
 
-
     @Transactional
     public void addOusideProject(ProfileDto.OutsideProjectRegisterReqDto registerResDto) {
         Optional<Profile> profile = profileRepository.findByUserNickName(registerResDto.getUserNickName());

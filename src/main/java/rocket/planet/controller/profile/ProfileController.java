@@ -16,14 +16,14 @@ import rocket.planet.service.profile.ProfileService;
 @Slf4j
 public class ProfileController {
     private final ProfileService profileService;
-    private final ProfileRepository profileRepository;
+
     @GetMapping("/{userNickName}")
     public ResponseEntity<ProfileDto.ProfileResDto> profileDetails(@PathVariable("userNickName") String userNickName) {
         ProfileDto.ProfileResDto profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
         return ResponseEntity.ok().body(profileDetail);
     }
 
-    @PatchMapping("{userNickName}")
+    @PatchMapping("/{userNickName}")
     public ResponseEntity<String> profileModify(@RequestBody ProfileDto.ProfileUpDateResDto profileUpDateResDto) {
         log.info("updateResDto : {}", profileUpDateResDto);
         profileService.modifyProfile(profileUpDateResDto);
