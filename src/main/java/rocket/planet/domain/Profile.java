@@ -133,7 +133,12 @@ public class Profile extends BaseTime {
 		this.profileStartDate = updateDto.getProfileStartDate();
 		this.profileBirthDt = updateDto.getProfileBirthDt();
 		this.profileCareer = updateDto.getProfileCareer();
-		this.profileDisplay = updateDto.isProfileDisplay();
-		this.profileAnnualStatus = updateDto.isProfileAnnualStatus();
 	}
+	public void updateDisplay(ProfileDto.ProfileDisplayUpDateResDto displayDto){
+		this.profileDisplay = displayDto.isProfileDisplay();
+	}
+	public void updateAnnual(ProfileDto.AnnualUpDateResDto annualDto){
+		this.profileAnnualStatus = annualDto.isProfileAnnualStatus();
+	}
+
 }

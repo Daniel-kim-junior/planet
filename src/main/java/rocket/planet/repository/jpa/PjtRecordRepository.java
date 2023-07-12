@@ -13,4 +13,5 @@ public interface PjtRecordRepository extends JpaRepository<PjtRecord, UUID> {
 
     long deletePjtRecordByPjtName(String pjtName);
 
+
 }

@@ -8,8 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import rocket.planet.domain.Certification;
  
 public interface CertRepository extends JpaRepository<Certification, UUID> {
+
     Optional<Certification> findByCertNumber(String certNumber);
     UUID findIdByCertNumber(String certNumber);
-    Long deleteCertificationByCertNumber(String certName);
+    Long deleteCertificationByCertNumber(String certNumber);
+
+    Optional<Certification> findByCertName(String certName);
 
 }

@@ -111,7 +111,15 @@ class PjtRecordControllerTest {
                 .pjtUserTech("백엔드 개발자")
                 .pjtTech("스프링, 자바, 스프링부트")
                 .build();
+<<<<<<< Updated upstream
         profileService.modifyOusideProject(updateProject);
+=======
+<<<<<<< Updated upstream
+        profileService.updateOusideProject(updateProject);
+=======
+        profileService.modifyOusideProject(updateProject);
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         assertThat(pjtRecordRepository.findByPjtName("crewz"));
     }
     @Test

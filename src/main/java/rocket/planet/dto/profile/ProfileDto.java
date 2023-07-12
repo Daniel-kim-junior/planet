@@ -12,8 +12,6 @@ import java.util.UUID;
 
 public class ProfileDto {
 
-    private final String AUTHORIZATION_HEADER = "Authorization";
-
     @Getter
     @Builder
     public static class ProfileResDto {
@@ -42,7 +40,18 @@ public class ProfileDto {
         private LocalDate profileBirthDt;
         private LocalDate profileStartDate;
         private boolean profileAnnualStatus;
-
+    }
+    @Getter
+    @Builder
+    public static class ProfileDisplayUpDateResDto {
+        private String userNickName;
+        private boolean profileDisplay;
+    }
+    @Getter
+    @Builder
+    public static class AnnualUpDateResDto {
+        private String userNickName;
+        private boolean profileAnnualStatus;
     }
 
     @Getter

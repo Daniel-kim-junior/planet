@@ -101,11 +101,33 @@ public class ProfileService {
         }).orElse(null);
     }
 
+    public void modifyProfile(ProfileDto.ProfileUpDateResDto profileUpDateResDto) {
+        Optional<Profile> updateProfile = profileRepository.findByUserNickName(profileUpDateResDto.getUserNickName());
+        updateProfile.ifPresent(profile -> {
+            updateProfile.get().updateProfile(profileUpDateResDto);
+            profileRepository.save(profile);
+        });
+    }
+    public void modifyProfileDisplay(ProfileDto.ProfileDisplayUpDateResDto displayUpDateResDto) {
+        Optional<Profile> updateDisplayStatus = profileRepository.findByUserNickName(displayUpDateResDto.getUserNickName());
+        updateDisplayStatus.ifPresent(display -> {
+            display.updateDisplay(displayUpDateResDto);
+            profileRepository.save(display);
+        });
+    }
+    public void modifyAnnualStatus(ProfileDto.AnnualUpDateResDto annualUpDateResDto) {
+        Optional<Profile> updateDisplayStatus = profileRepository.findByUserNickName(annualUpDateResDto.getUserNickName());
+        updateDisplayStatus.ifPresent(annual -> {
+            annual.updateAnnual(annualUpDateResDto);
+            profileRepository.save(annual);
+        });
+    }
+
+
 
     @Transactional
     public void addOusideProject(ProfileDto.OutsideProjectRegisterReqDto registerResDto) {
         Optional<Profile> profile = profileRepository.findByUserNickName(registerResDto.getUserNickName());
-//        Optional<PjtRecord> pjtRecord = pjtRecordRepository.findByPjtName()
         PjtRecord pjtRecord = PjtRecord.builder()
                 .profile(profile.get())
                 .pjtName(registerResDto.getPjtName())
@@ -130,7 +152,6 @@ public class ProfileService {
     public void removeOutsideProject(String pjtName) {
         pjtRecordRepository.deletePjtRecordByPjtName(pjtName);
     }
-
 
     @Transactional
     public void addCertification(ProfileDto.CertRegisterResDto certRegisterResDto) {
@@ -157,5 +178,6 @@ public class ProfileService {
             certRepository.deleteCertificationByCertNumber(certNumber);
 
     }
+
 }
 

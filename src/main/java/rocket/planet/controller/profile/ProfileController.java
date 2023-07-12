@@ -1,20 +1,14 @@
 package rocket.planet.controller.profile;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import rocket.planet.repository.jpa.CertRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
-import rocket.planet.service.profile.ProfileService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import rocket.planet.dto.profile.ProfileDto;
 
-import java.util.UUID;
+import rocket.planet.service.profile.ProfileService;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -27,6 +21,31 @@ public class ProfileController {
     public ResponseEntity<ProfileDto.ProfileResDto> profileDetails(@PathVariable("userNickName") String userNickName) {
         ProfileDto.ProfileResDto profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
         return ResponseEntity.ok().body(profileDetail);
+    }
+
+    @PatchMapping("{userNickName}")
+    public ResponseEntity<String> profileModify(@RequestBody ProfileDto.ProfileUpDateResDto profileUpDateResDto) {
+        log.info("updateResDto : {}", profileUpDateResDto);
+        profileService.modifyProfile(profileUpDateResDto);
+        return ResponseEntity.ok().body(profileUpDateResDto.getUserNickName() + "님의 프로필 수정이 완료되었습니다.");
+    }
+    @PatchMapping("/display/{userNickName}")
+    public ResponseEntity<String> profileDisplayModify(@RequestBody ProfileDto.ProfileDisplayUpDateResDto displayUpDateResDto) {
+        profileService.modifyProfileDisplay(displayUpDateResDto);
+        if (displayUpDateResDto.isProfileDisplay()) {
+            return ResponseEntity.ok().body(displayUpDateResDto.getUserNickName() + "님의 프로필이 공개로 변경되었습니다.");
+        } else {
+            return ResponseEntity.ok().body(displayUpDateResDto.getUserNickName() + "님의 프로필이 비공개로 변경되었습니다.");
+        }
+    }
+    @PatchMapping("/annual/{userNickName}")
+    public ResponseEntity<String> profileAnnualModify(@RequestBody ProfileDto.AnnualUpDateResDto annualUpDateResDto) {
+        profileService.modifyAnnualStatus(annualUpDateResDto);
+        if (annualUpDateResDto.isProfileAnnualStatus()) {
+            return ResponseEntity.ok().body(annualUpDateResDto.getUserNickName() + "님의 상태가 휴가중으로 변경되었습니다.");
+        } else {
+            return ResponseEntity.ok().body(annualUpDateResDto.getUserNickName() + "님의 상태가 출근으로 변경되었습니다.");
+        }
     }
 
     @PostMapping("/outside")
@@ -60,9 +79,11 @@ public class ProfileController {
         return ResponseEntity.ok().body("자격증 수정이 완료되었습니다.");
     }
     @DeleteMapping("/certs")
+
     public ResponseEntity<String> certRemove(String certNumber) {
         profileService.removeCertification(certNumber);
         return ResponseEntity.ok().body("자격증 번호가" + certNumber + "인 자격증을 삭제했습니다.");
+
     }
 
 }
