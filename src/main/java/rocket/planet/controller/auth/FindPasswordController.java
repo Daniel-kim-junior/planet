@@ -23,4 +23,5 @@ public class FindPasswordController {
 	public ResponseEntity<String> passwordModify(@RequestBody @Valid PasswordModifyReqDto dto) {
 		return ResponseEntity.ok().body(authFindPasswordService.modifyPassword(dto));
 	}
+
 }

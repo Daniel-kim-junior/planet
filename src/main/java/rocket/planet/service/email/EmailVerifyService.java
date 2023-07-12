@@ -4,15 +4,15 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
+import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.redis.EmailConfirm;
 import rocket.planet.domain.redis.EmailToken;
 import rocket.planet.repository.jpa.UserRepository;
@@ -30,6 +30,7 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailVerifyService {
 	private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String EMAIL_TITLE = "ROCKET PLANET 회원가입 인증번호입니다.";
@@ -48,12 +49,10 @@ public class EmailVerifyService {
 
 	private EmailToken token;
 
-	@Async
+	@Async("customAsyncExecutor")
 	public CompletableFuture<String> saveLimitTimeAndSendEmail(String email) {
-		boolean existUser = userRepository.findAll()
-			.stream()
-			.anyMatch(user -> StringUtils.pathEquals(user.getUserId(), email));
-		if (!existUser && !email.equals("test20412041@gmail.com")) {
+		boolean existUser = userRepository.findByUserId(email).isPresent();
+		if (existUser) {
 			CompletableFuture<String> future = new CompletableFuture<>();
 			future.completeExceptionally(new NoSuchEmailException());
 			return future;
@@ -66,8 +65,7 @@ public class EmailVerifyService {
 		return future;
 	}
 
-	public String saveRedisToken(String email, String generatedRandomString) throws
-		JsonProcessingException {
+	public String saveRedisToken(String email, String generatedRandomString) throws RedisException {
 		token = EmailToken.builder()
 			.email(email)
 			.token(generatedRandomString)
@@ -76,7 +74,7 @@ public class EmailVerifyService {
 		return SEND_EMAIL_MESSAGE;
 	}
 
-	public void sendMail(String email, String sendEmailToken) {
+	public void sendMail(String email, String sendEmailToken) throws MailSendException {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(email);
 		message.setSubject(EMAIL_TITLE);
@@ -84,7 +82,7 @@ public class EmailVerifyService {
 		mailSender.send(message);
 	}
 
-	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken) {
+	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken) throws RedisException {
 
 		Optional<EmailToken> findToken = emailTokenRepository.findById(email);
 		if (findToken.isPresent() && findToken.get().getToken().equals(reqToken)) {
