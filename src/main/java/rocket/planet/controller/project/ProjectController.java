@@ -33,11 +33,10 @@ public class ProjectController {
 	private final AuthorityService authorityService;
 
 	@GetMapping("/projects/{userNickName}")
-	public ResponseEntity<String> userNickName(@PathVariable("userNickName") String userNickName) {
+	public ResponseEntity<Boolean> userNickName(@PathVariable("userNickName") String userNickName) {
 		boolean isPresent = projectService.checkUser(userNickName);
 
-		return ResponseEntity.ok()
-			.body(isPresent ? userNickName + "를 팀원으로 등록하였습니다." : userNickName + "는 팀원으로 등록할 수 없습니다.");
+		return ResponseEntity.ok().body(isPresent);
 	}
 
 	@PostMapping("/projects")
