@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.profile.ProfileDto;
 
 @Entity
 @Getter
@@ -94,6 +95,10 @@ public class UserProject {
 
 	public void requestClose() {
 		this.userPjtCloseApply = true;
+	}
+
+	public void updateUserPjtDesc(ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
+		this.userPjtDesc = insidePjtReqDto.getProjectDesc();
 	}
 
 }
