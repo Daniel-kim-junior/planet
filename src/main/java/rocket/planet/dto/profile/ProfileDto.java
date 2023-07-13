@@ -30,6 +30,7 @@ public class ProfileDto {
         private List<OutsideProjectResDto> extPjtRecord;
         private List<CertResDto> certification;
     }
+
     @Getter
     @Builder
     public static class ProfileUpDateResDto {
@@ -41,12 +42,14 @@ public class ProfileDto {
         private LocalDate profileStartDate;
         private boolean profileAnnualStatus;
     }
+
     @Getter
     @Builder
     public static class ProfileDisplayUpDateResDto {
         private String userNickName;
         private boolean profileDisplay;
     }
+
     @Getter
     @Builder
     public static class AnnualUpDateResDto {
@@ -88,6 +91,7 @@ public class ProfileDto {
         private String deptName;
         private String teamName;
     }
+
     @Getter
     @Builder
     public static class OutsideProjectResDto {
@@ -160,8 +164,19 @@ public class ProfileDto {
         private String certNumber;
     }
 
-
-
-
-
+    @Getter
+    @Builder
+    public static class TechRegisterReqDto {
+        private String userNickName;
+        private String techName;
+    }
+    @Getter
+    @Builder
+    public static class TechDeleteReqDto {
+        private String userNickName;
+        private String techName;
+    }
 }
+
+
+

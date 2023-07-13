@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
-import rocket.planet.repository.jpa.CertRepository;
-import rocket.planet.repository.jpa.PjtRecordRepository;
-import rocket.planet.repository.jpa.ProfileRepository;
+import rocket.planet.repository.jpa.*;
 import rocket.planet.util.security.UserDetailsImpl;
 
 
@@ -24,6 +22,8 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final PjtRecordRepository pjtRecordRepository;
     private final CertRepository certRepository;
+    private final TechRepository techRepository;
+    private final PfTechRepository pfTechRepository;
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
@@ -167,14 +167,30 @@ public class ProfileService {
         certRepository.save(cert);
 
     }
-    @Transactional
-    public void modifyCertification(ProfileDto.CertUpdateResDto certUpdateResDto) {
-            Optional<Certification> updateCert = certRepository.findByCertNumber(certUpdateResDto.getCertNumber());
-            updateCert.get().updateCert(certUpdateResDto);
-    }
+
     @Transactional
     public void removeCertification(ProfileDto.CertDeleteReqDto certDeleteReqDto) {
             certRepository.deleteCertificationByCertNumber(certDeleteReqDto.getCertNumber());
+    }
+
+    public boolean checkTech(String techName){
+        return techRepository.findByTechNameIgnoreCase(techName).isPresent();
+    }
+
+    @Transactional
+    public void addUserTech(ProfileDto.TechRegisterReqDto techReqDto) {
+        Optional<Profile> userNickName = profileRepository.findByUserNickName(techReqDto.getUserNickName());
+        Optional<Tech> techName = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName());
+        ProfileTech userTech = ProfileTech.builder()
+                .profile(userNickName.get())
+                .tech(techName.get())
+                .build();
+        pfTechRepository.save(userTech);
+    }
+
+    @Transactional
+    public void removeUserTech(ProfileDto.TechDeleteReqDto techDeleteReqDto) {
+        pfTechRepository.deleteByTech_TechNameAndProfile_UserNickName(techDeleteReqDto.getUserNickName(),techDeleteReqDto.getTechName());
     }
 
 }

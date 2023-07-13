@@ -106,7 +106,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(lang17);
         Tech lang18 = Tech.builder()
-                .techName("Objective-C")
+                .techName("ObjectiveC")
                 .techCategory("Language")
                 .build();
         techRepository.saveAndFlush(lang18);

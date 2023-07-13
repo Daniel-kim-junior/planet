@@ -93,19 +93,6 @@ class CertificationControllerTest {
 
     @Test
     @Transactional
-    void 자격증_수정_테스트() {
-        Profile crew = profileRepository.findByUserNickName("crew").get();
-        ProfileDto.CertUpdateResDto updateCert = ProfileDto.CertUpdateResDto.builder()
-                .userNickName(crew.getUserNickName())
-                .certDt(LocalDate.of(2022,6,8))
-                .certType("기술")
-                .certNumber("2835820")
-                .certName("특정기술")
-                .build();
-        profileService.modifyCertification(updateCert);
-    }
-    @Test
-    @Transactional
     void 자격증_삭제_테스트() {
         ProfileDto.CertDeleteReqDto certDeleteReqDto = ProfileDto.CertDeleteReqDto.builder()
                 .certNumber("2835820")
