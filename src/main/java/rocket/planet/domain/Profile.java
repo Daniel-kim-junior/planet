@@ -1,6 +1,7 @@
 package rocket.planet.domain;
 
 import static lombok.AccessLevel.*;
+import static rocket.planet.dto.profile.ProfileDto.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import rocket.planet.dto.auth.AuthDto.BasicInputReqDto;
-import rocket.planet.dto.profile.ProfileDto;
 
 @Entity
 @Getter
@@ -128,17 +128,24 @@ public class Profile extends BaseTime {
 			'}';
 	}
 
-	public void updateProfile(ProfileDto.ProfileUpDateResDto updateDto) {
+	public void updateProfile(ProfileUpDateResDto updateDto) {
 		this.userName = updateDto.getUserName();
 		this.profileStartDate = updateDto.getProfileStartDate();
 		this.profileBirthDt = updateDto.getProfileBirthDt();
 		this.profileCareer = updateDto.getProfileCareer();
 	}
-	public void updateDisplay(ProfileDto.ProfileDisplayUpDateResDto displayDto){
+
+	public void updateDisplay(ProfileDisplayUpDateResDto displayDto) {
 		this.profileDisplay = displayDto.isProfileDisplay();
 	}
-	public void updateAnnual(ProfileDto.AnnualUpDateResDto annualDto){
+
+	public void updateAnnual(AnnualUpDateResDto annualDto) {
 		this.profileAnnualStatus = annualDto.isProfileAnnualStatus();
+	}
+
+	public void updateRole(String role) {
+		this.role = Role.valueOf(role);
+
 	}
 
 }

@@ -33,9 +33,7 @@ public class TeamService {
 
 		// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
 		Optional<Org> organization = orgRepository.findAllByTeam_TeamName(teamName).stream().findFirst();
-		log.info("organization==========> {}", organization);
 		List<Profile> teamMemberProfileList = profileRepository.findByOrg(organization);
-		log.info("teamMemberProfileList==========> {}", teamMemberProfileList);
 
 		// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
 		for (Profile teamMember : teamMemberProfileList) {

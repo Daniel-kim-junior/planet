@@ -209,7 +209,6 @@ class ProjectControllerTest {
 	void 프로젝트_목록_조회_테스트() {
 		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트팩토리");
 
-		// projectService.requestClose(projectName, userNickName);
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 
 		for (ProjectSummaryResDto project : projectList)
