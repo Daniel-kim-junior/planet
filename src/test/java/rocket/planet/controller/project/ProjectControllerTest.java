@@ -18,6 +18,7 @@ import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
+import rocket.planet.dto.admin.AdminDto;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
@@ -113,8 +114,12 @@ class ProjectControllerTest {
 		projectService.registerMemberToProject(project1, newProject);
 
 		// 프로젝트 리더 등록
-		ProfileAuthority newPfAuth = authorityService.addAuthority(newProject.getId(), AuthType.PROJECT,
-			project1.getUserNickName(), project1.getProjectLeader());
+		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
+			.authType(AuthType.PROJECT)
+			.authTargetId(newProject.getId())
+			.authorizerNickName(project1.getUserNickName())
+			.authNickName(project1.getProjectLeader())
+			.build());
 
 		// projectService.registerProject(project2);
 		// projectService.registerProject(project3);
