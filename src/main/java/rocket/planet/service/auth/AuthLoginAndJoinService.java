@@ -30,6 +30,7 @@ import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
 import rocket.planet.domain.redis.EmailConfirm;
+import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.domain.redis.RedisCacheAuth;
@@ -230,9 +231,9 @@ public class AuthLoginAndJoinService {
 		String authority;
 
 		if (Objects.isNull(user.getProfile())) {
-			authority = Role.CREW.name();
+			authority = "ROLE_" + Role.CREW.name();
 		} else {
-			authority = user.getProfile().getRole().name();
+			authority = "ROLE_" + user.getProfile().getRole().name();
 		}
 		return getResponseDtoByUserData(user, userName, authority);
 	}
@@ -450,22 +451,26 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public LoginResDto checkJoin(JoinReqDto dto) throws Exception {
-		emailConfirmRepository.findById(dto.getId())
+		EmailConfirm emailConfirm = emailConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
+
+		if (emailConfirm instanceof EmailJoinConfirm) {
+			emailConfirmRepository.delete(emailConfirm);
+		} else {
+			throw new NoValidEmailTokenException();
+		}
+
 		userRepository.findByUserId(dto.getId())
 			.ifPresent(user -> {
 				throw new AlreadyExistsIdException();
 			});
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
-		saveLastLoginDataAndDeleteConfirmDataInRedis(dto);
+		saveLastLoginDataInRedis(dto);
 		return completeLogin(saveUser);
 	}
 
-	private void saveLastLoginDataAndDeleteConfirmDataInRedis(JoinReqDto dto) throws RedisException {
+	private void saveLastLoginDataInRedis(JoinReqDto dto) throws RedisException {
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
-		EmailConfirm emailConfirm = emailConfirmRepository.findById(dto.getId())
-			.orElseThrow(() -> new NoValidEmailTokenException());
-		emailConfirmRepository.delete(emailConfirm);
 	}
 
 	/**

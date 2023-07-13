@@ -59,8 +59,9 @@ public class SecurityConfig {
 			.and().sessionManagement().sessionCreationPolicy(STATELESS)
 			.and()
 			.authorizeRequests()
-			 .antMatchers("/**").permitAll()
+			// .antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
+			.antMatchers("/api/user/**").hasRole("ADMIN")
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated();
 		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
