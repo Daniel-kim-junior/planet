@@ -91,14 +91,14 @@ public class AuthorityService {
 		if (adminAuthModifyReqDto.getRole().equals("PILOT")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
-				.authorizerNickName("admin")
+				.authorizerNickName("admin" + authorizerEmail)
 				.authType(AuthType.TEAM)
 				.authTargetId(team.getId())
 				.build());
 		} else if (adminAuthModifyReqDto.getRole().equals("CAPTAIN")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
-				.authorizerNickName("admin")
+				.authorizerNickName("admin" + authorizerEmail)
 				.authType(AuthType.DEPARTMENT)
 				.authTargetId(department.getId())
 				.build());

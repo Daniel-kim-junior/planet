@@ -50,6 +50,8 @@ class ProjectControllerTest {
 	@Autowired
 	private PfAuthRepository pfAuthRepository;
 
+	final String authorizerEmail = "@gmail.com";
+
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
 	@Test
@@ -117,7 +119,7 @@ class ProjectControllerTest {
 		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
 			.authType(AuthType.PROJECT)
 			.authTargetId(newProject.getId())
-			.authorizerNickName(project1.getUserNickName())
+			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
 			.authNickName(project1.getProjectLeader())
 			.build());
 
