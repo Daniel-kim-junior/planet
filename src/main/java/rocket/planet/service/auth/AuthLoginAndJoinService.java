@@ -29,7 +29,6 @@ import rocket.planet.domain.Profile;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
-import rocket.planet.domain.redis.EmailConfirm;
 import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
@@ -44,7 +43,7 @@ import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.AuthChangeRepository;
-import rocket.planet.repository.redis.EmailConfirmRepository;
+import rocket.planet.repository.redis.EmailJoinConfirmRepository;
 import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
@@ -68,7 +67,7 @@ public class AuthLoginAndJoinService {
 
 	private final LastLoginRepository lastLoginRepository;
 
-	private final EmailConfirmRepository emailConfirmRepository;
+	private final EmailJoinConfirmRepository emailJoinConfirmRepository;
 
 	private final TeamRepository teamRepository;
 
@@ -297,7 +296,7 @@ public class AuthLoginAndJoinService {
 	private LoginResDto makeLoginResBuilder(User user, String userName, String authority) throws
 		Exception {
 		return LoginResDto.builder()
-			.authRole(authority)
+			.authRole(roleIssue(authority))
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.userNickName(idToUserNickName(userName))
 			.grantType(GRANT_TYPE)
@@ -320,7 +319,7 @@ public class AuthLoginAndJoinService {
 
 		AuthOrg authOrg = getProfileToAuthOrg(profile);
 		return LoginResDto.builder()
-			.authRole(authority)
+			.authRole(roleIssue(authority))
 			.authOrg(authOrg)
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.userNickName(idToUserNickName(userName))
@@ -403,15 +402,30 @@ public class AuthLoginAndJoinService {
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) throws
 		Exception {
 		Optional<User> user = userRepository.findByUserId(claims.getSubject());
+		String roles = roleIssue(claims.get("roles").toString());
 
 		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
 			.authOrg(getProfileToAuthOrg(user.get().getProfile()))
-			.authRole(claims.get("roles").toString())
+			.authRole(roleIssue(roles))
 			.userNickName(idToUserNickName(claims.getSubject()))
 			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString()))
 			.refreshToken(refreshToken)
 			.build();
+	}
+
+	private String roleIssue(String role) {
+		String issueRole = role;
+
+		if (role.contains("[")) {
+			issueRole = role.replace("[", "").replace("]", "");
+		}
+
+		if (role.contains("ROLE_")) {
+			issueRole = role.replace("ROLE_", "");
+		}
+
+		return issueRole;
 	}
 
 	/**
@@ -451,14 +465,10 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public LoginResDto checkJoin(JoinReqDto dto) throws Exception {
-		EmailConfirm emailConfirm = emailConfirmRepository.findById(dto.getId())
+		EmailJoinConfirm emailConfirm = emailJoinConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
 
-		if (emailConfirm instanceof EmailJoinConfirm) {
-			emailConfirmRepository.delete(emailConfirm);
-		} else {
-			throw new NoValidEmailTokenException();
-		}
+		emailJoinConfirmRepository.delete(emailConfirm);
 
 		userRepository.findByUserId(dto.getId())
 			.ifPresent(user -> {
@@ -530,7 +540,7 @@ public class AuthLoginAndJoinService {
 				.deptName(org.getDepartment().getDeptName())
 				.companyName(org.getCompany().getCompanyName()).build())
 			.userNickName(idToUserNickName(id))
-			.authRole(profile.getRole().name())
+			.authRole(roleIssue(profile.getRole().name()))
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.build();
 	}

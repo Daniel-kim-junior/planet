@@ -92,8 +92,13 @@ public class ProfileController {
     @DeleteMapping("/tech")
     public ResponseEntity<String> userProfileTechRemove(@RequestBody ProfileDto.TechDeleteReqDto techDeleteReqDto) {
         profileService.removeUserTech(techDeleteReqDto);
-        return ResponseEntity.ok().body(techDeleteReqDto.getUserNickName() + "님의 " + techDeleteReqDto.getTechName() + "기술을 삭제하였습니다.");
+        return ResponseEntity.ok().body(techDeleteReqDto.getUserNickName() + "님의 " + techDeleteReqDto.getTechName() + " 기술을 삭제하였습니다.");
 
+    }
+    @PatchMapping("/inside")
+    public ResponseEntity<String> userInsidePjtModify(@RequestBody ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
+        profileService.modifyUserInsideProject(insidePjtReqDto);
+        return ResponseEntity.ok().body(insidePjtReqDto.getProjectName()+ "님의 " + insidePjtReqDto.getProjectName() + " 프로젝트를 상세이력을 수정하였습니다.");
     }
 
 

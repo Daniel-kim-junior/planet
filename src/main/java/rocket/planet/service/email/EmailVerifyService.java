@@ -1,6 +1,5 @@
 package rocket.planet.service.email;
 
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
@@ -9,6 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import io.lettuce.core.RedisException;
@@ -20,8 +20,10 @@ import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.EmailJoinToken;
 import rocket.planet.domain.redis.EmailToken;
 import rocket.planet.repository.jpa.UserRepository;
-import rocket.planet.repository.redis.EmailConfirmRepository;
-import rocket.planet.repository.redis.EmailTokenRepository;
+import rocket.planet.repository.redis.EmailFindConfirmRepository;
+import rocket.planet.repository.redis.EmailFindTokenRepository;
+import rocket.planet.repository.redis.EmailJoinConfirmRepository;
+import rocket.planet.repository.redis.EmailJoinTokenRepository;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 
@@ -47,9 +49,13 @@ public class EmailVerifyService {
 	private final UserRepository userRepository;
 	private final JavaMailSender mailSender;
 
-	private final EmailTokenRepository emailTokenRepository;
+	private final EmailJoinTokenRepository emailJoinTokenRepository;
 
-	private final EmailConfirmRepository emailConfirmRepository;
+	private final EmailJoinConfirmRepository emailJoinConfirmRepository;
+
+	private final EmailFindTokenRepository emailFindTokenRepository;
+
+	private final EmailFindConfirmRepository emailFindConfirmRepository;
 
 	private EmailToken token;
 
@@ -75,13 +81,14 @@ public class EmailVerifyService {
 				.email(email)
 				.token(generatedRandomString)
 				.build();
+			emailJoinTokenRepository.save((EmailJoinToken)token);
 		} else if (StringUtils.pathEquals(type, "find")) {
 			token = EmailFindToken.builder()
 				.email(email)
 				.token(generatedRandomString)
 				.build();
+			emailFindTokenRepository.save((EmailFindToken)token);
 		}
-		emailTokenRepository.save(token);
 		return SEND_EMAIL_MESSAGE;
 	}
 
@@ -93,27 +100,28 @@ public class EmailVerifyService {
 		mailSender.send(message);
 	}
 
+	@Transactional
 	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken, String type) throws RedisException {
 
-		Optional<EmailToken> findToken = emailTokenRepository.findById(email);
-		if (findToken.isPresent()) {
-			if (StringUtils.pathEquals(findToken.get().getToken(), reqToken)) {
-				emailTokenRepository.delete(findToken.get());
-				if (StringUtils.pathEquals(type, "join")) {
-					emailConfirmRepository.save(EmailJoinConfirm
-						.builder()
-						.email(email)
-						.build());
-				} else if (StringUtils.pathEquals(type, "find")) {
-					emailConfirmRepository.save(EmailFindConfirm
-						.builder()
-						.email(email)
-						.build());
-				}
-				return EMAIL_CONFIRM_TITLE;
+		if (StringUtils.pathEquals(type, "find")) {
+			EmailFindToken emailFindToken = emailFindTokenRepository.findById(email)
+				.orElseThrow(NoValidEmailTokenException::new);
+			if (StringUtils.pathEquals(emailFindToken.getToken(), reqToken)) {
+				emailFindConfirmRepository.save(EmailFindConfirm.builder()
+					.email(email).build());
+				emailFindTokenRepository.delete(emailFindToken);
+			}
+		} else if (StringUtils.pathEquals(type, "join")) {
+			EmailJoinToken emailJoinToken = emailJoinTokenRepository.findById(email)
+				.orElseThrow(NoValidEmailTokenException::new);
+			if (StringUtils.pathEquals(token.getToken(), reqToken)) {
+				emailJoinConfirmRepository.save(EmailJoinConfirm.builder()
+					.email(email).build());
+				emailJoinTokenRepository.delete(emailJoinToken);
+
 			}
 		}
-		throw new NoValidEmailTokenException();
+		return EMAIL_CONFIRM_TITLE;
 	}
 
 	public String makeRandomString(int length) {
