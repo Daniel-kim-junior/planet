@@ -74,11 +74,5 @@ public class Certification {
 			+ certType + '\'' + ", 자격증 번호='" + certNumber + '\'' + '}';
 	}
 
-	public void updateCert(ProfileDto.CertUpdateResDto cert) {
-		this.certName = cert.getCertName();
-		this.certAgency = cert.getCertAgency();
-		this.certType = cert.getCertType();
-		this.certDt = cert.getCertDt();
-		this.certExpireDate = cert.getCertExpireDate();
-	}
+
 }

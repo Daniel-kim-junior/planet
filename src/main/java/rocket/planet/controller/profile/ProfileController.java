@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.domain.ProfileTech;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.dto.profile.ProfileDto;
 
 import rocket.planet.service.profile.ProfileService;
+
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -71,17 +73,28 @@ public class ProfileController {
         profileService.addCertification(certRegisterResDto);
         return ResponseEntity.ok().body("자격증 생성이 완료되었습니다.");
     }
-
-    @PatchMapping("/certs")
-    public ResponseEntity<String> certModify(@RequestBody ProfileDto.CertUpdateResDto certUpdateResDto) {
-        log.info("updateResDto : {}", certUpdateResDto);
-        profileService.modifyCertification(certUpdateResDto);
-        return ResponseEntity.ok().body("자격증 수정이 완료되었습니다.");
-    }
     @DeleteMapping("/certs")
     public ResponseEntity<String> certRemove(@RequestBody ProfileDto.CertDeleteReqDto certDeleteReqDto) {
         profileService.removeCertification(certDeleteReqDto);
         return ResponseEntity.ok().body("자격증 번호가" + certDeleteReqDto.getCertNumber() + "인 자격증을 삭제했습니다.");
     }
+
+    @PostMapping("/tech")
+    public ResponseEntity<String> userProfileTechAdd(@RequestBody ProfileDto.TechRegisterReqDto techReqDto) {
+        boolean isPresentTech = profileService.checkTech(techReqDto.getTechName());
+        if (isPresentTech) {
+            profileService.addUserTech(techReqDto);
+            return ResponseEntity.ok().body(techReqDto.getUserNickName() + "님의 프로필에 " + techReqDto.getTechName() + "기술을 등록하였습니다.");
+        } else {
+                return ResponseEntity.ok().body(techReqDto.getTechName() + "은 등록할 수 없는 기술입니다.");
+            }
+        }
+    @DeleteMapping("/tech")
+    public ResponseEntity<String> userProfileTechRemove(@RequestBody ProfileDto.TechDeleteReqDto techDeleteReqDto) {
+        profileService.removeUserTech(techDeleteReqDto);
+        return ResponseEntity.ok().body(techDeleteReqDto.getUserNickName() + "님의 " + techDeleteReqDto.getTechName() + "기술을 삭제하였습니다.");
+
+    }
+
 
 }
