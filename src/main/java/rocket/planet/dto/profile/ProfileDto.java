@@ -79,8 +79,8 @@ public class ProfileDto {
     public static class InsideProjectResDto {
         private String projectName;
         private String projectDesc;
-        private LocalDate projectStartDt;
-        private LocalDate projectEndDt;
+        private LocalDate userPjtJoinDt;
+        private LocalDate userPjtCloseDt;
     }
 
     @Getter
@@ -175,6 +175,14 @@ public class ProfileDto {
     public static class TechDeleteReqDto {
         private String userNickName;
         private String techName;
+    }
+
+    @Getter
+    @Builder
+    public static class insideProjectUpdateReqDto {
+        private String userNickName;
+        private String projectName;
+        private String projectDesc;
     }
 }
 

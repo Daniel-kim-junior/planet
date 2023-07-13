@@ -24,6 +24,7 @@ public class ProfileService {
     private final CertRepository certRepository;
     private final TechRepository techRepository;
     private final PfTechRepository pfTechRepository;
+    private final UserPjtRepository userPjtRepository;
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
@@ -50,8 +51,8 @@ public class ProfileService {
                     .map(project -> ProfileDto.InsideProjectResDto.builder()
                             .projectName(project.getProject().getProjectName())
                             .projectDesc(project.getProject().getProjectDesc())
-                            .projectStartDt(project.getProject().getProjectStartDt())
-                            .projectEndDt(project.getProject().getProjectEndDt())
+                            .userPjtJoinDt(project.getUserPjtJoinDt())
+                            .userPjtCloseDt(project.getUserPjtCloseDt())
                             .build())
                     .collect(Collectors.toList());
 
@@ -191,6 +192,12 @@ public class ProfileService {
     @Transactional
     public void removeUserTech(ProfileDto.TechDeleteReqDto techDeleteReqDto) {
         pfTechRepository.deleteByTech_TechNameAndProfile_UserNickName(techDeleteReqDto.getUserNickName(),techDeleteReqDto.getTechName());
+    }
+
+    @Transactional
+    public void modifyUserInsideProject(ProfileDto.insideProjectUpdateReqDto insidePjtUpdateReqDto) {
+        Optional<UserProject> userProject = userPjtRepository.findByProject_ProjectNameAndAndProfile_UserNickName(insidePjtUpdateReqDto.getProjectName(), insidePjtUpdateReqDto.getUserNickName());
+        userProject.get().updateUserPjtDesc(insidePjtUpdateReqDto);
     }
 
 }
