@@ -13,4 +13,8 @@ public interface AuthRepository extends JpaRepository<Authority, UUID> {
 	Authority findByAuthType(AuthType authType);
 
 	List<Authority> findAllByProfileAuthority_ProfileUserId(String userId);
+
+	UUID findIdByAuthTargetId(UUID id);
+
+	Authority findByAuthTargetId(UUID id);
 }
