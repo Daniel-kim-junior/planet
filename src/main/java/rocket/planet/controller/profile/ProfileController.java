@@ -61,9 +61,9 @@ public class ProfileController {
         return ResponseEntity.ok().body("외부프로젝트 수정이 완료되었습니다.");
     }
     @DeleteMapping("/outside")
-    public ResponseEntity<String> outsideProjectRemove(String pjtName) {
-        profileService.removeOutsideProject(pjtName);
-        return ResponseEntity.ok().body(pjtName + "프로젝트를 삭제하였습니다.");
+    public ResponseEntity<String> outsideProjectRemove(@RequestBody ProfileDto.OutsideProjectDeleteReqDto deleteReqDto) {
+        profileService.removeOutsideProject(deleteReqDto);
+        return ResponseEntity.ok().body(deleteReqDto.getPjtName() + "프로젝트를 삭제하였습니다.");
     }
 
     @PostMapping("/certs")
@@ -79,11 +79,9 @@ public class ProfileController {
         return ResponseEntity.ok().body("자격증 수정이 완료되었습니다.");
     }
     @DeleteMapping("/certs")
-
-    public ResponseEntity<String> certRemove(String certNumber) {
-        profileService.removeCertification(certNumber);
-        return ResponseEntity.ok().body("자격증 번호가" + certNumber + "인 자격증을 삭제했습니다.");
-
+    public ResponseEntity<String> certRemove(@RequestBody ProfileDto.CertDeleteReqDto certDeleteReqDto) {
+        profileService.removeCertification(certDeleteReqDto);
+        return ResponseEntity.ok().body("자격증 번호가" + certDeleteReqDto.getCertNumber() + "인 자격증을 삭제했습니다.");
     }
 
 }

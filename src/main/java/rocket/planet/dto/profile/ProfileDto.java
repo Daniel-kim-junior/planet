@@ -126,6 +126,12 @@ public class ProfileDto {
 
     @Getter
     @Builder
+    public static class OutsideProjectDeleteReqDto {
+        private String pjtName;
+    }
+
+    @Getter
+    @Builder
     public static class CertRegisterResDto {
         private String userNickName;
         private String certName;
@@ -147,6 +153,13 @@ public class ProfileDto {
         private LocalDate certDt;
         private LocalDate certExpireDate;
     }
+
+    @Getter
+    @Builder
+    public static class CertDeleteReqDto {
+        private String certNumber;
+    }
+
 
 
 
