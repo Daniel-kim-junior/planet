@@ -18,6 +18,7 @@ import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
+import rocket.planet.dto.admin.AdminDto;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
@@ -48,6 +49,8 @@ class ProjectControllerTest {
 
 	@Autowired
 	private PfAuthRepository pfAuthRepository;
+
+	final String authorizerEmail = "@gmail.com";
 
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
@@ -113,8 +116,12 @@ class ProjectControllerTest {
 		projectService.registerMemberToProject(project1, newProject);
 
 		// 프로젝트 리더 등록
-		ProfileAuthority newPfAuth = authorityService.addAuthority(newProject.getId(), AuthType.PROJECT,
-			project1.getUserNickName(), project1.getProjectLeader());
+		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
+			.authType(AuthType.PROJECT)
+			.authTargetId(newProject.getId())
+			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
+			.authNickName(project1.getProjectLeader())
+			.build());
 
 		// projectService.registerProject(project2);
 		// projectService.registerProject(project3);
@@ -209,7 +216,6 @@ class ProjectControllerTest {
 	void 프로젝트_목록_조회_테스트() {
 		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트팩토리");
 
-		// projectService.requestClose(projectName, userNickName);
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 
 		for (ProjectSummaryResDto project : projectList)

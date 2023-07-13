@@ -1,5 +1,6 @@
 package rocket.planet.service.project;
 
+import static rocket.planet.dto.admin.AdminDto.*;
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.domain.AuthType;
 import rocket.planet.domain.Authority;
 import rocket.planet.domain.OrgType;
 import rocket.planet.domain.Profile;
@@ -28,6 +30,7 @@ import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
+import rocket.planet.service.auth.AuthorityService;
 
 @Service
 @Slf4j
@@ -38,6 +41,8 @@ public class ProjectService {
 	private final UserPjtRepository userPjtRepository;
 	private final AuthRepository authRepository;
 	private final PfAuthRepository pfAuthRepository;
+
+	private final AuthorityService authorityService;
 
 	// 프로젝트 생성
 	@Transactional
@@ -75,8 +80,15 @@ public class ProjectService {
 				.userPjtCloseApply(false)
 				.userPjtDesc("")
 				.build();
+
 			userPjtRepository.save(newProject);
 		}
+		authorityService.addAuthority(AdminAddAuthDto.builder()
+			.authTargetId(project.getId())
+			.authNickName(registerDto.getProjectLeader())
+			.authType(AuthType.PROJECT)
+			.authorizerNickName(registerDto.getUserNickName()).build()
+		);
 
 	}
 

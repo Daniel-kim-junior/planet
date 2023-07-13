@@ -10,7 +10,9 @@ import rocket.planet.domain.ProfileAuthority;
 
 public interface PfAuthRepository extends JpaRepository<ProfileAuthority, UUID> {
 
-	Profile findProfileByAuthority(Authority auth);
+	ProfileAuthority findByAuthority(Authority auth);
 
-	ProfileAuthority findByAuthority(Authority byAuthTargetId);
+	Authority findByProfile(Profile user);
+
+	void deleteByAuthorityAndProfile(Authority auth, Profile user);
 }

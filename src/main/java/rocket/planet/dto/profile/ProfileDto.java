@@ -1,17 +1,12 @@
 package rocket.planet.dto.profile;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
+import lombok.Builder;
+import lombok.Getter;
 
 public class ProfileDto {
-
     @Getter
     @Builder
     public static class ProfileResDto {
