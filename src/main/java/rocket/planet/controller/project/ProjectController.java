@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.Project;
 import rocket.planet.dto.project.ProjectCloseResDto;
+import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.service.project.ProjectService;
@@ -30,7 +31,7 @@ public class ProjectController {
 	private final ProjectService projectService;
 
 	@GetMapping("/project")
-	public ResponseEntity<ProjectRegisterReqDto> projectDetail(String projectName) {
+	public ResponseEntity<ProjectDetailResDto> projectDetail(String projectName) {
 
 		return ResponseEntity.ok().body(projectService.getProject(projectName));
 	}
