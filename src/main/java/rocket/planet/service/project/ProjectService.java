@@ -80,21 +80,6 @@ public class ProjectService {
 
 	}
 
-	// 프로젝트 조회
-	// public ProjectUpdateDetailDto showProjectDetail(ProjectUpdateReqDto projectUpdateReqDto) {
-	// 	Optional<Project> updateProject = projectRepository.findByProjectName(projectUpdateReqDto.getProjectName());
-	//
-	// 	return ProjectUpdateDetailDto.builder()
-	// 		.userNickName(projectUpdateReqDto.getUserNickName())
-	// 		.projectName(updateProject.get().getProjectName())
-	// 		.projectDesc(updateProject.get().getProjectDesc())
-	// 		.projectTech(updateProject.get().getProjectTech())
-	// 		.projectStartDt(updateProject.get().getProjectStartDt())
-	// 		.projectEndDt(updateProject.get().getProjectEndDt())
-	// 		.build();
-	//
-	// }
-
 	@Transactional
 	public void updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
 		Optional<Project> project = projectRepository.findByProjectName(projectUpdateDto.getProjectName());
