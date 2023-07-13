@@ -29,6 +29,8 @@ import rocket.planet.domain.Profile;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
+import rocket.planet.domain.redis.EmailConfirm;
+import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.domain.redis.RedisCacheAuth;
@@ -52,6 +54,7 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.security.JsonWebTokenIssuer;
+import rocket.planet.util.security.UserDetailsImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -95,7 +98,7 @@ public class AuthLoginAndJoinService {
 	 * @패스워드 5회 틀릴 시 30분간 잠금
 	 */
 	@Transactional
-	public LoginResDto checkLogin(LoginReqDto dto) throws RedisException, Exception {
+	public LoginResDto checkLogin(LoginReqDto dto) throws Exception {
 
 		User user = userRepository.findByUserId(dto.getId())
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다"));
@@ -110,7 +113,7 @@ public class AuthLoginAndJoinService {
 	 * @param user
 	 * @패스워드 5회 틀릴 시 30분간 잠금
 	 */
-	private void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException {
+	public void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			int count;
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()
@@ -138,7 +141,7 @@ public class AuthLoginAndJoinService {
 	 * @마지막 로그인 시간 Redis에 저장
 	 */
 
-	private LoginResDto completeLogin(User user) throws RedisException, Exception {
+	private LoginResDto completeLogin(User user) throws Exception {
 		limitLoginRepository.deleteById(user.getUserId());
 		authChangeRepository.deleteById(user.getUserId());
 
@@ -180,7 +183,7 @@ public class AuthLoginAndJoinService {
 	 */
 
 	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) throws
-		RedisException, Exception {
+		Exception {
 		LoginResDto responseDto;
 		responseDto = makeJsonWebTokenAndRoleDto(user);
 		saveAuthInRedisForJoinUser(user, responseDto);
@@ -228,9 +231,9 @@ public class AuthLoginAndJoinService {
 		String authority;
 
 		if (Objects.isNull(user.getProfile())) {
-			authority = Role.CREW.name();
+			authority = "ROLE_" + Role.CREW.name();
 		} else {
-			authority = user.getProfile().getRole().name();
+			authority = "ROLE_" + user.getProfile().getRole().name();
 		}
 		return getResponseDtoByUserData(user, userName, authority);
 	}
@@ -448,20 +451,26 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public LoginResDto checkJoin(JoinReqDto dto) throws Exception {
-		emailConfirmRepository.findById(dto.getId())
+		EmailConfirm emailConfirm = emailConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
+
+		if (emailConfirm instanceof EmailJoinConfirm) {
+			emailConfirmRepository.delete(emailConfirm);
+		} else {
+			throw new NoValidEmailTokenException();
+		}
+
 		userRepository.findByUserId(dto.getId())
 			.ifPresent(user -> {
 				throw new AlreadyExistsIdException();
 			});
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
-		saveLastLoginDataAndDeleteConfirmDataInRedis(dto);
+		saveLastLoginDataInRedis(dto);
 		return completeLogin(saveUser);
 	}
 
-	private void saveLastLoginDataAndDeleteConfirmDataInRedis(JoinReqDto dto) throws RedisException {
+	private void saveLastLoginDataInRedis(JoinReqDto dto) throws RedisException {
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
-		emailConfirmRepository.deleteById(dto.getId());
 	}
 
 	/**
@@ -472,12 +481,15 @@ public class AuthLoginAndJoinService {
 
 	@Transactional
 	public BasicInputResDto saveBasicProfile(BasicInputReqDto dto) throws Exception {
-		// String id = UserDetailsImpl.getLoginUserId();
-		String id = "test20412041@gmail.com";
+
+		String id = Optional.of(UserDetailsImpl.getLoginUserId())
+			.orElseThrow(() -> new UsernameNotFoundException("토큰이 만료되어 다시 로그인 해주세요"));
+
 		Profile profile = BasicInsertDtoToProfile(dto, id);
 
 		User user = userRepository.findByUserId(id)
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+
 		profile = profileRepository.save(profile);
 		user.updateProfile(profile);
 		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);

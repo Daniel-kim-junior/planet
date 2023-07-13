@@ -25,6 +25,10 @@ public class EmailDto {
 		@NotBlank
 		@NotEmpty
 		private String id;
+
+		@NotBlank
+		@NotEmpty
+		private String type;
 	}
 
 	@Getter
@@ -38,5 +42,9 @@ public class EmailDto {
 		@NotBlank
 		@NotEmpty
 		private String code;
+
+		@NotBlank
+		@NotEmpty
+		private String type;
 	}
 }

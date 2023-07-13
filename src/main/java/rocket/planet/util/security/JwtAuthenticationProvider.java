@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.util.exception.JwtInvalidException;
 
 @Component
@@ -24,6 +26,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 	private final String KEY_ROLES = "roles";
 
 	private final byte[] secretKey;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private PlanetUserDetailsService planetUserDetailsService;
 
 	public JwtAuthenticationProvider(@Value("${jwt.secret}") String secretKey) {
 		this.secretKey = secretKey.getBytes();
@@ -56,7 +64,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		} catch (IllegalArgumentException illegalArgumentException) {
 			throw new JwtInvalidException("using illegal argument like null", illegalArgumentException);
 		}
-		return new JwtAuthenticationToken(claims.getSubject(), "", createGrantedAuthorities(claims));
+		PlanetUser planetUser = (PlanetUser)planetUserDetailsService.loadUserByUsername(claims.getSubject());
+
+		return new JwtAuthenticationToken(planetUser, "", createGrantedAuthorities(claims));
 	}
 
 	@Override

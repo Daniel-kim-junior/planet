@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.service.email.EmailVerifyService;
 import rocket.planet.util.exception.NoSuchEmailException;
@@ -33,17 +34,19 @@ public class EmailVerifyController {
 		String email = dto.getId();
 		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email);
 		try {
-			emailVerifyService.saveRedisToken(email, gen.get().toString());
+			emailVerifyService.saveRedisToken(email, gen.get().toString(), dto.getType());
 			return ResponseEntity.ok().body("이메일 전송을 완료했습니다");
 		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
 			throw new NoSuchEmailException();
 		}
 	}
 
 	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
-	public ResponseEntity<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) {
+	public ResponseEntity<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) throws
+		RedisException {
 		return ResponseEntity.ok()
-			.body(emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode()));
+			.body(emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode(), dto.getType()));
 	}
 
 }
