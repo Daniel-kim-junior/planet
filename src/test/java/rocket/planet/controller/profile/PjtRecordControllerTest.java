@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import rocket.planet.domain.PjtRecord;
 import rocket.planet.domain.Profile;
 import rocket.planet.dto.profile.ProfileDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
@@ -16,6 +17,7 @@ import rocket.planet.service.profile.ProfileService;
 import rocket.planet.service.project.ProjectService;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static rocket.planet.dto.project.ProjectUpdateDto.ProjectUpdateDetailDto;
@@ -117,7 +119,10 @@ class PjtRecordControllerTest {
     @Test
     @Transactional
     void 외부프로젝트_삭제_테스트() {
-        profileService.removeOutsideProject("crewz");
+        ProfileDto.OutsideProjectDeleteReqDto deleteReqDto = ProfileDto.OutsideProjectDeleteReqDto.builder()
+                .pjtName("dk.log")
+                .build();
+        profileService.removeOutsideProject(deleteReqDto);
     }
 
 

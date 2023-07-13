@@ -107,7 +107,10 @@ class CertificationControllerTest {
     @Test
     @Transactional
     void 자격증_삭제_테스트() {
-        profileService.removeCertification("2835820");
+        ProfileDto.CertDeleteReqDto certDeleteReqDto = ProfileDto.CertDeleteReqDto.builder()
+                .certNumber("2835820")
+                .build();
+        profileService.removeCertification(certDeleteReqDto);
     }
 
 

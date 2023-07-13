@@ -148,8 +148,8 @@ public class ProfileService {
 
     }
     @Transactional
-    public void removeOutsideProject(String pjtName) {
-        pjtRecordRepository.deletePjtRecordByPjtName(pjtName);
+    public void removeOutsideProject(ProfileDto.OutsideProjectDeleteReqDto outPjtDeleteReqDto) {
+        pjtRecordRepository.deletePjtRecordByPjtName(outPjtDeleteReqDto.getPjtName());
     }
 
     @Transactional
@@ -173,9 +173,8 @@ public class ProfileService {
             updateCert.get().updateCert(certUpdateResDto);
     }
     @Transactional
-    public void removeCertification(String certNumber) {
-            certRepository.deleteCertificationByCertNumber(certNumber);
-
+    public void removeCertification(ProfileDto.CertDeleteReqDto certDeleteReqDto) {
+            certRepository.deleteCertificationByCertNumber(certDeleteReqDto.getCertNumber());
     }
 
 }
