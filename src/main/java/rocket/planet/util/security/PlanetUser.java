@@ -18,9 +18,18 @@ public class PlanetUser extends User {
 
 	private Profile profile;
 
+	private rocket.planet.domain.User user;
+
+	public PlanetUser(rocket.planet.domain.User user) {
+		super(user.getUserId(), user.getUserPwd(), authorities(Collections.singleton(Role.GUEST)));
+		this.user = user;
+	}
+
 	public PlanetUser(rocket.planet.domain.User user, Profile profile) {
 		super(user.getUserId(), user.getUserPwd(), authorities(Collections.singleton(profile.getRole())));
+
 		this.profile = profile;
+		this.user = user;
 	}
 
 	private static Collection<? extends GrantedAuthority> authorities(Set<Role> roles) {

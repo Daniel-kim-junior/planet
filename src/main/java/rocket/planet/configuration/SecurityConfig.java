@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
+import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.security.CustomAccessDeniedHandler;
 import rocket.planet.util.security.CustomAuthenticationEntryPoint;
 import rocket.planet.util.security.JwtAuthenticationFilter;
@@ -37,6 +38,8 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+	private final AccessTokenRedisRepository accessTokenRedisRepository;
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -67,7 +70,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated();
 		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
 			.authenticationProvider(
-				jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class);
+				jwtAuthenticationProvider).getOrBuild(), accessTokenRedisRepository), LogoutFilter.class);
 		http.exceptionHandling()
 			.authenticationEntryPoint(customAuthenticationEntryPoint) // 인증되지 않은 사용자가 접근하려 할 때
 			.accessDeniedHandler(customAccessDeniedHandler); // 인가되지 않은 사용자가 접근하려 할 때

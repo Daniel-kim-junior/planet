@@ -58,6 +58,19 @@ public class Department {
 		this.deptType = deptType;
 	}
 
+	public static Department defaultDept(String deptName, Company company) {
+		return builder()
+			.deptName(deptName)
+			.company(company)
+			.deptType(OrgType.NO_ORG_TYPE)
+			.build();
+	}
+
+	public Department update(String deptName) {
+		this.deptName = deptName;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		return "Department{" +
