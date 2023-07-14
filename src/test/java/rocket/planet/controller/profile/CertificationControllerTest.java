@@ -93,26 +93,8 @@ class CertificationControllerTest {
 
     @Test
     @Transactional
-<<<<<<< HEAD
     void 자격증_삭제_테스트() {
         profileService.removeCertification("5bb8351d-66c3-438c-a23d-5b26855a22c9");
-=======
-    void 자격증_수정_테스트() {
-        Profile crew = profileRepository.findByUserNickName("crew").get();
-        ProfileDto.CertUpdateResDto updateCert = ProfileDto.CertUpdateResDto.builder()
-                .userNickName(crew.getUserNickName())
-                .certDt(LocalDate.of(2022,6,8))
-                .certType("기술")
-                .certNumber("2835820")
-                .certName("특정기술")
-                .build();
-        profileService.modifyCertification(updateCert);
-    }
-    @Test
-    @Transactional
-    void 자격증_삭제_테스트() {
-        profileService.removeCertification("2835820");
->>>>>>> b15e199 ([PN-97] feat: 유저 프로필 수정)
     }
 
 
