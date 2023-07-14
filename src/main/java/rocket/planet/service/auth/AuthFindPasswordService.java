@@ -10,6 +10,7 @@ import rocket.planet.dto.auth.PasswordModifyReqDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.EmailFindConfirmRepository;
 import rocket.planet.util.exception.NoValidEmailTokenException;
+import rocket.planet.util.exception.PasswordMatchException;
 
 @Service
 @RequiredArgsConstructor

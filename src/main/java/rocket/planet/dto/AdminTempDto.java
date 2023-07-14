@@ -1,10 +1,10 @@
-package rocket.planet.controller.admin;
+package rocket.planet.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class AdminDto {
+public class AdminTempDto {
 
 	@Getter
 	@NoArgsConstructor

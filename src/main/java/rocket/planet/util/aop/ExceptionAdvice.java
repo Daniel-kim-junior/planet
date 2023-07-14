@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
-import rocket.planet.service.auth.PasswordMatchException;
 import rocket.planet.util.annotation.ValidPassword;
 import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.ExceptionEnum;
@@ -25,6 +24,7 @@ import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoSuchEmailTokenException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
+import rocket.planet.util.exception.PasswordMatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.exception.UserTechException;
@@ -54,7 +54,6 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleConstraintViolationException(MethodArgumentNotValidException e) {
 		BindingResult bindingResult = e.getBindingResult();
-		System.out.println(bindingResult);
 		Object target = bindingResult.getTarget();
 		Class<?> targetClass = target.getClass();
 		Field field;

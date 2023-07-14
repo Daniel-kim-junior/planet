@@ -1,4 +1,4 @@
-package rocket.planet.controller.admin;
+package rocket.planet.util.exception;
 
 public class NoSuchDeptException extends RuntimeException {
 }

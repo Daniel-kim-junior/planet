@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.controller.admin.AdminDto.AdminReqDto;
-import rocket.planet.controller.admin.AdminDto.AdminResDto;
+import rocket.planet.dto.AdminTempDto.AdminReqDto;
+import rocket.planet.dto.AdminTempDto.AdminResDto;
+import rocket.planet.service.admin.AdminTeamService;
 
 @RestController
 @RequestMapping("/api/admin/team")
