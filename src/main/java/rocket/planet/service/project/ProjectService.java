@@ -30,7 +30,7 @@ import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
-import rocket.planet.service.auth.AuthorityService;
+//import rocket.planet.service.auth.AuthorityService;
 
 @Service
 @Slf4j
@@ -42,7 +42,7 @@ public class ProjectService {
 	private final AuthRepository authRepository;
 	private final PfAuthRepository pfAuthRepository;
 
-	private final AuthorityService authorityService;
+//	private final AuthorityService authorityService;
 
 	// 프로젝트 생성
 	@Transactional
@@ -83,12 +83,12 @@ public class ProjectService {
 
 			userPjtRepository.save(newProject);
 		}
-		authorityService.addAuthority(AdminAddAuthDto.builder()
-			.authTargetId(project.getId())
-			.authNickName(registerDto.getProjectLeader())
-			.authType(AuthType.PROJECT)
-			.authorizerNickName(registerDto.getUserNickName()).build()
-		);
+//		authorityService.addAuthority(AdminAddAuthDto.builder()
+//			.authTargetId(project.getId())
+//			.authNickName(registerDto.getProjectLeader())
+//			.authType(AuthType.PROJECT)
+//			.authorizerNickName(registerDto.getUserNickName()).build()
+//		);
 
 	}
 

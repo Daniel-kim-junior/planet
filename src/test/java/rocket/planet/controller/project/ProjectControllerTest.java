@@ -26,7 +26,7 @@ import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
-import rocket.planet.service.auth.AuthorityService;
+//import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
 @SpringBootTest
@@ -35,8 +35,8 @@ class ProjectControllerTest {
 	@Autowired
 	private ProjectService projectService;
 
-	@Autowired
-	private AuthorityService authorityService;
+//	@Autowired
+//	private AuthorityService authorityService;
 
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -116,20 +116,20 @@ class ProjectControllerTest {
 		projectService.registerMemberToProject(project1, newProject);
 
 		// 프로젝트 리더 등록
-		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
-			.authType(AuthType.PROJECT)
-			.authTargetId(newProject.getId())
-			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
-			.authNickName(project1.getProjectLeader())
-			.build());
-
-		// projectService.registerProject(project2);
-		// projectService.registerProject(project3);
-		// projectService.registerProject(project4);
-		// projectService.registerProject(project5);
-
-		// assertThat(authRepository.count()).isEqualTo(1);
-		// assertThat(pfAuthRepository.count()).isEqualTo(3);
+//		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
+//			.authType(AuthType.PROJECT)
+//			.authTargetId(newProject.getId())
+//			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
+//			.authNickName(project1.getProjectLeader())
+//			.build());
+//
+//		 projectService.registerProject(project2);
+//		 projectService.registerProject(project3);
+//		 projectService.registerProject(project4);
+//		 projectService.registerProject(project5);
+//
+//		 assertThat(authRepository.count()).isEqualTo(1);
+//		 assertThat(pfAuthRepository.count()).isEqualTo(3);
 
 	}
 

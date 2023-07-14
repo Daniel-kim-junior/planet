@@ -2,14 +2,18 @@ package rocket.planet.service.profile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.*;
+import rocket.planet.util.exception.UserTechException;
 import rocket.planet.util.security.UserDetailsImpl;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +35,7 @@ public class ProfileService {
 
         Optional<Profile> profile = profileRepository.selectProfileByUserNickName(userNickName);
         return profile.map(profileD -> {
-            List<Org> orgList =  profileD.getOrg();
+            List<Org> orgList = profileD.getOrg();
             List<UserProject> projectList = profileD.getUserProject();
             List<ProfileTech> profileTechList = profileD.getProfileTech();
             List<PjtRecord> extPjtRecordList = profileD.getExtPjtRecord();
@@ -46,13 +50,22 @@ public class ProfileService {
                             .build())
                     .orElse(null);
 
+            List<ProfileDto.UserInProgressProjectResDto> inProgressProjectList = projectList.stream()
+                    .filter(project -> project.getUserPjtCloseDt().equals(LocalDate.of(2999, 12, 31)))
+                    .map(project -> ProfileDto.UserInProgressProjectResDto.builder()
+                            .projectName(project.getProject().getProjectName())
+                            .userPjtCloseDt(project.getUserPjtCloseDt())
+                            .build())
+                    .collect(Collectors.toList());
 
-            List<ProfileDto.InsideProjectResDto> projectDtoList = projectList.stream()
-                    .map(project -> ProfileDto.InsideProjectResDto.builder()
+            List<ProfileDto.ClosedInsideProjectResDto> closedProjectDtoList = projectList.stream()
+                    .filter(project -> !project.getUserPjtCloseDt().equals(LocalDate.of(2999, 12, 31)))
+                    .map(project -> ProfileDto.ClosedInsideProjectResDto.builder()
                             .projectName(project.getProject().getProjectName())
                             .projectDesc(project.getProject().getProjectDesc())
                             .userPjtJoinDt(project.getUserPjtJoinDt())
                             .userPjtCloseDt(project.getUserPjtCloseDt())
+                            .userPjtDesc(project.getUserPjtDesc())
                             .build())
                     .collect(Collectors.toList());
 
@@ -88,7 +101,8 @@ public class ProfileService {
                     .userId(profileD.getUserId())
                     .userNickName(profileD.getUserNickName())
                     .org(orgDto)
-                    .userProject(projectDtoList)
+                    .userInProgressProject(inProgressProjectList)
+                    .userClosedProject(closedProjectDtoList)
                     .role(profileD.getRole().toString())
                     .profileDisplay(profileD.isProfileDisplay())
                     .profileCareer(profileD.getProfileCareer())
@@ -109,6 +123,7 @@ public class ProfileService {
             profileRepository.save(profile);
         });
     }
+
     public void modifyProfileDisplay(ProfileDto.ProfileDisplayUpDateResDto displayUpDateResDto) {
         Optional<Profile> updateDisplayStatus = profileRepository.findByUserNickName(displayUpDateResDto.getUserNickName());
         updateDisplayStatus.ifPresent(display -> {
@@ -116,6 +131,7 @@ public class ProfileService {
             profileRepository.save(display);
         });
     }
+
     public void modifyAnnualStatus(ProfileDto.AnnualUpDateResDto annualUpDateResDto) {
         Optional<Profile> updateDisplayStatus = profileRepository.findByUserNickName(annualUpDateResDto.getUserNickName());
         updateDisplayStatus.ifPresent(annual -> {
@@ -148,9 +164,11 @@ public class ProfileService {
         updatePjt.get().updatePjtRecord(updateReqDto);
 
     }
+
     @Transactional
-    public void removeOutsideProject(ProfileDto.OutsideProjectDeleteReqDto outPjtDeleteReqDto) {
-        pjtRecordRepository.deletePjtRecordByPjtName(outPjtDeleteReqDto.getPjtName());
+    public void removeOutsideProject(String pjtUidString) {
+        UUID pjtUid = UUID.fromString(pjtUidString);
+        pjtRecordRepository.deleteById(pjtUid);
     }
 
     @Transactional
@@ -170,28 +188,52 @@ public class ProfileService {
     }
 
     @Transactional
-    public void removeCertification(ProfileDto.CertDeleteReqDto certDeleteReqDto) {
-            certRepository.deleteCertificationByCertNumber(certDeleteReqDto.getCertNumber());
+    public void removeCertification(String cetUidString) {
+        UUID certUid = UUID.fromString(cetUidString);
+        certRepository.deleteById(certUid);
     }
 
-    public boolean checkTech(String techName){
+    public boolean checkTech(String techName) {
         return techRepository.findByTechNameIgnoreCase(techName).isPresent();
     }
 
     @Transactional
     public void addUserTech(ProfileDto.TechRegisterReqDto techReqDto) {
-        Optional<Profile> userNickName = profileRepository.findByUserNickName(techReqDto.getUserNickName());
-        Optional<Tech> techName = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName());
-        ProfileTech userTech = ProfileTech.builder()
-                .profile(userNickName.get())
-                .tech(techName.get())
-                .build();
-        pfTechRepository.save(userTech);
+        Optional<Profile> existingProfile = profileRepository.findByUserNickName(techReqDto.getUserNickName());
+        Optional<Tech> existingTech = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName());
+            if (checkTech(techReqDto.getTechName())) {
+
+                if (existingProfile.isPresent() && existingTech.isPresent()) {
+                    Profile profile = existingProfile.get();
+                    Tech tech = existingTech.get();
+
+                    // 이미 등록된 기술의 경우 중복 등록 불가능
+                    boolean isTechAlreadyRegistered = pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName());
+                    if (isTechAlreadyRegistered) {
+                        throw new UserTechException("이미 등록된 기술입니다.");
+                    }
+
+                    // 사용자는 최대 다섯 개의 기술만 등록 가능
+                    List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
+                    if (userTechList.size() >= 5) {
+                        throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
+                    }
+                    ProfileTech userTech = ProfileTech.builder()
+                            .profile(profile)
+                            .tech(tech)
+                            .build();
+                    pfTechRepository.save(userTech);
+                }
+            } else {
+                throw new UserTechException("등록되지 않은 기술로 추가할 수 없습니다.");
+            }
+
     }
 
     @Transactional
-    public void removeUserTech(ProfileDto.TechDeleteReqDto techDeleteReqDto) {
-        pfTechRepository.deleteByTech_TechNameAndProfile_UserNickName(techDeleteReqDto.getUserNickName(),techDeleteReqDto.getTechName());
+    public void removeUserTech(String userTechIdString) {
+        UUID userTechId = UUID.fromString(userTechIdString);
+        pfTechRepository.deleteById(userTechId);
     }
 
     @Transactional

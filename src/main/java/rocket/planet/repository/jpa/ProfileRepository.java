@@ -20,7 +20,7 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 
 	List<Profile> findByOrg(Optional<Org> organization);
 
-	ProfileAuthority findByAuthorityAndProfile(Authority byProfile, Profile user);
+//	ProfileAuthority findByAuthorityAndProfile(Authority byProfile, Profile user);
 
-	void deleteByAuthorityAndProfile(Authority byProfile, Profile user);
+//	void deleteByAuthorityAndProfile(Authority byProfile, Profile user);
 }

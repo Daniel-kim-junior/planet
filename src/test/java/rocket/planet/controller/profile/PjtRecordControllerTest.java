@@ -18,6 +18,7 @@ import rocket.planet.service.project.ProjectService;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static rocket.planet.dto.project.ProjectUpdateDto.ProjectUpdateDetailDto;
@@ -119,10 +120,7 @@ class PjtRecordControllerTest {
     @Test
     @Transactional
     void 외부프로젝트_삭제_테스트() {
-        ProfileDto.OutsideProjectDeleteReqDto deleteReqDto = ProfileDto.OutsideProjectDeleteReqDto.builder()
-                .pjtName("dk.log")
-                .build();
-        profileService.removeOutsideProject(deleteReqDto);
+        profileService.removeOutsideProject("56fad2d9-324f-4fdd-a624-5ae3b4440152");
     }
 
 
