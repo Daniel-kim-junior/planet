@@ -21,7 +21,9 @@ public class PlanetUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUserId(username)
 			.orElseThrow(() -> new UsernameNotFoundException(username));
-
+		if (user.getProfile() == null) {
+			return new PlanetUser(user);
+		}
 		return new PlanetUser(user, user.getProfile());
 	}
 }

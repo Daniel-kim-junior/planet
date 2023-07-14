@@ -11,8 +11,10 @@ import rocket.planet.domain.Team;
 
 public interface TeamRepository extends JpaRepository<Team, UUID> {
 
-    Team findByTeamName(String teamName);
+	Team findByTeamName(String teamName);
 
-    @Query("SELECT t FROM Team t JOIN FETCH t.department d WHERE d.deptName = :deptName")
-    List<Team> findTeamNameByDeptName(@Param("deptName") String deptName);
+	@Query("SELECT t FROM Team t JOIN FETCH t.department d WHERE d.deptName = :deptName")
+	List<Team> findTeamNameByDeptName(@Param("deptName") String deptName);
+
+	void deleteByTeamName(String name);
 }

@@ -6,10 +6,14 @@ import org.springframework.data.redis.core.RedisHash;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
-@RedisHash("auth-change")
-public class AuthChange {
+@Builder
+@RedisHash(value = "access-token", timeToLive = 60 * 10)
+public class AccessToken {
+
 	@Id
 	private String email;
+
+	private String token;
+
 }

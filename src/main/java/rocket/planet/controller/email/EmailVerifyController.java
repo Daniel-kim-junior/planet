@@ -32,7 +32,7 @@ public class EmailVerifyController {
 	public ResponseEntity<String> emailVerify(
 		@Valid @RequestBody EmailDuplicateCheckAndSendEmailReqDto dto) {
 		String email = dto.getId();
-		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email);
+		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email, dto.getType());
 		try {
 			emailVerifyService.saveRedisToken(email, gen.get().toString(), dto.getType());
 			return ResponseEntity.ok().body("이메일 전송을 완료했습니다");

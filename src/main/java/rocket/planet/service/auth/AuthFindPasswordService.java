@@ -10,6 +10,7 @@ import rocket.planet.dto.auth.PasswordModifyReqDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.EmailFindConfirmRepository;
 import rocket.planet.util.exception.NoValidEmailTokenException;
+import rocket.planet.util.exception.PasswordMatchException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +30,13 @@ public class AuthFindPasswordService {
 		EmailFindConfirm emailConfirm = emailFindConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
 
-		emailFindConfirmRepository.delete(emailConfirm);
-
 		userRepository.findByUserId(dto.getId()).ifPresent(user -> {
+			if (passwordEncoder.matches(dto.getPassword(), user.getUserPwd()))
+				throw new PasswordMatchException();
 			user.updatePassword(passwordEncoder.encode(dto.getPassword()));
 		});
 
+		emailFindConfirmRepository.delete(emailConfirm);
 		return SUCCESS;
 	}
 }

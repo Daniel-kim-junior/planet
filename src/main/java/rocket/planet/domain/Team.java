@@ -62,6 +62,15 @@ public class Team extends BaseTime {
 		this.teamType = teamType;
 	}
 
+	public static Team addTeam(String teamName, String teamDesc, OrgType teamType, Department department) {
+		return builder()
+			.department(department)
+			.teamName(teamName)
+			.teamDesc(teamDesc)
+			.teamType(teamType)
+			.build();
+	}
+
 	@Override
 	public String toString() {
 		return "팀{" +
