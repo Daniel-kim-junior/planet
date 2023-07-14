@@ -45,6 +45,7 @@ public class AuthorityService {
 
 	final String authorizerEmail = "@gmail.com";
 
+	@Transactional
 	public ProfileAuthority addAuthority(AdminAddAuthDto adminAddAuthDto) {
 		Optional<Profile> projectLeaderProfile = profileRepository.findByUserNickName(
 			adminAddAuthDto.getAuthNickName());

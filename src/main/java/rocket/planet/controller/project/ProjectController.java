@@ -89,7 +89,7 @@ public class ProjectController {
 		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
 	}
 
-	@GetMapping("/management/projects")
+	@PostMapping("/management/projects/list")
 	public ResponseEntity<List<ProjectSummaryResDto>> projectList(ProjectNameReqDto projectNameReqDto) {
 		List<ProjectSummaryResDto> projectList = projectService.getProjectList(projectNameReqDto.getName());
 
@@ -98,7 +98,7 @@ public class ProjectController {
 
 	@GetMapping("/management/projects/request")
 	private ResponseEntity<List<ProjectCloseResDto>> projectReqList(ProjectNameReqDto projectNameReqDto) {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqtList(projectNameReqDto.getName());
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqList(projectNameReqDto.getName());
 
 		return ResponseEntity.ok().body(projectList);
 	}

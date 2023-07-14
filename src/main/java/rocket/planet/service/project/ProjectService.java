@@ -45,6 +45,7 @@ public class ProjectService {
 
 	private final AuthorityService authorityService;
 
+	@Transactional
 	public ProjectDetailResDto getProject(String projectName) {
 		Optional<Project> project = projectRepository.findByProjectName(projectName);
 
@@ -186,6 +187,7 @@ public class ProjectService {
 		}
 	}
 
+	@Transactional
 	public List<ProjectSummaryResDto> getProjectList(String teamName) {
 		List<ProjectSummaryResDto> projectSummaryList = new ArrayList<>();
 
@@ -215,7 +217,7 @@ public class ProjectService {
 		return projectSummaryList;
 	}
 
-	public List<ProjectCloseResDto> getProjecReqtList(String teamName) {
+	public List<ProjectCloseResDto> getProjecReqList(String teamName) {
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
 		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);

@@ -55,7 +55,6 @@ class ProjectControllerTest {
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
 	@Test
-	@Rollback(false)
 	void 프로젝트_생성_테스트() {
 
 		List<String> memberList = new ArrayList<>();
@@ -119,7 +118,7 @@ class ProjectControllerTest {
 		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
 			.authType(AuthType.PROJECT)
 			.authTargetId(newProject.getId())
-			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
+			.authorizerNickName(project1.getUserNickName())
 			.authNickName(project1.getProjectLeader())
 			.build());
 
@@ -226,7 +225,7 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_완수_인증_요청_테스트() {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqtList("스마트팩토리");
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqList("스마트팩토리");
 
 		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);
