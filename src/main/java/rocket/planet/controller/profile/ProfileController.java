@@ -26,6 +26,7 @@ public class ProfileController {
         ProfileDto.ProfileResDto profileDetail = profileService.getProfileDetailByUserNickName(userNickName);
         return ResponseEntity.ok().body(profileDetail);
     }
+
     @PatchMapping("/{userNickName}")
     public ResponseEntity<String> profileModify(@RequestBody ProfileDto.ProfileUpDateResDto profileUpDateResDto) {
         log.info("updateResDto : {}", profileUpDateResDto);
