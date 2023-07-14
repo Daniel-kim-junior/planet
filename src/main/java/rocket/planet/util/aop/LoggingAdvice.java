@@ -1,7 +1,6 @@
 package rocket.planet.util.aop;
 
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ public class LoggingAdvice {
 	private static final Logger logger = LoggerFactory.getLogger(LoggingAdvice.class);
 
 	private String paramMapToString(Map<String, String[]> paramMap) {
-		StringJoiner joiner = new StringJoiner(", ");
+
 		return paramMap.entrySet().stream()
 			.map(entry -> String.format("%s -> (%s)", entry.getKey(), String.join(",", entry.getValue())))
 			.collect(Collectors.joining(", "));

@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.AdminTempDto.AdminReqDto;
-import rocket.planet.dto.AdminTempDto.AdminResDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminReqDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.util.exception.TeamAlreadyExistsException;

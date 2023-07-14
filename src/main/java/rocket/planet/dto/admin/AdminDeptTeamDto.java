@@ -1,15 +1,17 @@
-package rocket.planet.dto;
+package rocket.planet.dto.admin;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class AdminTempDto {
+public class AdminDeptTeamDto {
 
 	@Getter
 	@NoArgsConstructor
 	public static class AdminReqDto {
 		private String name;
+
+		private String deptType;
 
 	}
 
