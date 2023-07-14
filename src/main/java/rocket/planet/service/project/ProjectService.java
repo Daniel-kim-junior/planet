@@ -23,6 +23,7 @@ import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.project.ProjectCloseResDto;
+import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
@@ -44,7 +45,36 @@ public class ProjectService {
 
 //	private final AuthorityService authorityService;
 
-	// 프로젝트 생성
+	@Transactional
+	public ProjectDetailResDto getProject(String projectName) {
+		Optional<Project> project = projectRepository.findByProjectName(projectName);
+
+		Authority auth = authRepository.findByAuthTargetId(project.get().getId());
+
+		List<UserProject> userprojectList = userPjtRepository.findAllByProject(project);
+
+		List<String> projectMember = userprojectList.stream()
+			.map(user -> user.getProfile().getUserNickName())
+			.collect(Collectors.toList());
+
+		return ProjectDetailResDto.builder()
+			.projectName(projectName)
+			.projectLeader(
+				pfAuthRepository.findByAuthority(auth).getProfile().getUserNickName())
+			.team(project.get().getTeam().getTeamName())
+			.dept(project.get().getTeam().getDepartment().getDeptName())
+			.projectMember(projectMember)
+			.projectStatus(String.valueOf(project.get().getProjectStatus()))
+			.projectStartDt(project.get().getProjectStartDt())
+			.projectEndDt(project.get().getProjectEndDt())
+			.projectTech(project.get().getProjectTech())
+			.projectDesc(project.get().getProjectDesc())
+			.projectLastModifiedBy(project.get().getProjectLastModifiedBy())
+			.lastModifiedDate(project.get().getLastModifiedDate())
+			.build();
+
+	}
+
 	@Transactional
 	public Project registerProject(ProjectRegisterReqDto registerDto) {
 		Optional<Profile> profile = profileRepository.findByUserNickName(registerDto.getUserNickName());
@@ -157,6 +187,7 @@ public class ProjectService {
 		}
 	}
 
+	@Transactional
 	public List<ProjectSummaryResDto> getProjectList(String teamName) {
 		List<ProjectSummaryResDto> projectSummaryList = new ArrayList<>();
 
@@ -186,7 +217,7 @@ public class ProjectService {
 		return projectSummaryList;
 	}
 
-	public List<ProjectCloseResDto> getProjecReqtList(String teamName) {
+	public List<ProjectCloseResDto> getProjecReqList(String teamName) {
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
 		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import rocket.planet.domain.AuthType;
 
 public class AdminDto {
@@ -21,6 +22,7 @@ public class AdminDto {
 
 	@Getter
 	@Builder
+	@ToString
 	public static class AdminAuthMemberResDto {
 		private String userNickName;
 		private String deptName;

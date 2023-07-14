@@ -26,7 +26,7 @@ import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
-//import rocket.planet.service.auth.AuthorityService;
+import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
 @SpringBootTest
@@ -35,8 +35,8 @@ class ProjectControllerTest {
 	@Autowired
 	private ProjectService projectService;
 
-//	@Autowired
-//	private AuthorityService authorityService;
+	@Autowired
+	private AuthorityService authorityService;
 
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -55,7 +55,6 @@ class ProjectControllerTest {
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
 	@Test
-	@Rollback(false)
 	void 프로젝트_생성_테스트() {
 
 		List<String> memberList = new ArrayList<>();
@@ -64,17 +63,17 @@ class ProjectControllerTest {
 		memberList.add("captain");
 
 		ProjectRegisterReqDto project1 = ProjectRegisterReqDto.builder()
-			.userNickName("captain")
-			.projectName("스마트 시티 TF")
-			.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
-			.projectTech("Spring, Java, Computer Vision")
-			.projectLeader("plpl")
-			.projectMember(memberList)
-			.projectStartDt(LocalDate.of(2023, 7, 5))
-			.projectEndDt(LocalDate.of(2023, 8, 14))
-			.projectStartDt(LocalDate.of(2023, 7, 5))
-			.projectEndDt(LocalDate.of(2023, 8, 14))
-			.build();
+				.userNickName("captain")
+				.projectName("스마트 시티 TF")
+				.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
+				.projectTech("Spring, Java, Computer Vision")
+				.projectLeader("plpl")
+				.projectMember(memberList)
+				.projectStartDt(LocalDate.of(2023, 7, 5))
+				.projectEndDt(LocalDate.of(2023, 8, 14))
+				.projectStartDt(LocalDate.of(2023, 7, 5))
+				.projectEndDt(LocalDate.of(2023, 8, 14))
+				.build();
 
 		// ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
 		// 	.userNickName("pilot")
@@ -116,20 +115,20 @@ class ProjectControllerTest {
 		projectService.registerMemberToProject(project1, newProject);
 
 		// 프로젝트 리더 등록
-//		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
-//			.authType(AuthType.PROJECT)
-//			.authTargetId(newProject.getId())
-//			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
-//			.authNickName(project1.getProjectLeader())
-//			.build());
-//
-//		 projectService.registerProject(project2);
-//		 projectService.registerProject(project3);
-//		 projectService.registerProject(project4);
-//		 projectService.registerProject(project5);
-//
-//		 assertThat(authRepository.count()).isEqualTo(1);
-//		 assertThat(pfAuthRepository.count()).isEqualTo(3);
+		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
+				.authType(AuthType.PROJECT)
+				.authTargetId(newProject.getId())
+				.authorizerNickName(project1.getUserNickName())
+				.authNickName(project1.getProjectLeader())
+				.build());
+
+		// projectService.registerProject(project2);
+		// projectService.registerProject(project3);
+		// projectService.registerProject(project4);
+		// projectService.registerProject(project5);
+
+		// assertThat(authRepository.count()).isEqualTo(1);
+		// assertThat(pfAuthRepository.count()).isEqualTo(3);
 
 	}
 
@@ -144,15 +143,15 @@ class ProjectControllerTest {
 		newMemberList.add("crew");
 
 		ProjectUpdateDetailDto project1Detail = ProjectUpdateDetailDto.builder()
-			.userNickName("captain")
-			.projectName("스마트 건설 TF")
-			.projectDesc("(수정) 건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
-			.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
-			.projectStartDt(LocalDate.of(2023, 7, 8))
-			.projectEndDt(LocalDate.of(2023, 9, 12))
-			.projectLeader("plpl")
-			.projectMember(newMemberList)
-			.build();
+				.userNickName("captain")
+				.projectName("스마트 건설 TF")
+				.projectDesc("(수정) 건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
+				.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
+				.projectStartDt(LocalDate.of(2023, 7, 8))
+				.projectEndDt(LocalDate.of(2023, 9, 12))
+				.projectLeader("plpl")
+				.projectMember(newMemberList)
+				.build();
 
 		projectService.updateProjectDetail(project1Detail);
 
@@ -165,10 +164,10 @@ class ProjectControllerTest {
 	@Rollback(false)
 	void 프로젝트_삭제_테스트() {
 		ProjectUpdateStatusDto projectDeleteDto = ProjectUpdateStatusDto.builder()
-			.authType("PILOT")
-			.projectName("카카오톡 IT 솔루션")
-			.userNickName("pilot")
-			.build();
+				.authType("PILOT")
+				.projectName("카카오톡 IT 솔루션")
+				.userNickName("pilot")
+				.build();
 		projectService.deleteProject(projectDeleteDto);
 
 		assertThat(projectRepository.findAllByProjectStatusIs(ProjectStatus.DELETED).size()).isEqualTo(1);
@@ -214,7 +213,7 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_목록_조회_테스트() {
-		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트팩토리");
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트시티");
 
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 
@@ -226,7 +225,7 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_완수_인증_요청_테스트() {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqtList("스마트팩토리");
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqList("스마트팩토리");
 
 		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);
