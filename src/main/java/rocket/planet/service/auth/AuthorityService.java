@@ -79,6 +79,7 @@ public class AuthorityService {
 		Profile user = profileRepository.findByUserNickName(adminAuthModifyReqDto.getUserNickName()).orElseThrow();
 		user.updateRole(adminAuthModifyReqDto.getRole());
 
+		System.out.println(user + "------------");
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
 		if (pfAuthRepository.findByProfile(user).getAuthTargetId().equals(department.getId())
@@ -106,6 +107,7 @@ public class AuthorityService {
 
 	}
 
+	@Transactional
 	public List<AdminAuthMemberResDto> getTeamMemberList(String teamName) {
 		List<AdminAuthMemberResDto> teamMemberList = new ArrayList<>();
 

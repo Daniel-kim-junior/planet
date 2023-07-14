@@ -214,7 +214,7 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_목록_조회_테스트() {
-		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트팩토리");
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트시티");
 
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 
