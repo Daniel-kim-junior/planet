@@ -219,7 +219,6 @@ class ProjectControllerTest {
 
 		for (ProjectSummaryResDto project : projectList)
 			System.out.println("==================final =========\n" + project);
-
 	}
 
 	@Test
