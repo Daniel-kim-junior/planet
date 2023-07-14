@@ -11,6 +11,8 @@ import rocket.planet.dto.profile.ProfileDto;
 
 import rocket.planet.service.profile.ProfileService;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -55,7 +57,6 @@ public class ProfileController {
         profileService.addOusideProject(registerReqDto);
         return ResponseEntity.ok().body("외부프로젝트 생성이 완료되었습니다.");
     }
-
     @PatchMapping("/outside")
     public ResponseEntity<String> outsideProjectModify(@RequestBody ProfileDto.OutsideProjectUpdateReqDto updateReqDto) {
         log.info("updateResDto : {}", updateReqDto);
@@ -63,43 +64,34 @@ public class ProfileController {
         return ResponseEntity.ok().body("외부프로젝트 수정이 완료되었습니다.");
     }
     @DeleteMapping("/outside")
-    public ResponseEntity<String> outsideProjectRemove(@RequestBody ProfileDto.OutsideProjectDeleteReqDto deleteReqDto) {
-        profileService.removeOutsideProject(deleteReqDto);
-        return ResponseEntity.ok().body(deleteReqDto.getPjtName() + "프로젝트를 삭제하였습니다.");
+    public ResponseEntity<String> outsideProjectRemove(@RequestParam("pjtUid") String pjtUidString) {
+        profileService.removeOutsideProject(pjtUidString);
+        return ResponseEntity.ok().body("프로젝트 번호가 " + pjtUidString + "인 프로젝트를 삭제하였습니다.");
     }
-
     @PostMapping("/certs")
     public ResponseEntity<String> certAdd(@RequestBody ProfileDto.CertRegisterResDto certRegisterResDto) {
         profileService.addCertification(certRegisterResDto);
         return ResponseEntity.ok().body("자격증 생성이 완료되었습니다.");
     }
     @DeleteMapping("/certs")
-    public ResponseEntity<String> certRemove(@RequestBody ProfileDto.CertDeleteReqDto certDeleteReqDto) {
-        profileService.removeCertification(certDeleteReqDto);
-        return ResponseEntity.ok().body("자격증 번호가" + certDeleteReqDto.getCertNumber() + "인 자격증을 삭제했습니다.");
+    public ResponseEntity<String> userCertRemove(@RequestParam("certUid")String cetUidString) {
+        profileService.removeCertification(cetUidString);
+        return ResponseEntity.ok().body("자격증 등록번호가" + cetUidString + "인 자격증을 삭제했습니다.");
     }
-
     @PostMapping("/tech")
     public ResponseEntity<String> userProfileTechAdd(@RequestBody ProfileDto.TechRegisterReqDto techReqDto) {
-        boolean isPresentTech = profileService.checkTech(techReqDto.getTechName());
-        if (isPresentTech) {
             profileService.addUserTech(techReqDto);
             return ResponseEntity.ok().body(techReqDto.getUserNickName() + "님의 프로필에 " + techReqDto.getTechName() + "기술을 등록하였습니다.");
-        } else {
-                return ResponseEntity.ok().body(techReqDto.getTechName() + "은 등록할 수 없는 기술입니다.");
-            }
         }
     @DeleteMapping("/tech")
-    public ResponseEntity<String> userProfileTechRemove(@RequestBody ProfileDto.TechDeleteReqDto techDeleteReqDto) {
-        profileService.removeUserTech(techDeleteReqDto);
-        return ResponseEntity.ok().body(techDeleteReqDto.getUserNickName() + "님의 " + techDeleteReqDto.getTechName() + " 기술을 삭제하였습니다.");
-
+    public ResponseEntity<String> userProfileTechRemove(@RequestParam("userTechId")String userTechIdString) {
+        profileService.removeUserTech(userTechIdString);
+        return ResponseEntity.ok().body("테크 등록번호가 " + userTechIdString + "인 기술을 삭제하였습니다.");
     }
     @PatchMapping("/inside")
     public ResponseEntity<String> userInsidePjtModify(@RequestBody ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
         profileService.modifyUserInsideProject(insidePjtReqDto);
         return ResponseEntity.ok().body(insidePjtReqDto.getProjectName()+ "님의 " + insidePjtReqDto.getProjectName() + " 프로젝트를 상세이력을 수정하였습니다.");
     }
-
 
 }

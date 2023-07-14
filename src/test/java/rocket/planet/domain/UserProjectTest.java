@@ -39,6 +39,7 @@ public class UserProjectTest {
                 .userPjtDesc("스마트 시티 건설 일조")
                 .build();
         userPjtRepository.save(crewProject);
+
         UserProject pilotProject = UserProject.builder()
                 .profile(pilot)
                 .project(pj1)

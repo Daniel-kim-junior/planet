@@ -60,7 +60,7 @@ public class UserProject {
 	@Column(nullable = false)
 	private boolean userPjtCloseApply;
 
-	@Column(nullable = false)
+	@Column
 	private String userPjtDesc;
 
 	@Builder

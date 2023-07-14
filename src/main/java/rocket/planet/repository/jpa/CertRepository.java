@@ -9,8 +9,4 @@ import rocket.planet.domain.Certification;
  
 public interface CertRepository extends JpaRepository<Certification, UUID> {
 
-    Optional<Certification> findByCertNumber(String certNumber);
-    UUID findIdByCertNumber(String certNumber);
-    Long deleteCertificationByCertNumber(String certNumber);
-
 }

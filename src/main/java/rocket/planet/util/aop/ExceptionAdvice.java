@@ -17,14 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
-import rocket.planet.util.exception.AlreadyExistsIdException;
-import rocket.planet.util.exception.ExceptionEnum;
-import rocket.planet.util.exception.IdMismatchException;
-import rocket.planet.util.exception.NoSuchEmailException;
-import rocket.planet.util.exception.NoSuchEmailTokenException;
-import rocket.planet.util.exception.NoValidEmailTokenException;
-import rocket.planet.util.exception.PasswordMismatchException;
-import rocket.planet.util.exception.Temp30MinuteLockException;
+import rocket.planet.util.exception.*;
 
 /*
  * 예외 처리를 위한 어드바이스(AOP)
@@ -121,6 +114,13 @@ public class ExceptionAdvice {
 	public CommonErrorDto handleException(Exception e) {
 		log.error("Exception", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
+	}
+
+	@ExceptionHandler(UserTechException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleUserTechException(UserTechException e) {
+		log.error("UserTechException", e.getClass().getSimpleName(), e.getMessage());
+		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 
 	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
