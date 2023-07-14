@@ -71,12 +71,14 @@ public class ProfileService {
 
             List<ProfileDto.ProfileTechResDto> profileTechDtoList = profileTechList.stream()
                     .map(profileTech -> ProfileDto.ProfileTechResDto.builder()
+                            .userTechId(profileTech.getId())
                             .techName(profileTech.getTech().getTechName())
                             .build())
                     .collect(Collectors.toList());
 
             List<ProfileDto.OutsideProjectResDto> extPjtRecordDtoList = extPjtRecordList.stream()
                     .map(extPjtRecord -> ProfileDto.OutsideProjectResDto.builder()
+                            .pjtUid(extPjtRecord.getId())
                             .pjtName(extPjtRecord.getPjtName())
                             .pjtDesc(extPjtRecord.getPjtDesc())
                             .pjtStartDt(extPjtRecord.getPjtStartDt())
@@ -88,6 +90,7 @@ public class ProfileService {
 
             List<ProfileDto.CertResDto> certReqDtoList = certList.stream()
                     .map(cert -> ProfileDto.CertResDto.builder()
+                            .certUid(cert.getId())
                             .certName(cert.getCertName())
                             .certType(cert.getCertType())
                             .certDt(cert.getCertDt())
