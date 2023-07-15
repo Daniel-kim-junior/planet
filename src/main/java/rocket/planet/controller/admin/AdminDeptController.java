@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,18 +20,17 @@ public class AdminDeptController {
 	private final AdminDeptService adminDeptService;
 
 	@PostMapping
-	public ResponseEntity<AdminResDto> deptAdd(@RequestBody AdminDeptAddReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> deptAdd(AdminDeptAddReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.addDept(dto));
 	}
 
 	@DeleteMapping
-	public ResponseEntity<AdminResDto> deptRemove(@RequestBody AdminDeptTeamDelReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> deptRemove(AdminDeptTeamDelReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.removeDept(dto));
 	}
 
 	@PutMapping("/name")
-	public ResponseEntity<AdminResDto> deptModify(
-		@RequestBody AdminDeptModReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> deptModify(AdminDeptModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.modifyDept(dto));
 	}
 }
