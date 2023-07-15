@@ -2,6 +2,7 @@ package rocket.planet.domain;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
+import static rocket.planet.dto.admin.AdminDeptTeamDto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +59,15 @@ public class Department {
 		this.deptType = deptType;
 	}
 
-	public static Department defaultDept(String deptName, Company company) {
+	public void addTeam(Team team) {
+		this.team.add(team);
+	}
+
+	public static Department defaultDept(AdminDeptAddReqDto dto, Company company) {
 		return builder()
-			.deptName(deptName)
+			.deptName(dto.getName())
 			.company(company)
-			.deptType(OrgType.NO_ORG_TYPE)
+			.deptType(OrgType.valueOf(dto.getDeptType()))
 			.build();
 	}
 

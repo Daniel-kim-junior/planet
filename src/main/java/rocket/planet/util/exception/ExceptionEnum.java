@@ -43,7 +43,9 @@ public enum ExceptionEnum {
 
 	AUTH_CHANGE_EXCEPTION("UE011", "인증 변경 중입니다. 잠시 후 다시 시도해주세요"),
 
-	PASSWORD_MATCH_EXCEPTION("UE012", "이전 비밀번호와 동일합니다");
+	PASSWORD_MATCH_EXCEPTION("UE012", "이전 비밀번호와 동일합니다"),
+
+	ALREADY_EXISTS_DEPT_EXCEPTION("UE013", "이미 존재하는 부서입니다");
 
 	private HttpStatus httpStatus;
 	private final String code;

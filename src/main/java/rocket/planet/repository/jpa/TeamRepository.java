@@ -1,6 +1,7 @@
 package rocket.planet.repository.jpa;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 	List<Team> findTeamNameByDeptName(@Param("deptName") String deptName);
 
 	void deleteByTeamName(String name);
+
+	Optional<Team> findByDepartment_DeptNameAndTeamName(String deptName, String teamName);
 }

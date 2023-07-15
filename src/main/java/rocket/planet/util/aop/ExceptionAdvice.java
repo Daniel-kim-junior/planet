@@ -18,6 +18,7 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidPassword;
+import rocket.planet.util.exception.AlreadyExistsDeptException;
 import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.ExceptionEnum;
 import rocket.planet.util.exception.IdMismatchException;
@@ -133,6 +134,13 @@ public class ExceptionAdvice {
 	public CommonErrorDto handleException(Exception e) {
 		log.error("Exception", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
+	}
+
+	@ExceptionHandler(AlreadyExistsDeptException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleAlreadyExistsDeptException(AlreadyExistsDeptException e) {
+		log.error("AlreadyExistsDeptException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.ALREADY_EXISTS_DEPT_EXCEPTION);
 	}
 
 	@ExceptionHandler(UserTechException.class)
