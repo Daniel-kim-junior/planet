@@ -13,7 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.Email;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -41,19 +40,13 @@ public class Authority extends BaseTime {
 	@Column(columnDefinition = "BINARY(16)", nullable = false)
 	private UUID authTargetId;
 
-	// 삭제 예정
-	@Column(columnDefinition = "BINARY(16)")
-	private UUID userUid;
-
 	@Column(nullable = false)
-	@Email
 	private String authorizerId;
 
 	@Builder
-	public Authority(AuthType authType, UUID authTargetId, UUID userUid, String authorizerId) {
+	public Authority(AuthType authType, UUID authTargetId, String authorizerId) {
 		this.authType = authType;
 		this.authTargetId = authTargetId;
-		this.userUid = userUid;
 		this.authorizerId = authorizerId;
 	}
 

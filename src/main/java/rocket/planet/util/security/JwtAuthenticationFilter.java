@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String jwt = resolveToken(request);
 
 		if (StringUtils.hasText(jwt) && checkJwtHeaderUrl(request)) {
-
 			try {
 				Authentication jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
 				Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);

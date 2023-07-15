@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Company;
 import rocket.planet.domain.Department;
-import rocket.planet.dto.AdminTempDto;
-import rocket.planet.dto.AdminTempDto.AdminResDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.util.exception.NoSuchDeptException;
@@ -22,7 +22,7 @@ public class AdminDeptService {
 
 	private CompanyRepository companyRepository;
 
-	public AdminResDto addDept(AdminTempDto.AdminReqDto dto) throws Exception {
+	public AdminResDto addDept(AdminDeptTeamDto.AdminReqDto dto) throws Exception {
 		Company dkteckin = companyRepository.findByCompanyName("dkteckin");
 		deptRepository.save(Department.defaultDept(dto.getName(), dkteckin));
 
@@ -30,7 +30,7 @@ public class AdminDeptService {
 	}
 
 	@Transactional
-	public AdminResDto removeDept(AdminTempDto.AdminReqDto dto) throws Exception {
+	public AdminResDto removeDept(AdminDeptTeamDto.AdminReqDto dto) throws Exception {
 
 		deptRepository.deleteByDeptName(dto.getName());
 
@@ -38,7 +38,7 @@ public class AdminDeptService {
 	}
 
 	@Transactional
-	public AdminResDto modifyDept(AdminTempDto.AdminReqDto dto) {
+	public AdminResDto modifyDept(AdminDeptTeamDto.AdminReqDto dto) {
 		Department department = Optional.of(deptRepository.findByDeptName(dto.getName()))
 			.orElseThrow(NoSuchDeptException::new);
 

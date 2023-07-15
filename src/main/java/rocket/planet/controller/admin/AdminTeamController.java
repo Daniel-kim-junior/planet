@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.AdminTempDto.AdminReqDto;
-import rocket.planet.dto.AdminTempDto.AdminResDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminReqDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
 import rocket.planet.service.admin.AdminTeamService;
 
 @RestController

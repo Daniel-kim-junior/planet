@@ -3,7 +3,6 @@ package rocket.planet.util.security;
 import java.util.Collections;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +11,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.exception.JwtInvalidException;
 
 @Component
@@ -27,9 +25,6 @@ public class JsonWebTokenIssuer {
 	private final byte[] secretKeyBytes;
 
 	private final byte[] refreshSecretKeyBytes;
-
-	@Autowired
-	private AccessTokenRedisRepository accessTokenRepository;
 
 	private final int expireMin;
 
@@ -79,10 +74,5 @@ public class JsonWebTokenIssuer {
 			throw new JwtInvalidException("using illegal argument like null", illegalArgumentException);
 		}
 		return claims;
-	}
-
-	public void invalidAccessToken(String id) {
-		// jwt 토큰 무효화
-		accessTokenRepository.deleteById(id);
 	}
 }
