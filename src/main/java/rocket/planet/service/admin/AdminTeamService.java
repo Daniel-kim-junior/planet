@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.Department;
 import rocket.planet.domain.Team;
-import rocket.planet.dto.admin.AdminDeptTeamDto.*;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.util.exception.AlreadyExistsTeamException;
@@ -31,11 +30,8 @@ public class AdminTeamService {
 	@Transactional
 	public AdminResDto addTeam(AdminTeamAddReqDto dto) throws Exception {
 
-		final Department department = deptRepository.findByDeptName(dto.getDeptName());
-
-		if (department == null) {
-			throw new NoSuchDeptException();
-		}
+		final Department department = Optional.ofNullable(deptRepository.findByDeptName(dto.getDeptName()))
+			.orElseThrow(NoSuchDeptException::new);
 
 		Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
 			.ifPresentOrElse(team -> {
