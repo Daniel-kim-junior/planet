@@ -4,4 +4,5 @@ public class UserTechException extends RuntimeException{
     public UserTechException(String message) {
         super(message);
     }
+
 }
