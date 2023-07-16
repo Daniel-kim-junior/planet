@@ -159,6 +159,14 @@ public class ProfileDto {
         private String projectName;
         private String projectDesc;
     }
+
+    @Getter
+    @Builder
+    public static class UserNewPwdReqDto{
+        private String userId;
+        private String userPwd;
+        private String userPwdCheck;
+    }
 }
 
 

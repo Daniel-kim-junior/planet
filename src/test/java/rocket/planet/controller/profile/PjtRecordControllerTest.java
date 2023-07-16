@@ -113,8 +113,6 @@ class PjtRecordControllerTest {
         assertThat(pjtRecordRepository.findByPjtName("crewz"));
     }
 
-
-
 	@Test
 	@Transactional
 	void 외부프로젝트_삭제_테스트() {

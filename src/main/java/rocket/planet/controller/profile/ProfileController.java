@@ -94,4 +94,11 @@ public class ProfileController {
         return ResponseEntity.ok().body(insidePjtReqDto.getProjectName()+ "님의 " + insidePjtReqDto.getProjectName() + " 프로젝트를 상세이력을 수정하였습니다.");
     }
 
+    @PatchMapping("/modify-pwd")
+    public ResponseEntity<String> userPwdModify(@RequestBody ProfileDto.UserNewPwdReqDto newPwdReqDto) {
+        profileService.changeUserPwd(newPwdReqDto);
+        return ResponseEntity.ok().body("비밀번호를 변경하였습니다.");
+    }
+
+
 }

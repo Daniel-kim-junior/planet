@@ -33,8 +33,6 @@ class AuthLoginAndJoinServiceTest {
 	@Mock
 	private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-	@Mock
-	private AuthChangeRepository authChangeRepository;
 
 	@Mock
 	private LastLoginRepository lastLoginRepository;
