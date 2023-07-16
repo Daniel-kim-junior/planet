@@ -151,7 +151,7 @@ public class AuthLoginAndJoinService {
 		}
 	}
 
-	private LoginResDto completeLogin(User user) throws Exception {
+	public LoginResDto completeLogin(User user) throws Exception {
 		limitLoginRepository.deleteById(user.getUserId());
 
 		saveLastLoginLogDataInRedis(user);

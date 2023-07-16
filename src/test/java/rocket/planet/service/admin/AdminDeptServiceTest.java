@@ -38,7 +38,7 @@ class AdminDeptServiceTest {
 
 		final Department department = Department.builder().deptName("dktechin").build();
 
-		when(companyRepository.findByCompanyName("dkteckin"))
+		when(companyRepository.findByCompanyName("dktechin"))
 			.thenReturn(Company.builder().companyName("dktechin").build());
 		when(deptRepository.findByDeptName("dktechin")).thenReturn(department);
 		when(deptRepository.findByDeptName("dktechi")).thenReturn(null);

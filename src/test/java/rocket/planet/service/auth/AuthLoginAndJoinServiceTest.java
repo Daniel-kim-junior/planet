@@ -25,8 +25,10 @@ import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
 import rocket.planet.domain.redis.EmailJoinConfirm;
+import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.repository.redis.EmailJoinConfirmRepository;
 import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
@@ -45,6 +47,9 @@ class AuthLoginAndJoinServiceTest {
 
 	@Mock
 	private RefreshTokenRedisRepository refreshTokenRedisRepository;
+
+	@Mock
+	private AccessTokenRedisRepository accessTokenRedisRepository;
 
 	@Mock
 	private LastLoginRepository lastLoginRepository;
@@ -95,6 +100,8 @@ class AuthLoginAndJoinServiceTest {
 		when(userRepository.findByUserId("limit@gmail.com")).thenReturn(Optional.of(inValidUser));
 		when(limitLoginRepository.findById("limit@gmail.com"))
 			.thenReturn(Optional.of(LimitLogin.builder().email("limit@gmail.com").count(4).build()));
+		when(lastLoginRepository.findById("limit@gmail.com"))
+			.thenReturn(Optional.of(LastLogin.builder().email("").build()));
 		when(emailJoinConfirmRepository.findById("test@gmail.com")).thenReturn(Optional.empty());
 		when(emailJoinConfirmRepository.findById("admin@gmail.com")).thenReturn(
 			Optional.of(EmailJoinConfirm.builder().build()));
@@ -149,46 +156,41 @@ class AuthLoginAndJoinServiceTest {
 
 	@Test
 	void 로그인_DTO_생성시_프로필이_있을때_없을때_분기처리() throws Exception {
-		/**
-		 * user가 null일때
-		 */
-		// assertThrows(NullPointerException.class,
-		// 	() -> authLoginAndJoinService.
 
-		// /**
-		//  *  메소드 성공
-		//  */
-		// assertDoesNotThrow(() ->
-		// 	authLoginAndJoinService
-		// 		.makeJsonWebTokenAndRoleDto(User.builder().userId("limit@gmail.com")
-		// 			.lastPwdModifiedDt(LocalDate.now()).profile(null).build()));
-		//
-		// /**
-		//  * 현재 시간을 기준으로 3개월이 경과
-		//  */
-		// LoginResDto dto = authLoginAndJoinService
-		// 	.makeJsonWebTokenAndRoleDto(User.builder().userId("limit@gmail.com")
-		// 		.lastPwdModifiedDt(LocalDate.of(2023, 4, 16)).profile(null).build());
-		//
-		// assertThat(dto.isThreeMonth()).isTrue();
-		//
-		// /**
-		//  * 초기 역할은 CREW
-		//  */
-		// assertThat(dto.getAuthRole()).isEqualTo(Role.CREW.name());
-		//
-		// /**
-		//  * user Profile이 존재할때
-		//  */
-		// final Profile profile = Profile.builder().userId("limit@gmail.com").role(Role.ADMIN).build();
-		// profile.getOrg()
-		// 	.add(Org.builder().company(Company.builder().build()).department(Department.builder().build()).team(
-		// 		Team.builder().build()).build());
-		// dto = authLoginAndJoinService
-		// 	.makeJsonWebTokenAndRoleDto(User.builder().userId("limit@gmail.com")
-		// 		.lastPwdModifiedDt(LocalDate.of(2023, 4, 16))
-		// 		.profile(profile).build());
-		// assertThat(dto.getAuthRole()).isEqualTo(Role.ADMIN.name());
+		/**
+		 *  메소드 성공
+		 */
+		assertDoesNotThrow(() ->
+			authLoginAndJoinService
+				.completeLogin(User.builder().userId("limit@gmail.com")
+					.lastPwdModifiedDt(LocalDate.now()).profile(null).build()));
+
+		/**
+		 * 현재 시간을 기준으로 3개월이 경과
+		 */
+		LoginResDto dto = authLoginAndJoinService
+			.completeLogin(User.builder().userId("limit@gmail.com")
+				.lastPwdModifiedDt(LocalDate.of(2023, 4, 16)).profile(null).build());
+
+		assertThat(dto.isThreeMonth()).isTrue();
+
+		/**
+		 * 초기 역할은 CREW
+		 */
+		assertThat(dto.getAuthRole()).isEqualTo(Role.CREW.name());
+
+		/**
+		 * user Profile이 존재할때
+		 */
+		final Profile profile = Profile.builder().userId("limit@gmail.com").role(Role.ADMIN).build();
+		profile.getOrg()
+			.add(Org.builder().company(Company.builder().build()).department(Department.builder().build()).team(
+				Team.builder().build()).build());
+		dto = authLoginAndJoinService
+			.completeLogin(User.builder().userId("limit@gmail.com")
+				.lastPwdModifiedDt(LocalDate.of(2023, 4, 16))
+				.profile(profile).build());
+		assertThat(dto.getAuthRole()).isEqualTo(Role.ADMIN.name());
 
 	}
 
