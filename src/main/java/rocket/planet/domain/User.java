@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.profile.ProfileDto;
 
 @Entity
 @Getter
@@ -76,10 +77,6 @@ public class User extends BaseTime {
 		return this;
 	}
 
-	public User updatePassword(String userPwd) {
-		this.userPwd = userPwd;
-		return this;
-	}
 
 	public static User defaultUser(String userId, String userPwd) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -91,4 +88,17 @@ public class User extends BaseTime {
 	public boolean isExistProfile() {
 		return this.profile != null;
 	}
+
+	public User updatePassword(String newPassword) {
+		this.userPwd = userPwd;
+		this.lastPwdModifiedDt = LocalDate.now();
+	return this;
+	}
+
+	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto){
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwdCheck());
+		this.lastPwdModifiedDt = LocalDate.now();
+	}
+
 }

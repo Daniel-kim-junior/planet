@@ -62,6 +62,7 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class CertResDto {
+        private UUID certUid;
         private String certName;
         private LocalDate certDt;
         private String certAgency;
@@ -73,6 +74,7 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class ProfileTechResDto {
+        private UUID userTechId;
         private String techName;
     }
 
@@ -98,6 +100,7 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class OutsideProjectResDto {
+        private UUID pjtUid;
         private String pjtName;
         private String pjtDesc;
         private LocalDate pjtStartDt;
@@ -155,6 +158,14 @@ public class ProfileDto {
         private String userNickName;
         private String projectName;
         private String projectDesc;
+    }
+
+    @Getter
+    @Builder
+    public static class UserNewPwdReqDto{
+        private String userId;
+        private String userPwd;
+        private String userPwdCheck;
     }
 }
 

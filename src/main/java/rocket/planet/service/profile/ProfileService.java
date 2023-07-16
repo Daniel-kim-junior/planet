@@ -3,12 +3,14 @@ package rocket.planet.service.profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.*;
+import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 import rocket.planet.util.security.UserDetailsImpl;
 
@@ -29,6 +31,10 @@ public class ProfileService {
     private final TechRepository techRepository;
     private final PfTechRepository pfTechRepository;
     private final UserPjtRepository userPjtRepository;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+    private Exception handlePasswordMatchException;
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
@@ -71,12 +77,14 @@ public class ProfileService {
 
             List<ProfileDto.ProfileTechResDto> profileTechDtoList = profileTechList.stream()
                     .map(profileTech -> ProfileDto.ProfileTechResDto.builder()
+                            .userTechId(profileTech.getId())
                             .techName(profileTech.getTech().getTechName())
                             .build())
                     .collect(Collectors.toList());
 
             List<ProfileDto.OutsideProjectResDto> extPjtRecordDtoList = extPjtRecordList.stream()
                     .map(extPjtRecord -> ProfileDto.OutsideProjectResDto.builder()
+                            .pjtUid(extPjtRecord.getId())
                             .pjtName(extPjtRecord.getPjtName())
                             .pjtDesc(extPjtRecord.getPjtDesc())
                             .pjtStartDt(extPjtRecord.getPjtStartDt())
@@ -88,6 +96,7 @@ public class ProfileService {
 
             List<ProfileDto.CertResDto> certReqDtoList = certList.stream()
                     .map(cert -> ProfileDto.CertResDto.builder()
+                            .certUid(cert.getId())
                             .certName(cert.getCertName())
                             .certType(cert.getCertType())
                             .certDt(cert.getCertDt())
@@ -242,5 +251,17 @@ public class ProfileService {
         userProject.get().updateUserPjtDesc(insidePjtUpdateReqDto);
     }
 
+
+    @Transactional
+    public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto) {
+        Optional<User> user = userRepository.findByUserId(newPwdReqDto.getUserId());
+        if (passwordEncoder.matches(newPwdReqDto.getUserPwd(), user.get().getUserPwd())) {
+            throw new UserPwdCheckException("이전에 사용하던 비밀번호와 동일합니다.");
+        }
+        if (!newPwdReqDto.getUserPwd().equals(newPwdReqDto.getUserPwdCheck())) {
+            throw new UserPwdCheckException("변경하려는 비밀번호가 동일하지 않습니다.");
+        }
+        user.get().changeUserPwd(newPwdReqDto);
+    }
 }
 
