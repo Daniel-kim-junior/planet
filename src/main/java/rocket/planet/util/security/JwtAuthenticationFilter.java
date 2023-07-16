@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.exception.JwtInvalidException;
 
 /*
@@ -26,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer ";
 	private final AuthenticationManager authenticationManager;
+	private final AccessTokenRedisRepository accessTokenRedisRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -33,11 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String jwt = resolveToken(request);
 
 		if (StringUtils.hasText(jwt) && checkJwtHeaderUrl(request)) {
-
 			try {
-
 				Authentication jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
 				Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);
+				PlanetUser planetUser = (PlanetUser)authentication.getPrincipal();
+				accessTokenRedisRepository.findById(planetUser.getUser().getUserId())
+					.orElseThrow(() -> new JwtInvalidException("Invalid JWT Token"));
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			} catch (JwtInvalidException e) {

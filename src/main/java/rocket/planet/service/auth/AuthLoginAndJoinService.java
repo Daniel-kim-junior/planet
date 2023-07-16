@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +21,7 @@ import org.springframework.util.StringUtils;
 import io.jsonwebtoken.Claims;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
+import rocket.planet.domain.Authority;
 import rocket.planet.domain.Company;
 import rocket.planet.domain.Department;
 import rocket.planet.domain.Org;
@@ -29,10 +29,10 @@ import rocket.planet.domain.Profile;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.User;
+import rocket.planet.domain.redis.AccessToken;
 import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
-import rocket.planet.domain.redis.RedisCacheAuth;
 import rocket.planet.domain.redis.RefreshToken;
 import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 import rocket.planet.repository.jpa.AuthRepository;
@@ -42,7 +42,7 @@ import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserRepository;
-import rocket.planet.repository.redis.AuthChangeRepository;
+import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.repository.redis.EmailJoinConfirmRepository;
 import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
@@ -53,7 +53,6 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.security.JsonWebTokenIssuer;
-import rocket.planet.util.security.UserDetailsImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -75,11 +74,11 @@ public class AuthLoginAndJoinService {
 
 	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
+	private final AccessTokenRedisRepository accessTokenRedisRepository;
+
 	private final LimitLoginRepository limitLoginRepository;
 
 	private final CompanyRepository companyRepository;
-
-	private final AuthChangeRepository authChangeRepository;
 
 	private final OrgRepository orgRepository;
 
@@ -142,22 +141,12 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto completeLogin(User user) throws Exception {
 		limitLoginRepository.deleteById(user.getUserId());
-		authChangeRepository.deleteById(user.getUserId());
-
-		LoginResDto responseDto;
 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPwd());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		if (user.isExistProfile()) {
-			responseDto = getLoginResDtoByCompleteJoinUser(user);
-		} else {
-			responseDto = getLoginResDtoByNotCompleteJoinUser(user);
-		}
-
 		saveLastLoginLogDataInRedis(user);
-
-		return responseDto;
+		return getLoginResDtoByCompleteJoinUser(user);
 	}
 
 	/**
@@ -181,7 +170,7 @@ public class AuthLoginAndJoinService {
 	 * @return
 	 */
 
-	private LoginResDto getLoginResDtoByNotCompleteJoinUser(User user) throws
+	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) throws
 		Exception {
 		LoginResDto responseDto;
 		responseDto = makeJsonWebTokenAndRoleDto(user);
@@ -194,26 +183,14 @@ public class AuthLoginAndJoinService {
 	 * @return
 	 */
 
-	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) throws
-		Exception {
-		LoginResDto responseDto;
-		responseDto = makeJsonWebTokenAndRoleDto(user);
-		saveAuthInRedisForJoinUser(user, responseDto, getUserAuthoritiesByDb(user));
-		return responseDto;
-	}
-
 	/**
 	 * @param user
 	 * @return
 	 * @DB에서 권한 정보 가져오기
 	 */
 
-	private List<RedisCacheAuth> getUserAuthoritiesByDb(User user) throws Exception {
-		return authRepository.findAllByProfileAuthority_ProfileUserId(
-				user.getUserId()).stream().map(e -> RedisCacheAuth.builder().authorityTargetTable(e.getAuthType())
-				.authorityTargetUid(e.getAuthTargetId()).build())
-			.collect(
-				Collectors.toList());
+	private List<Authority> getUserAuthoritiesByDb(User user) throws Exception {
+		return authRepository.findAllByProfileAuthority_ProfileUserId(user.getUserId());
 	}
 
 	/**
@@ -240,25 +217,14 @@ public class AuthLoginAndJoinService {
 	/**
 	 * @param user
 	 * @param responseDto
-	 * @프로필 정보가 없을때 RefreshToken Redis에 저장
+	 * @프로필 정보가 없을때 RefreshToken, AccessToken Redis에 저장
 	 */
 	private void saveAuthInRedisForJoinUser(User user, LoginResDto responseDto) throws RedisException {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
 			.email(user.getUserId())
 			.build());
-	}
-
-	/**
-	 * @param user
-	 * @param responseDto
-	 * @프로필 정보가 있을때 RefreshToken Redis에 저장
-	 */
-
-	private void saveAuthInRedisForJoinUser(User user, LoginResDto responseDto,
-		List<RedisCacheAuth> userAuthorities) throws RedisException {
-		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
+		accessTokenRedisRepository.save(AccessToken.builder().token(responseDto.getAccessToken())
 			.email(user.getUserId())
-			.authorities(userAuthorities)
 			.build());
 	}
 
@@ -295,6 +261,7 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto makeLoginResBuilder(User user, String userName, String authority) throws
 		Exception {
+
 		return LoginResDto.builder()
 			.authRole(roleIssue(authority))
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
@@ -476,6 +443,7 @@ public class AuthLoginAndJoinService {
 			});
 		User saveUser = userRepository.save(User.defaultUser(dto.getId(), dto.getPassword()));
 		saveLastLoginDataInRedis(dto);
+
 		return completeLogin(saveUser);
 	}
 
@@ -490,21 +458,18 @@ public class AuthLoginAndJoinService {
 	 */
 
 	@Transactional
-	public BasicInputResDto saveBasicProfile(BasicInputReqDto dto) throws Exception {
-
-		String id = Optional.of(UserDetailsImpl.getLoginUserId())
+	public BasicInputResDto saveBasicProfile(BasicInputReqDto dto, User user) throws Exception {
+		Optional.ofNullable(user)
 			.orElseThrow(() -> new UsernameNotFoundException("토큰이 만료되어 다시 로그인 해주세요"));
 
-		Profile profile = BasicInsertDtoToProfile(dto, id);
+		Profile basicProfile = BasicInsertDtoToProfile(dto, user.getUserId());
+		Profile saveProfile = profileRepository.save(basicProfile);
+		User updateUser = user.updateProfile(saveProfile);
+		userRepository.save(updateUser);
 
-		User user = userRepository.findByUserId(id)
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+		Org org = makeOrgByCompanyAndDeptAndTeam(dto, saveProfile);
 
-		profile = profileRepository.save(profile);
-		user.updateProfile(profile);
-		Org org = makeOrgByCompanyAndDeptAndTeam(dto, profile);
-
-		return makeBasicInputResDto(profile, user, org, id);
+		return makeBasicInputResDto(saveProfile, user, org, updateUser.getUserId());
 	}
 
 	/**

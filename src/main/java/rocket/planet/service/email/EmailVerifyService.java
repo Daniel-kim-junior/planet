@@ -60,9 +60,9 @@ public class EmailVerifyService {
 	private EmailToken token;
 
 	@Async("customAsyncExecutor")
-	public CompletableFuture<String> saveLimitTimeAndSendEmail(String email) {
+	public CompletableFuture<String> saveLimitTimeAndSendEmail(String email, String type) {
 		boolean existUser = userRepository.findByUserId(email).isPresent();
-		if (existUser) {
+		if (existUser && StringUtils.pathEquals(type, "join")) {
 			CompletableFuture<String> future = new CompletableFuture<>();
 			future.completeExceptionally(new NoSuchEmailException());
 			return future;

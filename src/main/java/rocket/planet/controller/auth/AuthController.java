@@ -5,6 +5,7 @@ import static rocket.planet.dto.auth.AuthDto.*;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import rocket.planet.domain.User;
 import rocket.planet.service.auth.AuthLoginAndJoinService;
 
 @RestController
@@ -28,8 +30,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/basic-profile-register")
-	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto) throws Exception {
-		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfile(dto));
+	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto,
+		@AuthenticationPrincipal(expression = "user") User user) throws Exception {
+		System.out.println("user: " + user);
+		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfile(dto, user));
 	}
 
 	@PostMapping("/login")

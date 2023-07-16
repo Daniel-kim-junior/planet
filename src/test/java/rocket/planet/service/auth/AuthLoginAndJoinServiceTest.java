@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.User;
 import rocket.planet.repository.jpa.UserRepository;
-import rocket.planet.repository.redis.AuthChangeRepository;
 import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
@@ -34,8 +33,6 @@ class AuthLoginAndJoinServiceTest {
 	@Mock
 	private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-	@Mock
-	private AuthChangeRepository authChangeRepository;
 
 	@Mock
 	private LastLoginRepository lastLoginRepository;

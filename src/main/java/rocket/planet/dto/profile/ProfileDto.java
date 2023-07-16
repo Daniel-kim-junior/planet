@@ -2,6 +2,7 @@ package rocket.planet.dto.profile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,8 @@ public class ProfileDto {
         private boolean profileAnnualStatus;
 
         private OrgResDto org;
-        private List<InsideProjectResDto> userProject;
+        private List<ClosedInsideProjectResDto> userClosedProject;
+        private List<UserInProgressProjectResDto> userInProgressProject;
         private List<ProfileTechResDto> profileTech;
         private List<OutsideProjectResDto> extPjtRecord;
         private List<CertResDto> certification;
@@ -51,10 +53,16 @@ public class ProfileDto {
         private String userNickName;
         private boolean profileAnnualStatus;
     }
-
+    @Getter
+    @Builder
+    public static class UserInProgressProjectResDto {
+        private String projectName;
+        private LocalDate userPjtCloseDt;
+    }
     @Getter
     @Builder
     public static class CertResDto {
+        private UUID certUid;
         private String certName;
         private LocalDate certDt;
         private String certAgency;
@@ -66,16 +74,18 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class ProfileTechResDto {
+        private UUID userTechId;
         private String techName;
     }
 
     @Getter
     @Builder
-    public static class InsideProjectResDto {
+    public static class ClosedInsideProjectResDto {
         private String projectName;
         private String projectDesc;
         private LocalDate userPjtJoinDt;
         private LocalDate userPjtCloseDt;
+        private String userPjtDesc;
     }
 
     @Getter
@@ -90,6 +100,7 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class OutsideProjectResDto {
+        private UUID pjtUid;
         private String pjtName;
         private String pjtDesc;
         private LocalDate pjtStartDt;
@@ -125,12 +136,6 @@ public class ProfileDto {
 
     @Getter
     @Builder
-    public static class OutsideProjectDeleteReqDto {
-        private String pjtName;
-    }
-
-    @Getter
-    @Builder
     public static class CertRegisterResDto {
         private String userNickName;
         private String certName;
@@ -143,41 +148,24 @@ public class ProfileDto {
 
     @Getter
     @Builder
-    public static class CertUpdateResDto {
-        private String userNickName;
-        private String certName;
-        private String certAgency;
-        private String certType;
-        private String certNumber;
-        private LocalDate certDt;
-        private LocalDate certExpireDate;
-    }
-
-    @Getter
-    @Builder
-    public static class CertDeleteReqDto {
-        private String certNumber;
-    }
-
-    @Getter
-    @Builder
     public static class TechRegisterReqDto {
         private String userNickName;
         private String techName;
     }
     @Getter
     @Builder
-    public static class TechDeleteReqDto {
-        private String userNickName;
-        private String techName;
-    }
-
-    @Getter
-    @Builder
     public static class insideProjectUpdateReqDto {
         private String userNickName;
         private String projectName;
         private String projectDesc;
+    }
+
+    @Getter
+    @Builder
+    public static class UserNewPwdReqDto{
+        private String userId;
+        private String userPwd;
+        private String userPwdCheck;
     }
 }
 

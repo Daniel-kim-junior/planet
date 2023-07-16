@@ -41,7 +41,9 @@ public enum ExceptionEnum {
 
 	TEMP_LOCK_EXCEPTION("UE010", "5회 비밀번호 실패 이유로 30분간 계정 잠금"),
 
-	AUTH_CHANGE_EXCEPTION("UE011", "인증 변경 중입니다. 잠시 후 다시 시도해주세요");
+	AUTH_CHANGE_EXCEPTION("UE011", "인증 변경 중입니다. 잠시 후 다시 시도해주세요"),
+
+	PASSWORD_MATCH_EXCEPTION("UE012", "이전 비밀번호와 동일합니다");
 
 	private HttpStatus httpStatus;
 	private final String code;
