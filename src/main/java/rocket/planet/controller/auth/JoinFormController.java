@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class JoinFormController {
 	}
 
 	@GetMapping("/join-team")
-	public ResponseEntity<List<String>> joinFormTeamList(String deptName) throws Exception {
+	public ResponseEntity<List<String>> joinFormTeamList(@RequestParam String deptName) throws Exception {
 		return ResponseEntity.ok().body(teamRepository.findTeamNameByDeptName(deptName).stream()
 			.map(e -> e.getTeamName()).collect(Collectors.toList()));
 	}
