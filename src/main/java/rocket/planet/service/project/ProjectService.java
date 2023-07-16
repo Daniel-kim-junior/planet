@@ -217,6 +217,7 @@ public class ProjectService {
 		return projectSummaryList;
 	}
 
+	@Transactional
 	public List<ProjectCloseResDto> getProjecReqList(String teamName) {
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 

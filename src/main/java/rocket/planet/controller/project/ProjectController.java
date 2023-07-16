@@ -1,11 +1,13 @@
 package rocket.planet.controller.project;
 
+import static rocket.planet.dto.project.ProjectDto.*;
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,9 +34,9 @@ public class ProjectController {
 	private final ProjectService projectService;
 
 	@GetMapping("/project")
-	public ResponseEntity<ProjectDetailResDto> projectDetail(String projectName) {
+	public ResponseEntity<ProjectDetailResDto> projectDetail(@ModelAttribute NameReqDto projectName) {
 
-		return ResponseEntity.ok().body(projectService.getProject(projectName));
+		return ResponseEntity.ok().body(projectService.getProject(projectName.getName()));
 	}
 
 	@GetMapping("/management/projects/{userNickName}")
@@ -54,21 +56,21 @@ public class ProjectController {
 	}
 
 	@PatchMapping("/management/projects")
-	public ResponseEntity<String> projectDetailUpdate(ProjectUpdateDetailDto projectDetailDto) {
+	public ResponseEntity<String> projectDetailUpdate(@RequestBody ProjectUpdateDetailDto projectDetailDto) {
 		projectService.updateProjectDetail(projectDetailDto);
 
 		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
 	}
 
 	@PatchMapping("/management/projects/disable")
-	public ResponseEntity<String> projectDelete(ProjectUpdateStatusDto projectDeleteDto) {
+	public ResponseEntity<String> projectDelete(@RequestBody ProjectUpdateStatusDto projectDeleteDto) {
 		projectService.deleteProject(projectDeleteDto);
 
 		return ResponseEntity.ok().body("프로젝트 삭제가 완료되었습니다.");
 	}
 
 	@PatchMapping("/management/projects/finish")
-	public ResponseEntity<String> projectClose(ProjectNameReqDto projectNameReqDto) {
+	public ResponseEntity<String> projectClose(@RequestBody ProjectNameReqDto projectNameReqDto) {
 		projectService.closeProject(projectNameReqDto.getName(), projectNameReqDto.getUserNickName());
 
 		return ResponseEntity.ok().body("프로젝트를 마감하였습니다.");
@@ -83,21 +85,22 @@ public class ProjectController {
 	}
 
 	@PostMapping("/management/projects/confirm")
-	public ResponseEntity<String> projectCloseRequest(ProjectNameReqDto projectNameReqDto) {
+	public ResponseEntity<String> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
 		projectService.requestProjectClose(projectNameReqDto.getName(), projectNameReqDto.getUserNickName());
 
 		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
 	}
 
 	@PostMapping("/management/projects/list")
-	public ResponseEntity<List<ProjectSummaryResDto>> projectList(ProjectNameReqDto projectNameReqDto) {
+	public ResponseEntity<List<ProjectSummaryResDto>> projectList(@RequestBody ProjectNameReqDto projectNameReqDto) {
 		List<ProjectSummaryResDto> projectList = projectService.getProjectList(projectNameReqDto.getName());
 
 		return ResponseEntity.ok().body(projectList);
 	}
 
 	@GetMapping("/management/projects/request")
-	private ResponseEntity<List<ProjectCloseResDto>> projectReqList(ProjectNameReqDto projectNameReqDto) {
+	private ResponseEntity<List<ProjectCloseResDto>> projectReqList(
+		@ModelAttribute ProjectNameReqDto projectNameReqDto) {
 		List<ProjectCloseResDto> projectList = projectService.getProjecReqList(projectNameReqDto.getName());
 
 		return ResponseEntity.ok().body(projectList);
