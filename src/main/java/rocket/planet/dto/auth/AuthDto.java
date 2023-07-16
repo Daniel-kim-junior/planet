@@ -1,12 +1,13 @@
 package rocket.planet.dto.auth;
 
+import static lombok.AccessLevel.*;
+
 import java.time.LocalDate;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import rocket.planet.util.annotation.ValidPassword;
 public class AuthDto {
 
 	@Getter
-	@NoArgsConstructor
+	@NoArgsConstructor(access = PROTECTED)
 	public static class JoinReqDto {
 		@Email
 		@NotEmpty
@@ -28,10 +29,15 @@ public class AuthDto {
 		@ValidPassword
 		private String password;
 
+		@Builder
+		public JoinReqDto(String id, String password) {
+			this.id = id;
+			this.password = password;
+		}
 	}
 
 	@Getter
-	@NoArgsConstructor
+	@NoArgsConstructor(access = PROTECTED)
 	public static class BasicInputReqDto {
 
 		@NotEmpty
@@ -54,6 +60,18 @@ public class AuthDto {
 
 		private boolean profileDisplay;
 
+		@Builder
+		public BasicInputReqDto(String userName, String deptName, String teamName, int career,
+			LocalDate companyJoinDate,
+			LocalDate userBirth, boolean profileDisplay) {
+			this.userName = userName;
+			this.deptName = deptName;
+			this.teamName = teamName;
+			this.career = career;
+			this.companyJoinDate = companyJoinDate;
+			this.userBirth = userBirth;
+			this.profileDisplay = profileDisplay;
+		}
 	}
 
 	@Getter
@@ -97,9 +115,7 @@ public class AuthDto {
 	}
 
 	@Getter
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Builder
+	@NoArgsConstructor(access = PROTECTED)
 	public static class LoginReqDto {
 		@Email
 		@NotEmpty
@@ -109,5 +125,11 @@ public class AuthDto {
 		@NotEmpty
 		@NotBlank
 		private String password;
+
+		@Builder
+		public LoginReqDto(String id, String password) {
+			this.id = id;
+			this.password = password;
+		}
 	}
 }

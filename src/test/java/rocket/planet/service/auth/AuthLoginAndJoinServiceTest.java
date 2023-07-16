@@ -1,5 +1,6 @@
 package rocket.planet.service.auth;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static rocket.planet.dto.auth.AuthDto.*;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.User;
+import rocket.planet.domain.redis.LimitLogin;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
@@ -61,6 +63,7 @@ class AuthLoginAndJoinServiceTest {
 		when(userRepository.findByUserId("admin@gmail.com")).thenReturn(Optional.of(adminUser));
 		when(passwordEncoder.matches("encodedPassword", "encodedPassword")).thenReturn(true);
 		when(passwordEncoder.matches("encoded222sdf", "encodedPassword")).thenReturn(false);
+		when(limitLoginRepository.findById("admin@gmail.com")).thenReturn(Optional.empty());
 	}
 
 	@Test
@@ -92,12 +95,12 @@ class AuthLoginAndJoinServiceTest {
 			authLoginAndJoinService.checkPasswordTryFiveValidation(LoginReqDto.builder()
 				.id("admin@gmail.com").password("encoded222sdf").build(), save.get());
 		});
-		//
-		// /**
-		//  * 비밀번호가 틀렸을때 레디스의 정보가 취소 횟수가 비어있을때
-		//  */
-		// Optional<LimitLogin> limitLogin = limitLoginRepository.findById("admin@gmail.com");
-		// assertThat(limitLogin).isEmpty();
+
+		/**
+		 * 비밀번호가 틀렸을때 레디스의 정보가 취소 횟수가 비어있을때
+		 */
+		Optional<LimitLogin> limitLogin = limitLoginRepository.findById("admin@gmail.com");
+		assertThat(limitLogin).isEmpty();
 	}
 
 }

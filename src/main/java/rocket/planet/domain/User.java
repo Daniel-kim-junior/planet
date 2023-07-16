@@ -77,7 +77,6 @@ public class User extends BaseTime {
 		return this;
 	}
 
-
 	public static User defaultUser(String userId, String userPwd) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		return builder().userLock(false)
@@ -89,13 +88,13 @@ public class User extends BaseTime {
 		return this.profile != null;
 	}
 
-	public User updatePassword(String newPassword) {
+	public User updatePassword(String userPwd) {
 		this.userPwd = userPwd;
 		this.lastPwdModifiedDt = LocalDate.now();
-	return this;
+		return this;
 	}
 
-	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto){
+	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwdCheck());
 		this.lastPwdModifiedDt = LocalDate.now();
