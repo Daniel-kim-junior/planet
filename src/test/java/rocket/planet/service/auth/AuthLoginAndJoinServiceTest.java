@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.User;
@@ -33,7 +34,6 @@ class AuthLoginAndJoinServiceTest {
 	@Mock
 	private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-
 	@Mock
 	private LastLoginRepository lastLoginRepository;
 
@@ -42,6 +42,9 @@ class AuthLoginAndJoinServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -54,9 +57,10 @@ class AuthLoginAndJoinServiceTest {
 			.userId("admin@gmail.com")
 			.build();
 
-		// when(userRepository.findByUserId("now204122@gmail.com")).thenReturn(Optional.empty());
+		when(userRepository.findByUserId("now204122@gmail.com")).thenReturn(Optional.empty());
 		when(userRepository.findByUserId("admin@gmail.com")).thenReturn(Optional.of(adminUser));
-
+		when(passwordEncoder.matches("encodedPassword", "encodedPassword")).thenReturn(true);
+		when(passwordEncoder.matches("encoded222sdf", "encodedPassword")).thenReturn(false);
 	}
 
 	@Test
@@ -72,6 +76,7 @@ class AuthLoginAndJoinServiceTest {
 	@Test
 	void 로그인시_아이디가_존재할때_비밀번호_체크() throws Exception {
 		Optional<User> save = userRepository.findByUserId("admin@gmail.com");
+
 		/**
 		 * 비밀번호가 맞았을때
 		 */

@@ -58,7 +58,6 @@ public class AuthorityService {
 			.authorizerId(adminAddAuthDto.getAuthorizerNickName() + authorizerEmail)
 			.authType(adminAddAuthDto.getAuthType())
 			.authTargetId(adminAddAuthDto.getAuthTargetId())
-			.userUid(userId)
 			.build());
 
 		return addProfileAuthority(newAuth, projectLeaderProfile.get());

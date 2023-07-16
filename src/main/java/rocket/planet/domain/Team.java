@@ -22,6 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminTeamAddReqDto;
 
 @Entity
 @Getter
@@ -60,6 +61,20 @@ public class Team extends BaseTime {
 		this.teamName = teamName;
 		this.teamDesc = teamDesc;
 		this.teamType = teamType;
+	}
+
+	public static Team defaultTeam(AdminTeamAddReqDto dto, OrgType orgType) {
+		return builder()
+			.teamName(dto.getTeamName())
+			.teamDesc(dto.getTeamDesc())
+			.teamType(orgType)
+			.build();
+	}
+
+	public Team modifyTeam(String teamName, String teamDesc) {
+		this.teamName = teamName;
+		this.teamDesc = teamDesc;
+		return this;
 	}
 
 	public static Team addTeam(String teamName, String teamDesc, OrgType teamType, Department department) {

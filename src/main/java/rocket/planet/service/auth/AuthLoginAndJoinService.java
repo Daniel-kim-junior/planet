@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.lettuce.core.RedisException;
-import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Authority;
 import rocket.planet.domain.Company;
 import rocket.planet.domain.Department;
@@ -55,38 +54,59 @@ import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.security.JsonWebTokenIssuer;
 
 @Service
-@RequiredArgsConstructor
 public class AuthLoginAndJoinService {
 
 	private static final String GRANT_TYPE = "Bearer";
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 
-	private final ProfileRepository profileRepository;
+	private ProfileRepository profileRepository;
 
-	private final LastLoginRepository lastLoginRepository;
+	private LastLoginRepository lastLoginRepository;
 
-	private final EmailJoinConfirmRepository emailJoinConfirmRepository;
+	private EmailJoinConfirmRepository emailJoinConfirmRepository;
 
-	private final TeamRepository teamRepository;
+	private TeamRepository teamRepository;
 
-	private final DeptRepository deptRepository;
+	private DeptRepository deptRepository;
 
-	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+	private RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-	private final AccessTokenRedisRepository accessTokenRedisRepository;
+	private AccessTokenRedisRepository accessTokenRedisRepository;
 
-	private final LimitLoginRepository limitLoginRepository;
+	private LimitLoginRepository limitLoginRepository;
 
-	private final CompanyRepository companyRepository;
+	private CompanyRepository companyRepository;
 
-	private final OrgRepository orgRepository;
+	private OrgRepository orgRepository;
 
-	private final AuthRepository authRepository;
+	private AuthRepository authRepository;
 
-	private final PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
-	private final JsonWebTokenIssuer jwtIssuer;
+	private JsonWebTokenIssuer jwtIssuer;
+
+	public AuthLoginAndJoinService(UserRepository userRepository, ProfileRepository profileRepository,
+		LastLoginRepository lastLoginRepository, EmailJoinConfirmRepository emailJoinConfirmRepository,
+		TeamRepository teamRepository, DeptRepository deptRepository,
+		RefreshTokenRedisRepository refreshTokenRedisRepository, AccessTokenRedisRepository accessTokenRedisRepository,
+		LimitLoginRepository limitLoginRepository, CompanyRepository companyRepository, OrgRepository orgRepository,
+		AuthRepository authRepository, PasswordEncoder passwordEncoder, JsonWebTokenIssuer jwtIssuer) {
+		this.userRepository = userRepository;
+		this.profileRepository = profileRepository;
+		this.lastLoginRepository = lastLoginRepository;
+		this.emailJoinConfirmRepository = emailJoinConfirmRepository;
+		this.teamRepository = teamRepository;
+		this.deptRepository = deptRepository;
+		this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+		this.accessTokenRedisRepository = accessTokenRedisRepository;
+		this.limitLoginRepository = limitLoginRepository;
+		this.companyRepository = companyRepository;
+		this.orgRepository = orgRepository;
+		this.authRepository = authRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtIssuer = jwtIssuer;
+	}
 
 	/**
 	 * 로그인 시작점

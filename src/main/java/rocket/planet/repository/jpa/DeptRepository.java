@@ -15,6 +15,5 @@ public interface DeptRepository extends JpaRepository<Department, UUID> {
 	@Query("SELECT d.deptName FROM Department d")
 	List<String> findDeptNameAll();
 
-	void deleteByDeptName(String deptName);
 }
 

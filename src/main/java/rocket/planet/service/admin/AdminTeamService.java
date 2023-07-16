@@ -1,45 +1,71 @@
 package rocket.planet.service.admin;
 
+import static rocket.planet.dto.admin.AdminDeptTeamDto.*;
+
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.admin.AdminDeptTeamDto.AdminReqDto;
-import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
+import rocket.planet.domain.Department;
+import rocket.planet.domain.Team;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.TeamRepository;
-import rocket.planet.util.exception.TeamAlreadyExistsException;
+import rocket.planet.util.exception.AlreadyExistsTeamException;
+import rocket.planet.util.exception.NoSuchDeptException;
+import rocket.planet.util.exception.NoSuchTeamException;
 
 @Service
-@RequiredArgsConstructor
 public class AdminTeamService {
 
-	private final TeamRepository teamRepository;
+	private TeamRepository teamRepository;
 
-	private final DeptRepository deptRepository;
+	private DeptRepository deptRepository;
 
-	public AdminResDto removeTeam(AdminReqDto dto) throws Exception {
-
-		teamRepository.deleteByTeamName(dto.getName());
-
-		return AdminResDto.builder().message("팀이 삭제되었습니다").build();
+	public AdminTeamService(TeamRepository teamRepository, DeptRepository deptRepository) {
+		this.teamRepository = teamRepository;
+		this.deptRepository = deptRepository;
 	}
 
-	public AdminResDto modifyTeam(AdminReqDto dto) throws Exception {
+	@Transactional
+	public AdminResDto addTeam(AdminTeamAddReqDto dto) throws Exception {
 
-		return null;
-	}
+		final Department department = Optional.ofNullable(deptRepository.findByDeptName(dto.getDeptName()))
+			.orElseThrow(NoSuchDeptException::new);
 
-	public AdminResDto addTeam(AdminReqDto dto) throws Exception {
-
-		Optional.of(teamRepository.findByTeamName(dto.getName()))
+		Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
 			.ifPresentOrElse(team -> {
-				throw new TeamAlreadyExistsException();
+				throw new AlreadyExistsTeamException();
 			}, () -> {
-
+				Team saveTeam = teamRepository.save(Team.defaultTeam(dto, department.getDeptType()));
+				department.addTeam(saveTeam);
 			});
 
-		return null;
+		return AdminResDto.builder().message("팀이 추가되었습니다").build();
+	}
+
+	@Transactional
+	public AdminResDto modifyTeam(AdminTeamModReqDto dto) throws Exception {
+		final Team team = Optional.ofNullable(teamRepository.findByTeamName(dto.getTargetName()))
+			.orElseThrow(NoSuchTeamException::new);
+
+		Optional.ofNullable(teamRepository.findByTeamName(dto.getChangeName()))
+			.ifPresent(e -> {
+				throw new AlreadyExistsTeamException();
+			});
+
+		team.modifyTeam(dto.getChangeName(), dto.getChangeDesc());
+
+		return AdminResDto.builder().message("팀이 수정되었습니다").build();
+	}
+
+	public AdminResDto removeTeam(AdminDeptTeamDelReqDto dto) throws Exception {
+
+		final Team team = Optional.ofNullable(teamRepository.findByTeamName(dto.getName()))
+			.orElseThrow(NoSuchTeamException::new);
+
+		teamRepository.delete(team);
+
+		return AdminResDto.builder().message("팀이 삭제되었습니다").build();
 	}
 }

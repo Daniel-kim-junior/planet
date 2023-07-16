@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.admin.AdminDeptTeamDto.AdminReqDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminDeptTeamDelReqDto;
 import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminTeamAddReqDto;
+import rocket.planet.dto.admin.AdminDeptTeamDto.AdminTeamModReqDto;
 import rocket.planet.service.admin.AdminTeamService;
 
 @RestController
@@ -20,17 +22,17 @@ public class AdminTeamController {
 	private final AdminTeamService adminTeamService;
 
 	@DeleteMapping
-	public ResponseEntity<AdminResDto> teamDelete(AdminReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamDelete(AdminDeptTeamDelReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.removeTeam(dto));
 	}
 
 	@PutMapping("/name")
-	public ResponseEntity<AdminResDto> teamList(AdminReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamList(AdminTeamModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.modifyTeam(dto));
 	}
 
 	@PostMapping
-	public ResponseEntity<AdminResDto> teamCreate(AdminReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamAdd(AdminTeamAddReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.addTeam(dto));
 	}
 
