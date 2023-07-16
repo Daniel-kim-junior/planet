@@ -1,6 +1,7 @@
 package rocket.planet.controller.project;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static rocket.planet.dto.admin.AdminDto.*;
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.time.LocalDate;
@@ -16,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.AuthType;
 import rocket.planet.domain.ProfileAuthority;
-import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
-import rocket.planet.dto.admin.AdminDto;
+import rocket.planet.domain.UserProject;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
@@ -63,17 +63,19 @@ class ProjectControllerTest {
 		memberList.add("captain");
 
 		ProjectRegisterReqDto project1 = ProjectRegisterReqDto.builder()
-				.userNickName("captain")
-				.projectName("스마트 시티 TF")
-				.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
-				.projectTech("Spring, Java, Computer Vision")
-				.projectLeader("plpl")
-				.projectMember(memberList)
-				.projectStartDt(LocalDate.of(2023, 7, 5))
-				.projectEndDt(LocalDate.of(2023, 8, 14))
-				.projectStartDt(LocalDate.of(2023, 7, 5))
-				.projectEndDt(LocalDate.of(2023, 8, 14))
-				.build();
+			.userNickName("captain")
+			.projectName("스마트 시티 TF")
+			.projectDesc("스마트 시티에 대한 단기 목표를 달성하기 위해 만들었습니다.")
+			.projectTech("Spring, Java, Computer Vision")
+			.projectLeader("plpl")
+			.deptName("스마트솔루션")
+			.teamName("스마트시티")
+			.projectMember(memberList)
+			.projectStartDt(LocalDate.of(2023, 7, 5))
+			.projectEndDt(LocalDate.of(2023, 8, 14))
+			.projectStartDt(LocalDate.of(2023, 7, 5))
+			.projectEndDt(LocalDate.of(2023, 8, 14))
+			.build();
 
 		// ProjectRegisterReqDto project2 = ProjectRegisterReqDto.builder()
 		// 	.userNickName("pilot")
@@ -111,16 +113,15 @@ class ProjectControllerTest {
 		// 	.projectEndDt(LocalDate.of(2023, 8, 7))
 		// 	.build();
 
-		Project newProject = projectService.registerProject(project1);
-		projectService.registerMemberToProject(project1, newProject);
+		UserProject newproject = projectService.registerProject(project1);
 
 		// 프로젝트 리더 등록
-		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
-				.authType(AuthType.PROJECT)
-				.authTargetId(newProject.getId())
-				.authorizerNickName(project1.getUserNickName())
-				.authNickName(project1.getProjectLeader())
-				.build());
+		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
+			.authType(AuthType.PROJECT)
+			.authTargetId(newproject.getProject().getId())
+			.authorizerNickName(project1.getUserNickName())
+			.authNickName(project1.getProjectLeader())
+			.build());
 
 		// projectService.registerProject(project2);
 		// projectService.registerProject(project3);
@@ -143,15 +144,15 @@ class ProjectControllerTest {
 		newMemberList.add("crew");
 
 		ProjectUpdateDetailDto project1Detail = ProjectUpdateDetailDto.builder()
-				.userNickName("captain")
-				.projectName("스마트 건설 TF")
-				.projectDesc("(수정) 건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
-				.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
-				.projectStartDt(LocalDate.of(2023, 7, 8))
-				.projectEndDt(LocalDate.of(2023, 9, 12))
-				.projectLeader("plpl")
-				.projectMember(newMemberList)
-				.build();
+			.userNickName("captain")
+			.projectName("스마트 건설 TF")
+			.projectDesc("(수정) 건설 현장에서 카카오톡을 이용하여 관리를 용이하게 합니다.")
+			.projectTech("iOS, Android, Kotlin, MySQL, MongoDB")
+			.projectStartDt(LocalDate.of(2023, 7, 8))
+			.projectEndDt(LocalDate.of(2023, 9, 12))
+			.projectLeader("plpl")
+			.projectMember(newMemberList)
+			.build();
 
 		projectService.updateProjectDetail(project1Detail);
 
@@ -164,10 +165,10 @@ class ProjectControllerTest {
 	@Rollback(false)
 	void 프로젝트_삭제_테스트() {
 		ProjectUpdateStatusDto projectDeleteDto = ProjectUpdateStatusDto.builder()
-				.authType("PILOT")
-				.projectName("카카오톡 IT 솔루션")
-				.userNickName("pilot")
-				.build();
+			.authType("PILOT")
+			.projectName("카카오톡 IT 솔루션")
+			.userNickName("pilot")
+			.build();
 		projectService.deleteProject(projectDeleteDto);
 
 		assertThat(projectRepository.findAllByProjectStatusIs(ProjectStatus.DELETED).size()).isEqualTo(1);
