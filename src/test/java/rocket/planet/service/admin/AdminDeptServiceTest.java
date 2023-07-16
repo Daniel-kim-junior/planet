@@ -1,4 +1,4 @@
-package rocket.planet.controller.admin;
+package rocket.planet.service.admin;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +17,6 @@ import rocket.planet.dto.admin.AdminDeptTeamDto;
 import rocket.planet.dto.admin.AdminDeptTeamDto.AdminResDto;
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
-import rocket.planet.service.admin.AdminDeptService;
 import rocket.planet.util.exception.AlreadyExistsDeptException;
 import rocket.planet.util.exception.NoSuchDeptException;
 

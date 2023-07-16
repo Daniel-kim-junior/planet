@@ -30,7 +30,7 @@ public class AdminDeptService {
 	@Transactional
 	public AdminResDto addDept(AdminDeptAddReqDto dto) throws Exception {
 
-		final Company dkTechIn = Optional.ofNullable(companyRepository.findByCompanyName("dkteckin"))
+		final Company dkTechIn = Optional.ofNullable(companyRepository.findByCompanyName("dktechin"))
 			.orElseThrow(NoSuchCompanyException::new);
 
 		Optional.ofNullable(deptRepository.findByDeptName(dto.getName()))

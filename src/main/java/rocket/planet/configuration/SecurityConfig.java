@@ -25,6 +25,7 @@ import rocket.planet.util.security.CustomAccessDeniedHandler;
 import rocket.planet.util.security.CustomAuthenticationEntryPoint;
 import rocket.planet.util.security.JwtAuthenticationFilter;
 import rocket.planet.util.security.JwtAuthenticationProvider;
+import rocket.planet.util.security.JwtExceptionHandlerFilter;
 
 /*
  * Spring Security 설정
@@ -40,6 +41,8 @@ public class SecurityConfig {
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
 	private final AccessTokenRedisRepository accessTokenRedisRepository;
+
+	private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -71,6 +74,8 @@ public class SecurityConfig {
 		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
 			.authenticationProvider(
 				jwtAuthenticationProvider).getOrBuild(), accessTokenRedisRepository), LogoutFilter.class);
+		http.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class);
+
 		http.exceptionHandling()
 			.authenticationEntryPoint(customAuthenticationEntryPoint) // 인증되지 않은 사용자가 접근하려 할 때
 			.accessDeniedHandler(customAccessDeniedHandler); // 인가되지 않은 사용자가 접근하려 할 때

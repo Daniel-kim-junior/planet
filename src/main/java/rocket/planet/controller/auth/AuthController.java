@@ -32,7 +32,6 @@ public class AuthController {
 	@PostMapping("/basic-profile-register")
 	public ResponseEntity<BasicInputResDto> basicProfileAdd(@Valid @RequestBody BasicInputReqDto dto,
 		@AuthenticationPrincipal(expression = "user") User user) throws Exception {
-		System.out.println("user: " + user);
 		return ResponseEntity.ok().body(authLoginAndJoinService.saveBasicProfile(dto, user));
 	}
 
