@@ -45,6 +45,7 @@ public class AdminDeptTeamDto {
 
 		private String changeDesc;
 
+		@Builder
 		public AdminTeamModReqDto(String targetName, String changeName, String changeDesc) {
 			this.targetName = targetName;
 			this.changeName = changeName;
