@@ -1,10 +1,16 @@
 package rocket.planet.service.team;
 
+import static rocket.planet.dto.team.TeamMemberDto.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.UserProject;
-import rocket.planet.dto.team.TeamMemberResDto;
+import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.util.common.PagingUtil;
 
 @Service
 @Slf4j
@@ -30,8 +37,10 @@ public class TeamService {
 	private final UserPjtRepository userPjtRepository;
 
 	@Transactional
-	public List<TeamMemberResDto> getMemberList(String teamName) {
-		List<TeamMemberResDto> teamMemberList = new ArrayList<>();
+	public TeamMemberListDto getMemberList(ListReqDto listReqDto, String teamName) {
+		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+
+		List<TeamMemberInfoDto> teamMemberList = new ArrayList<>();
 
 		// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
 		Optional<Org> organization = orgRepository.findAllByTeam_TeamName(teamName).stream().findFirst();
@@ -45,7 +54,7 @@ public class TeamService {
 			boolean hasProject = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
-			TeamMemberResDto teamMemberDto = TeamMemberResDto.builder()
+			TeamMemberInfoDto teamMemberDto = TeamMemberInfoDto.builder()
 				.userNickName(teamMember.getUserNickName())
 				.profileEmail(userRepository.findByProfile_Id(teamMember.getId()).getUserId())
 				.profileCareer(teamMember.getProfileCareer())
@@ -56,7 +65,20 @@ public class TeamService {
 			teamMemberList.add(teamMemberDto);
 
 		}
-		return teamMemberList;
 
+		Page<TeamMemberInfoDto> memberList = getPagedResult(teamMemberList, pageable);
+
+		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
+			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+
+		return
+			TeamMemberListDto.builder().memberList(teamMemberList).pagingUtil(pagingUtil).build();
+
+	}
+
+	private Page<TeamMemberInfoDto> getPagedResult(List<TeamMemberInfoDto> teamMembers, Pageable pageable) {
+		int start = (int)pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
+		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
 	}
 }
