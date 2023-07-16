@@ -118,7 +118,7 @@ class ProjectControllerTest {
 		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminDto.AdminAddAuthDto.builder()
 			.authType(AuthType.PROJECT)
 			.authTargetId(newProject.getId())
-			.authorizerNickName(project1.getUserNickName())
+			.authorizerNickName(project1.getUserNickName() + authorizerEmail)
 			.authNickName(project1.getProjectLeader())
 			.build());
 
