@@ -1,5 +1,6 @@
 package rocket.planet.repository.jpa.profile;
 
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,8 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     private final QPjtRecord qPjtRecord = QPjtRecord.pjtRecord;
     private final QProject qProject = QProject.project;
 
+
+
     @Override
     public Optional<Profile> selectProfileByUserNickName(String userNickName) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
@@ -37,11 +40,20 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
                 .leftJoin(qProfile.certification, qCertification)
                 .leftJoin(qProfile.profileTech, qProfileTech)
                 .leftJoin(qProfileTech.tech, qTech)
-                .leftJoin(qUserProject.project,qProject)
+                .leftJoin(qUserProject.project, qProject)
                 .where(qProfile.userNickName.eq(userNickName))
                 .fetch();
-
         return profiles.stream().findFirst();
+
+
+
+
+
+
+
+
+
+
 
 
     }

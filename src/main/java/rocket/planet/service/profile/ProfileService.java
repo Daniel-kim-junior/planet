@@ -10,12 +10,14 @@ import org.springframework.web.server.ResponseStatusException;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.*;
+import rocket.planet.util.exception.UserLogException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 import rocket.planet.util.security.UserDetailsImpl;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,14 +34,17 @@ public class ProfileService {
     private final PfTechRepository pfTechRepository;
     private final UserPjtRepository userPjtRepository;
     private final UserRepository userRepository;
+    private final PvisitorRepository pvisitorRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private Exception handlePasswordMatchException;
+
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
 
         Optional<Profile> profile = profileRepository.selectProfileByUserNickName(userNickName);
+        List<ProfileVisitor> profileVisitor = pvisitorRepository.findByOwner_UserNickName(userNickName);
+
         return profile.map(profileD -> {
             List<Org> orgList = profileD.getOrg();
             List<UserProject> projectList = profileD.getUserProject();
@@ -106,12 +111,20 @@ public class ProfileService {
                             .build())
                     .collect(Collectors.toList());
 
+            List<ProfileDto.VisitorResDto> visitors = profileVisitor.stream()
+                    .map(pVisitor -> ProfileDto.VisitorResDto.builder()
+                            .visitorNickName(pVisitor.getVisitor().getUserNickName())
+                            .visitorRole(pVisitor.getVisitor().getRole().toString())
+                            .build())
+                    .collect(Collectors.toList());
+
             return ProfileDto.ProfileResDto.builder()
                     .userId(profileD.getUserId())
                     .userNickName(profileD.getUserNickName())
                     .org(orgDto)
                     .userInProgressProject(inProgressProjectList)
                     .userClosedProject(closedProjectDtoList)
+                    .visitor(visitors)
                     .role(profileD.getRole().toString())
                     .profileDisplay(profileD.isProfileDisplay())
                     .profileCareer(profileD.getProfileCareer())
@@ -263,5 +276,20 @@ public class ProfileService {
         }
         user.get().changeUserPwd(newPwdReqDto);
     }
+
+    @Transactional
+    public void addProfileVisitor(ProfileDto.VisitorReqDto visitorReqDto) {
+        Optional<Profile> pOwner = profileRepository.findByUserNickName(visitorReqDto.getOwnerNickName());
+        Optional<Profile> pVisitor = profileRepository.findByUserNickName(visitorReqDto.getVisitorNickName());
+        if (!visitorReqDto.getVisitorNickName().equals(visitorReqDto.getOwnerNickName())) {
+            ProfileVisitor profileVisitor = ProfileVisitor.builder()
+                    .visitor(pVisitor.get())
+                    .owner(pOwner.get())
+                    .build();
+            pvisitorRepository.save(profileVisitor);
+        }
+    }
+
+
 }
 
