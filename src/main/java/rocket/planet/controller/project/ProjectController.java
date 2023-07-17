@@ -98,6 +98,7 @@ public class ProjectController {
 	@GetMapping("/management/projects/request")
 	private ResponseEntity<List<ProjectCloseResDto>> projectReqList(
 		@ModelAttribute ProjectNameReqDto projectNameReqDto) {
+		System.out.println("=========================> " + projectNameReqDto.getName());
 		List<ProjectCloseResDto> projectList = projectService.getProjecReqList(projectNameReqDto.getName());
 
 		return ResponseEntity.ok().body(projectList);
