@@ -34,7 +34,6 @@ import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.service.auth.AuthorityService;
-//import rocket.planet.service.auth.AuthorityService;
 
 @Service
 @Slf4j
@@ -46,7 +45,6 @@ public class ProjectService {
 	private final AuthRepository authRepository;
 	private final PfAuthRepository pfAuthRepository;
 	private final TeamRepository teamRepository;
-	private final DeptRepository deptRepository;
 
 	private final AuthorityService authorityService;
 

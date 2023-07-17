@@ -29,7 +29,7 @@ public class UserTechTest {
         Tech lang7 = techRepository.findByTechName("C++");
         Tech lang8 = techRepository.findByTechName("JavaScript");
         Tech frame1 = techRepository.findByTechName("Spring");
-        Tech frame2 = techRepository.findByTechName("Spring Boot");
+        Tech frame2 = techRepository.findByTechName("SpringBoot");
         Tech frame3 = techRepository.findByTechName("Django");
         Tech frame4 = techRepository.findByTechName("Flutter");
         Tech frame5 = techRepository.findByTechName("Vue.js");

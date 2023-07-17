@@ -122,7 +122,7 @@ public class TechTest {
         techRepository.saveAndFlush(lang20);
 
         Tech frame1 = Tech.builder()
-                .techName("Spring Boot")
+                .techName("SpringBoot")
                 .techCategory("Framework")
                 .build();
         techRepository.saveAndFlush(frame1);
@@ -179,7 +179,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(frame11);
         Tech frame12 = Tech.builder()
-                .techName("React Native")
+                .techName("ReactNative")
                 .techCategory("Framework")
                 .build();
         techRepository.saveAndFlush(frame12);
@@ -199,7 +199,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(frame15);
         Tech frame16 = Tech.builder()
-                .techName("Apache Spark")
+                .techName("ApacheSpark")
                 .techCategory("Framework")
                 .build();
         techRepository.saveAndFlush(frame16);
@@ -214,7 +214,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(frame18);
         Tech frame19 = Tech.builder()
-                .techName("Ruby on Rails")
+                .techName("RubyOnRails")
                 .techCategory("Framework")
                 .build();
         techRepository.saveAndFlush(frame19);
@@ -255,7 +255,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(db5);
         Tech db6 = Tech.builder()
-                .techName("MS SQL")
+                .techName("MSSQL")
                 .techCategory("DataBase")
                 .build();
         techRepository.saveAndFlush(db6);
@@ -270,7 +270,7 @@ public class TechTest {
                 .build();
         techRepository.saveAndFlush(db8);
         Tech db9 = Tech.builder()
-                .techName("AWS Aurora")
+                .techName("AWSAurora")
                 .techCategory("DataBase")
                 .build();
         techRepository.saveAndFlush(db9);

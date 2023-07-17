@@ -84,6 +84,7 @@ public class ProfileDto {
     public static class ClosedInsideProjectResDto {
         private String projectName;
         private String projectDesc;
+        private String teamName;
         private LocalDate userPjtJoinDt;
         private LocalDate userPjtCloseDt;
         private String userPjtDesc;
@@ -92,8 +93,6 @@ public class ProfileDto {
     @Getter
     @Builder
     public static class OrgResDto {
-        private boolean orgStatus;
-        private boolean belongStatus;
         private String deptName;
         private String teamName;
     }
