@@ -63,8 +63,9 @@ public class Team extends BaseTime {
 		this.teamType = teamType;
 	}
 
-	public static Team defaultTeam(AdminTeamAddReqDto dto, OrgType orgType) {
+	public static Team defaultTeam(AdminTeamAddReqDto dto, OrgType orgType, Department department) {
 		return builder()
+			.department(department)
 			.teamName(dto.getTeamName())
 			.teamDesc(dto.getTeamDesc())
 			.teamType(orgType)

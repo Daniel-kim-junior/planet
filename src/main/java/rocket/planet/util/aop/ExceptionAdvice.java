@@ -130,10 +130,11 @@ public class ExceptionAdvice {
 		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_FOUND_EXCEPTION);
 	}
 
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({Exception.class, NullPointerException.class, IllegalArgumentException.class})
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public CommonErrorDto handleException(Exception e) {
 		log.error("Exception", e.getClass().getSimpleName(), e.getMessage());
+		e.printStackTrace();
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
 	}
 

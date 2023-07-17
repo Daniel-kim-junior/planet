@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +45,7 @@ import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
 import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.JwtInvalidException;
+import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
@@ -131,13 +129,16 @@ public class AuthLoginAndJoinService {
 	 * @param user
 	 * @패스워드 5회 틀릴 시 30분간 잠금
 	 */
-	public void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException {
+	public void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException, NullPointerException {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
+			limitLoginRepository.findById(user.getUserId()).ifPresent(limitLogin -> {
+				if (limitLogin.getCount() == 4) {
+					throw new Temp30MinuteLockException();
+				}
+			});
+
 			int count;
-			if (limitLoginRepository.findById(user.getUserId()).isPresent()
-				&& limitLoginRepository.findById(user.getUserId()).get().getCount() == 4) {
-				throw new Temp30MinuteLockException();
-			}
+
 			if (limitLoginRepository.findById(user.getUserId()).isPresent()) {
 				LimitLogin limitLogin = limitLoginRepository.findById(user.getUserId()).get();
 				count = limitLogin.add();
@@ -150,23 +151,30 @@ public class AuthLoginAndJoinService {
 		}
 	}
 
-	/**
-	 * @param user 5회 틀렸을시 저장하는 Redis Data 제거
-	 *             권한 변경시 저장하는 Flag 제거
-	 * @return LoginResDto
-	 * @로그인 성공시 스프링 시큐리티 컨텍스트에 Authentication 객체 생성 및 주입
-	 * @유저 프로필이 있을때와 없을때 분기 처리
-	 * @마지막 로그인 시간 Redis에 저장
-	 */
-
-	private LoginResDto completeLogin(User user) throws Exception {
+	public LoginResDto completeLogin(User user) throws Exception {
 		limitLoginRepository.deleteById(user.getUserId());
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPwd());
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
 		saveLastLoginLogDataInRedis(user);
-		return getLoginResDtoByCompleteJoinUser(user);
+
+		String userName = user.getUserId();
+
+		Profile profile = user.getProfile();
+
+		LoginResDto loginResDto;
+
+		String authority;
+
+		if (Objects.isNull(profile)) {
+			authority = "ROLE_" + Role.CREW.name();
+			loginResDto = makeLoginResBuilder(user, userName, authority);
+		} else {
+			authority = "ROLE_" + profile.getRole().name();
+			loginResDto = makeLoginResBuilder(user, userName, authority, profile);
+		}
+
+		saveAuthInRedisForJoinUser(user, loginResDto);
+
+		return loginResDto;
 	}
 
 	/**
@@ -185,25 +193,6 @@ public class AuthLoginAndJoinService {
 	}
 
 	/**
-	 * @param user 프로필 입력을 하지 않은 유저의 responseDto 생성
-	 *             프로필 정보가 없으므로 권한을 뺀 responseDto 생성 및 Redis에 정보 저장
-	 * @return
-	 */
-
-	private LoginResDto getLoginResDtoByCompleteJoinUser(User user) throws
-		Exception {
-		LoginResDto responseDto;
-		responseDto = makeJsonWebTokenAndRoleDto(user);
-		saveAuthInRedisForJoinUser(user, responseDto);
-		return responseDto;
-	}
-
-	/**
-	 * @param user 프로필 정보가 있기 때문에 Db에서 권한 정보를 가져와서 Redis에 함께 저장
-	 * @return
-	 */
-
-	/**
 	 * @param user
 	 * @return
 	 * @DB에서 권한 정보 가져오기
@@ -211,27 +200,6 @@ public class AuthLoginAndJoinService {
 
 	private List<Authority> getUserAuthoritiesByDb(User user) throws Exception {
 		return authRepository.findAllByProfileAuthority_ProfileUserId(user.getUserId());
-	}
-
-	/**
-	 * @param user
-	 * @return
-	 * @Jwt 토큰 생성 메소드(로그인이 성공했거나, 회원 가입시 자동 로그인)
-	 * @유저 프로필이 있을때와 없을 때 분기 처리
-	 */
-	@Transactional
-	private LoginResDto makeJsonWebTokenAndRoleDto(User user) throws Exception {
-
-		String userName = user.getUserId();
-
-		String authority;
-
-		if (Objects.isNull(user.getProfile())) {
-			authority = "ROLE_" + Role.CREW.name();
-		} else {
-			authority = "ROLE_" + user.getProfile().getRole().name();
-		}
-		return getResponseDtoByUserData(user, userName, authority);
 	}
 
 	/**
@@ -246,29 +214,6 @@ public class AuthLoginAndJoinService {
 		accessTokenRedisRepository.save(AccessToken.builder().token(responseDto.getAccessToken())
 			.email(user.getUserId())
 			.build());
-	}
-
-	/**
-	 * @param user
-	 * @param userName
-	 * @param authority
-	 * @return
-	 * @프로필 정보를 분기로 LoginResDto 생성
-	 */
-
-	private LoginResDto getResponseDtoByUserData(User user, String userName, String authority) throws
-		Exception {
-		LoginResDto loginResDto;
-
-		Profile profile = user.getProfile();
-
-		if (Objects.isNull(profile)) {
-			loginResDto = makeLoginResBuilder(user, userName, authority);
-		} else {
-			loginResDto = makeLoginResBuilder(user, userName, authority, profile);
-		}
-
-		return loginResDto;
 	}
 
 	/**
@@ -321,7 +266,7 @@ public class AuthLoginAndJoinService {
 	 * @return
 	 */
 
-	private AuthOrg getProfileToAuthOrg(Profile profile) throws Exception {
+	public AuthOrg getProfileToAuthOrg(Profile profile) throws Exception {
 		List<Org> org = profile.getOrg();
 		return AuthOrg.builder()
 			.companyName(org.get(0).getCompany().getCompanyName())
@@ -377,7 +322,7 @@ public class AuthLoginAndJoinService {
 		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
-		return makeJsonWebTokenAndRoleDto(findUserByJwtSubject);
+		return completeLogin(findUserByJwtSubject);
 	}
 
 	/**
@@ -388,12 +333,13 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) throws
 		Exception {
-		Optional<User> user = userRepository.findByUserId(claims.getSubject());
+		User user = userRepository.findByUserId(claims.getSubject())
+			.orElseThrow(NoSuchEmailException::new);
 		String roles = roleIssue(claims.get("roles").toString());
 
 		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
-			.authOrg(getProfileToAuthOrg(user.get().getProfile()))
+			.authOrg(getProfileToAuthOrg(user.getProfile()))
 			.authRole(roleIssue(roles))
 			.userNickName(idToUserNickName(claims.getSubject()))
 			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString()))
@@ -431,7 +377,7 @@ public class AuthLoginAndJoinService {
 	 * @return
 	 * @RefreshToken 유효성 체크
 	 */
-	private Claims getClaimsWithValidCheck(String refreshToken) {
+	public Claims getClaimsWithValidCheck(String refreshToken) {
 		if (!StringUtils.hasText(refreshToken)) {
 			throw new JwtInvalidException("not exists refresh token");
 		}
@@ -499,7 +445,6 @@ public class AuthLoginAndJoinService {
 	 * @회사, 부서, 팀 정보를 바탕으로 Org 생성
 	 */
 
-	@Transactional
 	public Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) throws
 		Exception {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");

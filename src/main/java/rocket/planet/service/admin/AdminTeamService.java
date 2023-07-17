@@ -32,12 +32,11 @@ public class AdminTeamService {
 
 		final Department department = Optional.ofNullable(deptRepository.findByDeptName(dto.getDeptName()))
 			.orElseThrow(NoSuchDeptException::new);
-
 		Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
 			.ifPresentOrElse(team -> {
 				throw new AlreadyExistsTeamException();
 			}, () -> {
-				Team saveTeam = teamRepository.save(Team.defaultTeam(dto, department.getDeptType()));
+				Team saveTeam = teamRepository.save(Team.defaultTeam(dto, department.getDeptType(), department));
 				department.addTeam(saveTeam);
 			});
 

@@ -6,6 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,13 @@ public class EmailDto {
 		private String address;
 		private String title;
 		private String message;
+
+		@Builder
+		public SendMailReqDto(String address, String title, String message) {
+			this.address = address;
+			this.title = title;
+			this.message = message;
+		}
 	}
 
 	@Getter
@@ -29,6 +37,12 @@ public class EmailDto {
 		@NotBlank
 		@NotEmpty
 		private String type;
+
+		@Builder
+		public EmailDuplicateCheckAndSendEmailReqDto(String id, String type) {
+			this.id = id;
+			this.type = type;
+		}
 	}
 
 	@Getter
@@ -46,5 +60,12 @@ public class EmailDto {
 		@NotBlank
 		@NotEmpty
 		private String type;
+
+		@Builder
+		public EmailVerifyCheckReqDto(String id, String code, String type) {
+			this.id = id;
+			this.code = code;
+			this.type = type;
+		}
 	}
 }

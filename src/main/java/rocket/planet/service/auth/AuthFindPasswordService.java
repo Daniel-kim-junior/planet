@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import rocket.planet.domain.redis.EmailFindConfirm;
 import rocket.planet.dto.auth.PasswordModifyReqDto;
 import rocket.planet.repository.jpa.UserRepository;
@@ -13,16 +13,23 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMatchException;
 
 @Service
-@RequiredArgsConstructor
 public class AuthFindPasswordService {
 
-	private final PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 
-	private final EmailFindConfirmRepository emailFindConfirmRepository;
+	private EmailFindConfirmRepository emailFindConfirmRepository;
 
 	private final static String SUCCESS = "비밀번호가 변경되었습니다";
+
+	@Builder
+	public AuthFindPasswordService(PasswordEncoder passwordEncoder, UserRepository userRepository,
+		EmailFindConfirmRepository emailFindConfirmRepository) {
+		this.passwordEncoder = passwordEncoder;
+		this.userRepository = userRepository;
+		this.emailFindConfirmRepository = emailFindConfirmRepository;
+	}
 
 	@Transactional
 	public String modifyPassword(PasswordModifyReqDto dto) throws Exception {
