@@ -96,6 +96,7 @@ public class AuthDto {
 		private AuthOrg authOrg;
 
 		private String accessToken;
+
 		private String refreshToken;
 
 		private boolean isThreeMonth;

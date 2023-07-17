@@ -221,8 +221,8 @@ class ProjectControllerTest {
 
 	@Test
 	@Transactional
-	void 프로젝트_완수_인증_요청_테스트() {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqList("스마트팩토리");
+	void 프로젝트_완수_요청_리스트_조회_테스트() {
+		List<ProjectCloseResDto> projectList = projectService.getProjecReqList("스마트시티");
 
 		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);

@@ -97,7 +97,7 @@ public class UserProject {
 		this.userPjtCloseApply = true;
 	}
 
-	public void updateUserPjtDesc(ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
+	public void updateUserPjtDesc(ProfileDto.insideProjectUpdateReqDto insidePjtReqDto) {
 		this.userPjtDesc = insidePjtReqDto.getProjectDesc();
 	}
 

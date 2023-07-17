@@ -82,6 +82,7 @@ public class ProjectService {
 
 	@Transactional
 	public void registerProject(ProjectRegisterReqDto registerDto) {
+		// 프로젝트 이름 중복 error 처리
 		Team team = teamRepository.findByTeamName(registerDto.getTeamName());
 		OrgType teamType = team.getTeamType();
 		ProjectStatus status = ProjectStatus.ONGOING;
@@ -157,8 +158,9 @@ public class ProjectService {
 		Project requestedProject = projectRepository.findByProjectName(projectName).get();
 		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
 
-		// 프로젝트에 대한 마감 요청이 있다면 요청 수락으로 변경
-		userProjects.stream().filter(UserProject::isUserPjtCloseApply).forEach(UserProject::toUserProjectCloseApprove);
+		// 프로젝트-유저 변경
+		userProjects.forEach(UserProject::toUserProjectCloseApprove);
+
 		// 프로젝트 상태 변경
 		requestedProject.close(userNickName);
 	}

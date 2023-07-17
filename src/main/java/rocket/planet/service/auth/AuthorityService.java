@@ -75,10 +75,15 @@ public class AuthorityService {
 
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
-		if (pfAuthRepository.findByProfile(user).getAuthTargetId().equals(department.getId())
-			|| pfAuthRepository.findByProfile(user).getAuthTargetId().equals(team.getId())) {
-			pfAuthRepository.deleteByAuthorityAndProfile(pfAuthRepository.findByProfile(user), user);
-			authRepository.deleteById(pfAuthRepository.findByProfile(user).getId());
+		Optional<Authority> authority = pfAuthRepository.findByProfile(user);
+		if (authority.isPresent()) {
+			if (authority.get().getAuthTargetId().equals(department.getId())
+				|| authority.get().getAuthTargetId().equals(team.getId())) {
+
+				pfAuthRepository.deleteByAuthorityAndProfile(authority.get(), user);
+				authRepository.deleteById(authority.get().getId());
+
+			}
 		}
 
 		// 3. 권한 추가 & 4. 프로필-권한 추가

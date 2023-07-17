@@ -1,5 +1,6 @@
 package rocket.planet.repository.jpa;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,7 @@ public interface PfAuthRepository extends JpaRepository<ProfileAuthority, UUID> 
 
 	ProfileAuthority findByAuthority(Authority auth);
 
-	Authority findByProfile(Profile user);
+	Optional<Authority> findByProfile(Profile user);
 
 	void deleteByAuthorityAndProfile(Authority auth, Profile user);
 }
