@@ -27,10 +27,13 @@ import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
+import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
+import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
+import rocket.planet.service.auth.AuthorityService;
 //import rocket.planet.service.auth.AuthorityService;
 
 @Service
@@ -42,8 +45,10 @@ public class ProjectService {
 	private final UserPjtRepository userPjtRepository;
 	private final AuthRepository authRepository;
 	private final PfAuthRepository pfAuthRepository;
+	private final TeamRepository teamRepository;
+	private final DeptRepository deptRepository;
 
-//	private final AuthorityService authorityService;
+	private final AuthorityService authorityService;
 
 	@Transactional
 	public ProjectDetailResDto getProject(String projectName) {
@@ -76,10 +81,13 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public Project registerProject(ProjectRegisterReqDto registerDto) {
-		Optional<Profile> profile = profileRepository.findByUserNickName(registerDto.getUserNickName());
-		Team team = profile.get().getOrg().get(0).getTeam();
+	public UserProject registerProject(ProjectRegisterReqDto registerDto) {
+		Team team = teamRepository.findByTeamName(registerDto.getTeamName());
 		OrgType teamType = team.getTeamType();
+		ProjectStatus status = ProjectStatus.ONGOING;
+
+		if (registerDto.getProjectStartDt().isAfter(LocalDate.now()))
+			status = ProjectStatus.WAITING;
 
 		Project project = Project.builder()
 			.projectName(registerDto.getProjectName())
@@ -88,17 +96,19 @@ public class ProjectService {
 			.projectStartDt(registerDto.getProjectStartDt())
 			.projectEndDt(registerDto.getProjectEndDt())
 			.projectLastModifiedBy(registerDto.getUserNickName())
-			.projectStatus(ProjectStatus.WAITING)
+			.projectStatus(status)
 			.team(team)
 			.projectType(teamType)
 			.build();
 
-		return projectRepository.save(project);
+		Project newProject = projectRepository.save(project);
+
+		return registerMemberToProject(registerDto, newProject);
 
 	}
 
 	@Transactional
-	public void registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
+	public UserProject registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
 		List<String> membersList = registerDto.getProjectMember();
 
 		for (String member : membersList) {
@@ -111,15 +121,18 @@ public class ProjectService {
 				.userPjtDesc("")
 				.build();
 
-			userPjtRepository.save(newProject);
+			return userPjtRepository.save(newProject);
 		}
-//		authorityService.addAuthority(AdminAddAuthDto.builder()
-//			.authTargetId(project.getId())
-//			.authNickName(registerDto.getProjectLeader())
-//			.authType(AuthType.PROJECT)
-//			.authorizerNickName(registerDto.getUserNickName()).build()
-//		);
 
+		// Project Leader 등록
+		authorityService.addAuthority(AdminAddAuthDto.builder()
+			.authTargetId(project.getId())
+			.authNickName(registerDto.getProjectLeader())
+			.authType(AuthType.PROJECT)
+			.authorizerNickName(registerDto.getUserNickName()).build()
+		);
+
+		return null;
 	}
 
 	@Transactional

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import rocket.planet.domain.Project;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectNameReqDto;
@@ -48,9 +47,7 @@ public class ProjectController {
 
 	@PostMapping("/management/projects")
 	public ResponseEntity<String> projectRegister(@RequestBody ProjectRegisterReqDto registerReqDto) {
-		Project newProject = projectService.registerProject(registerReqDto);
-
-		projectService.registerMemberToProject(registerReqDto, newProject);
+		projectService.registerProject(registerReqDto);
 
 		return ResponseEntity.ok().body("프로젝트 생성이 완료되었습니다.");
 	}

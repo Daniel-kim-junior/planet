@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,19 +42,13 @@ public class AuthorityService {
 	private final DeptRepository deptRepository;
 	private final TeamRepository teamRepository;
 
-	final String authorizerEmail = "@gmail.com";
-
 	@Transactional
 	public ProfileAuthority addAuthority(AdminAddAuthDto adminAddAuthDto) {
 		Optional<Profile> projectLeaderProfile = profileRepository.findByUserNickName(
 			adminAddAuthDto.getAuthNickName());
-		UUID adminProfileId = (profileRepository.findByUserNickName(adminAddAuthDto.getAuthorizerNickName())
-			.get()).getId();
-		UUID userId = userRepository.findByProfile_Id(adminProfileId).getId();
 
-		log.info("projectLeaderProfile {} => ", projectLeaderProfile);
 		Authority newAuth = authRepository.save(Authority.builder()
-			.authorizerId(adminAddAuthDto.getAuthorizerNickName() + authorizerEmail)
+			.authorizerId(adminAddAuthDto.getAuthorizerNickName())
 			.authType(adminAddAuthDto.getAuthType())
 			.authTargetId(adminAddAuthDto.getAuthTargetId())
 			.build());
@@ -63,6 +56,7 @@ public class AuthorityService {
 		return addProfileAuthority(newAuth, projectLeaderProfile.get());
 	}
 
+	@Transactional
 	public ProfileAuthority addProfileAuthority(Authority authority, Profile profile) {
 		return pfAuthRepository.save(ProfileAuthority.builder()
 			.authority(authority)
@@ -79,7 +73,6 @@ public class AuthorityService {
 		Profile user = profileRepository.findByUserNickName(adminAuthModifyReqDto.getUserNickName()).orElseThrow();
 		user.updateRole(adminAuthModifyReqDto.getRole());
 
-		System.out.println(user + "------------");
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
 		if (pfAuthRepository.findByProfile(user).getAuthTargetId().equals(department.getId())
@@ -92,14 +85,14 @@ public class AuthorityService {
 		if (adminAuthModifyReqDto.getRole().equals("PILOT")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
-				.authorizerNickName("admin" + authorizerEmail)
+				.authorizerNickName("admin")
 				.authType(AuthType.TEAM)
 				.authTargetId(team.getId())
 				.build());
 		} else if (adminAuthModifyReqDto.getRole().equals("CAPTAIN")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
-				.authorizerNickName("admin" + authorizerEmail)
+				.authorizerNickName("admin")
 				.authType(AuthType.DEPARTMENT)
 				.authTargetId(department.getId())
 				.build());
