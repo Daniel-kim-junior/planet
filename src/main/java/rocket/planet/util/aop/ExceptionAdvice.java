@@ -18,18 +18,7 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidPassword;
-import rocket.planet.util.exception.AlreadyExistsDeptException;
-import rocket.planet.util.exception.AlreadyExistsIdException;
-import rocket.planet.util.exception.ExceptionEnum;
-import rocket.planet.util.exception.IdMismatchException;
-import rocket.planet.util.exception.NoSuchEmailException;
-import rocket.planet.util.exception.NoSuchEmailTokenException;
-import rocket.planet.util.exception.NoValidEmailTokenException;
-import rocket.planet.util.exception.PasswordMatchException;
-import rocket.planet.util.exception.PasswordMismatchException;
-import rocket.planet.util.exception.Temp30MinuteLockException;
-import rocket.planet.util.exception.UserPwdCheckException;
-import rocket.planet.util.exception.UserTechException;
+import rocket.planet.util.exception.*;
 
 /*
  * 예외 처리를 위한 어드바이스(AOP)
@@ -156,6 +145,13 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleUserPwdCheckException(UserPwdCheckException e) {
 		log.error("handleUserPwdCheckException", e.getClass().getSimpleName(), e.getMessage());
+		return CommonErrorDto.builder().message(e.getMessage()).build();
+	}
+
+	@ExceptionHandler(UserLogException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleUserLogException(UserLogException e) {
+		log.error("handleUserLogException", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 

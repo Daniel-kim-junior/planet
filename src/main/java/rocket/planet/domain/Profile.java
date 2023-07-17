@@ -51,6 +51,12 @@ public class Profile extends BaseTime {
 	@OneToMany(mappedBy = "profile")
 	private List<ProfileTech> profileTech = new ArrayList<>();
 
+	@OneToMany(mappedBy = "owner")
+	private List<ProfileVisitor> profileOwner = new ArrayList<>();
+
+	@OneToMany(mappedBy = "visitor")
+	private List<ProfileVisitor> profileVisitor = new ArrayList<>();
+
 	@Column(nullable = false)
 	private LocalDate profileBirthDt;
 

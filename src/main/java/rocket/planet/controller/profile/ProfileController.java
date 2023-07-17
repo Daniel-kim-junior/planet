@@ -100,5 +100,12 @@ public class ProfileController {
         return ResponseEntity.ok().body("비밀번호를 변경하였습니다.");
     }
 
+    @PostMapping("/visitor-log")
+    public ResponseEntity<String> visitorLogAdd(@RequestBody ProfileDto.VisitorReqDto visitorReqDto) {
+        profileService.addProfileVisitor(visitorReqDto);
+        return ResponseEntity.ok().body(visitorReqDto.getVisitorNickName() + "님이 " + visitorReqDto.getOwnerNickName() + "님의 프로필을 방문하였습니다.");
+    }
+
+
 
 }

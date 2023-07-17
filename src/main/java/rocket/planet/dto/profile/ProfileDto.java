@@ -26,6 +26,7 @@ public class ProfileDto {
         private List<ProfileTechResDto> profileTech;
         private List<OutsideProjectResDto> extPjtRecord;
         private List<CertResDto> certification;
+        private List<VisitorResDto> visitor;
     }
 
     @Getter
@@ -167,6 +168,22 @@ public class ProfileDto {
         private String userPwd;
         private String userPwdCheck;
     }
+
+    @Getter
+    @Builder
+    public static class VisitorReqDto{
+        private String visitorNickName;
+        private String ownerNickName;
+    }
+
+    @Getter
+    @Builder
+    public static class VisitorResDto{
+        private String visitorNickName;
+        private String visitorRole;
+    }
+
+
 }
 
 

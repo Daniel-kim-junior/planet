@@ -4,15 +4,11 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -50,6 +46,9 @@ public class User extends BaseTime {
 
 	@Column(nullable = false, unique = true)
 	private String userId;
+
+//	@OneToMany(mappedBy = "user")
+//	private List<ProfileVisitor> profileVisitor = new ArrayList<>();
 
 	@Builder
 	public User(Profile profile, String userPwd, boolean userLock,
