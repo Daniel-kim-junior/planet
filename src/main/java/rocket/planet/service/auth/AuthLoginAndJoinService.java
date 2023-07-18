@@ -337,13 +337,16 @@ public class AuthLoginAndJoinService {
 		User user = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(NoSuchEmailException::new);
 		String roles = roleIssue(claims.get("roles").toString());
-
+		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString());
+		accessTokenRedisRepository.save(AccessToken.builder().token(accessToken)
+			.email(user.getUserId())
+			.build());
 		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
 			.authOrg(getProfileToAuthOrg(user.getProfile()))
 			.authRole(roleIssue(roles))
 			.userNickName(idToUserNickName(claims.getSubject()))
-			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString()))
+			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
 	}

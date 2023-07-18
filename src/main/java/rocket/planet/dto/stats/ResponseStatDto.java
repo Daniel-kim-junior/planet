@@ -2,8 +2,6 @@ package rocket.planet.dto.stats;
 
 import static lombok.AccessLevel.*;
 
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +12,10 @@ public class ResponseStatDto {
 
 	private String name;
 
-	private List<LabelAndStatDto> labelAndStats;
+	private LabelAndStatDto labelAndStats;
 
 	@Builder
-	public ResponseStatDto(String name, List<LabelAndStatDto> labelAndStats) {
+	public ResponseStatDto(String name, LabelAndStatDto labelAndStats) {
 		this.name = name;
 		this.labelAndStats = labelAndStats;
 	}

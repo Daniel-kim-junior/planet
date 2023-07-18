@@ -18,6 +18,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.exception.JwtInvalidException;
 
 @Component
@@ -32,6 +33,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private PlanetUserDetailsService planetUserDetailsService;
+
+	@Autowired
+	private AccessTokenRedisRepository accessTokenRedisRepository;
 
 	public JwtAuthenticationProvider(@Value("${jwt.secret}") String secretKey) {
 		this.secretKey = secretKey.getBytes();
@@ -65,7 +69,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new JwtInvalidException("using illegal argument like null", illegalArgumentException);
 		}
 		PlanetUser planetUser = (PlanetUser)planetUserDetailsService.loadUserByUsername(claims.getSubject());
-
+		accessTokenRedisRepository.findById(planetUser.getUsername())
+			.orElseThrow(() -> new JwtInvalidException("Invalid JWT token"));
 		return new JwtAuthenticationToken(planetUser, "", createGrantedAuthorities(claims));
 	}
 

@@ -25,7 +25,9 @@ import rocket.planet.util.exception.NoSuchTeamException;
 @Service
 @RequiredArgsConstructor
 public class StatsService {
+
 	private final DeptRepository deptRepository;
+
 	private final ProfileRepository profileRepository;
 
 	private final PfTechRepository pfTechRepository;
@@ -43,7 +45,7 @@ public class StatsService {
 
 		if (isDevelop(department)) {
 			// 개발 부문인 경우
-			List<LabelAndStatDto> statList = getDetailStats(department, pfTechRepository,
+			LabelAndStatDto statList = getDetailStats(department, pfTechRepository,
 				TechStats.builder().name("기술별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
 
@@ -59,7 +61,7 @@ public class StatsService {
 				.build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
 		} else {
-			List<LabelAndStatDto> statList = getDetailStats(department, profileRepository,
+			LabelAndStatDto statList = getDetailStats(department, profileRepository,
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
 
@@ -82,17 +84,22 @@ public class StatsService {
 		Team team = Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
 			.orElseThrow(NoSuchTeamException::new);
 
+		List<ResponseStatDto> res = new ArrayList<>();
+
 		// TODO: 2021-07-22 팀별 통계
 		if (isDevelop(department)) {
+			LabelAndStatDto statList = getDetailStats(team, pfTechRepository,
+				TechStats.builder().name("기술별").build(), dto.getUnit());
+			res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
 
 		} else {
 
 		}
 
-		return null;
+		return res;
 	}
 
-	private <T extends JpaRepository, E> List<LabelAndStatDto> getDetailStats(E entity, T repository,
+	private <T extends JpaRepository, E> LabelAndStatDto getDetailStats(E entity, T repository,
 		StatCategory category,
 		int unit) {
 		return Stat.builder()

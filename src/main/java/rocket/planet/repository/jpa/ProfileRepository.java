@@ -27,5 +27,12 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "where d.deptName = :deptName")
 	List<Profile> findCareerStatsByDepartment(String deptName);
 
+	@Query(
+		"select distinct p "
+			+ "from Profile p "
+			+ "join FETCH p.org o "
+			+ "JOIN FETCH o.team t "
+			+ "where t.teamName = :teamName")
+
 
 }
