@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.security.CustomAccessDeniedHandler;
 import rocket.planet.util.security.CustomAuthenticationEntryPoint;
 import rocket.planet.util.security.JwtAuthenticationFilter;
@@ -39,9 +38,6 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-	private final AccessTokenRedisRepository accessTokenRedisRepository;
-
 	private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
 
 	@Bean
@@ -73,7 +69,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated();
 		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
 			.authenticationProvider(
-				jwtAuthenticationProvider).getOrBuild(), accessTokenRedisRepository), LogoutFilter.class);
+				jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class);
 		http.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class);
 
 		http.exceptionHandling()
@@ -87,7 +83,7 @@ public class SecurityConfig {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(false); // 쿠키를 받을건지
 		configuration.setAllowedOrigins(List.of("*"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"));
 		configuration.addAllowedHeader("*");
 
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

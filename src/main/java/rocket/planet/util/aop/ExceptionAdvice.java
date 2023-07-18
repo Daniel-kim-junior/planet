@@ -18,7 +18,20 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidPassword;
-import rocket.planet.util.exception.*;
+import rocket.planet.util.exception.AlreadyExistsDeptException;
+import rocket.planet.util.exception.AlreadyExistsIdException;
+import rocket.planet.util.exception.ExceptionEnum;
+import rocket.planet.util.exception.IdMismatchException;
+import rocket.planet.util.exception.JwtInvalidException;
+import rocket.planet.util.exception.NoSuchEmailException;
+import rocket.planet.util.exception.NoSuchEmailTokenException;
+import rocket.planet.util.exception.NoValidEmailTokenException;
+import rocket.planet.util.exception.PasswordMatchException;
+import rocket.planet.util.exception.PasswordMismatchException;
+import rocket.planet.util.exception.Temp30MinuteLockException;
+import rocket.planet.util.exception.UserLogException;
+import rocket.planet.util.exception.UserPwdCheckException;
+import rocket.planet.util.exception.UserTechException;
 
 /*
  * 예외 처리를 위한 어드바이스(AOP)
@@ -39,6 +52,13 @@ public class ExceptionAdvice {
 	public CommonErrorDto handlePasswordMismatchException(PasswordMismatchException e) {
 		log.error("PasswordMismatchException", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().code("UE-002").message(e.getMessage()).build();
+	}
+
+	@ExceptionHandler(JwtInvalidException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public CommonErrorDto jwtInvalidException(JwtInvalidException e) {
+		log.error("INTERNAL JWT INVALID EXCEPTION", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.INVALID_JWT_EXCEPTION);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
