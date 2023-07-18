@@ -33,6 +33,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "join FETCH p.org o "
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName")
-
+	List<Profile> findCareerStatsByTeam(String teamName);
 
 }
