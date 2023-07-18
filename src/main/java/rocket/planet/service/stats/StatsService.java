@@ -54,6 +54,7 @@ public class StatsService {
 			statList = getDetailStats(department, teamRepository,
 				TeamStats.builder().name("팀별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().name("팀별").labelAndStats(statList).build());
+
 			statList = getDetailStats(department, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 				.build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());

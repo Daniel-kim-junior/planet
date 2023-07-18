@@ -73,13 +73,12 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 					((Department)entity).getDeptName());
 				map = makeCareerMap();
 
-				double size = profileList.size();
 				for (Profile profile : profileList) {
 					if (profile.getProfileCareer() <= 0) {
-						map.put("경력 없음", map.get("경력 없음") + 1 / size);
+						map.put("경력 없음", map.get("경력 없음") + 1);
 					} else {
 						int higherBound = getHigherBound(new ArrayList<>(map.keySet()), profile.getProfileCareer());
-						map.put(higherBound + "년 이하", map.get(higherBound + "년 이하") + 1 / size);
+						map.put(higherBound + "년 이하", map.get(higherBound + "년 이하") + 1);
 					}
 				}
 				rst.add(LabelAndStatDto.builder().data(map).build());

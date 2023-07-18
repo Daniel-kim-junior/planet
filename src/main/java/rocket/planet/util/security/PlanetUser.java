@@ -27,7 +27,6 @@ public class PlanetUser extends User {
 
 	public PlanetUser(rocket.planet.domain.User user, Profile profile) {
 		super(user.getUserId(), user.getUserPwd(), authorities(Collections.singleton(profile.getRole())));
-
 		this.profile = profile;
 		this.user = user;
 	}
