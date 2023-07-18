@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.exception.ExceptionEnum;
 
 /*
@@ -34,7 +35,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		response.setStatus(exceptionEnum.getHttpStatus().value());
 		try (OutputStream os = response.getOutputStream()) {
 			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writeValue(os, exceptionEnum.getMessage());
+			CommonErrorDto error = CommonErrorDto.builder()
+				.code(exceptionEnum.getCode())
+				.message(exceptionEnum.getMessage())
+				.build();
+			objectMapper.writeValue(os, error);
 			os.flush();
 		}
 	}
