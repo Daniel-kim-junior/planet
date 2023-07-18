@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.util.security.CustomAccessDeniedHandler;
 import rocket.planet.util.security.CustomAuthenticationEntryPoint;
 import rocket.planet.util.security.JwtAuthenticationFilter;
@@ -39,9 +38,6 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-	private final AccessTokenRedisRepository accessTokenRedisRepository;
-
 	private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
 
 	@Bean
