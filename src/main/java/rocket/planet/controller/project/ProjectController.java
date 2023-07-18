@@ -74,11 +74,11 @@ public class ProjectController {
 	}
 
 	@PatchMapping("/management/projects/confirm")
-	public ResponseEntity<String> projectCloseApprove(@RequestBody ProjectNameReqDto projectNameReqDto) {
-		projectService.closeProjectApprove(projectNameReqDto.getName(),
-			projectNameReqDto.getUserNickName(), projectNameReqDto.getRole());
+	public ResponseEntity<String> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
+		String result = projectService.closeProjectApprove(closeReqDto.getName(),
+			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.isApprove());
 
-		return ResponseEntity.ok().body("프로젝트를 마감 요청을 승인하였습니다.");
+		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping("/management/projects/confirm")
@@ -98,7 +98,7 @@ public class ProjectController {
 	@GetMapping("/management/projects/request")
 	public ResponseEntity<List<ProjectCloseResDto>> projectReqList(
 		@ModelAttribute ProjectNameReqDto projectNameReqDto) {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqList(projectNameReqDto.getName());
+		List<ProjectCloseResDto> projectList = projectService.getProjectReqList(projectNameReqDto.getName());
 
 		return ResponseEntity.ok().body(projectList);
 	}

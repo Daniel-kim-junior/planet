@@ -27,14 +27,12 @@ import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
-import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.service.auth.AuthorityService;
-//import rocket.planet.service.auth.AuthorityService;
 
 @Service
 @Slf4j
@@ -46,7 +44,6 @@ public class ProjectService {
 	private final AuthRepository authRepository;
 	private final PfAuthRepository pfAuthRepository;
 	private final TeamRepository teamRepository;
-	private final DeptRepository deptRepository;
 
 	private final AuthorityService authorityService;
 
@@ -159,7 +156,7 @@ public class ProjectService {
 		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
 
 		// 프로젝트-유저 변경
-		userProjects.forEach(UserProject::toUserProjectCloseApprove);
+		userProjects.forEach(UserProject::approveProjectClose);
 
 		// 프로젝트 상태 변경
 		requestedProject.close(userNickName);
@@ -173,19 +170,19 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public void closeProjectApprove(String projectName,
-		String userNickName, String role) {
+	public String closeProjectApprove(String projectName,
+		String userNickName, String role, boolean isApprove) {
 		// todo: error 처리 -> 권한 확인
 
-		List<UserProject> userProject = userPjtRepository.findAllByProject(
-			projectRepository.findByProjectName(projectName));
-		Optional<Profile> profile = profileRepository.findByUserNickName(userNickName);
+		UserProject requestedProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
+			userNickName);
 
-		// 프로젝트 목록에서 사용자가 마감 요청한 프로젝트가 있는 row를 찾아서 변경
-		for (UserProject updateProject : userProject) {
-			if (updateProject.getProfile().getId().equals(profile.get().getId())) {
-				updateProject.toUserProjectCloseApprove();
-			}
+		if (isApprove) {
+			requestedProject.approveProjectClose();
+			return "마감 요청을 승인하였습니다.";
+		} else {
+			requestedProject.rejectProjectClose();
+			return "마감 요청을 반려하였습니다.";
 		}
 	}
 
@@ -194,10 +191,7 @@ public class ProjectService {
 		if (isInProject(projectName, userNickName)) {
 			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
 				userNickName);
-			log.info("newUserProject => {}", newUserProject);
-			newUserProject.requestClose();
-		} else {
-			log.info("isInProject => {}", false);
+			newUserProject.requestProjectClose();
 		}
 	}
 
@@ -232,16 +226,18 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public List<ProjectCloseResDto> getProjecReqList(String teamName) {
-
+	public List<ProjectCloseResDto> getProjectReqList(String teamName) {
+		// 팀이름으로 마감 요청 리스트 조회
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
-		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);
+		// 팀이름으로 프로젝트 리스트 찾기
+		List<Project> projectsList = projectRepository.findByTeam_TeamName(teamName);
 
 		for (Project project : projectsList) {
-
+			// 프로젝트로 프로젝트-유저 정보 찾기
 			List<UserProject> userProjectList = userPjtRepository.findAllByProject(Optional.ofNullable(project));
 
+			// 프로젝트 리더 찾기
 			Authority auth = authRepository.findByAuthTargetId(project.getId());
 			Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
 

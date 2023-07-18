@@ -21,4 +21,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 	UUID findIdByProjectName(String projectName);
 
 	List<Project> findAllByTeam_TeamName(String teamName);
+
+	List<Project> findByTeam_TeamName(String teamName);
 }

@@ -9,9 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.Profile;
-import rocket.planet.dto.admin.AdminDto.AdminAuthMemberResDto;
+import rocket.planet.dto.admin.AdminDto.AdminAuthMemberListDto;
 import rocket.planet.dto.admin.AdminDto.AdminAuthModifyReqDto;
 import rocket.planet.dto.admin.AdminDto.AdminOrgModifyReqDto;
+import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
@@ -69,7 +70,8 @@ class AdminControllerTest {
 	void 관리자_팀원_리스트_조회_테스트() {
 
 		String teamName = "AI챗봇구축";
-		List<AdminAuthMemberResDto> teamMemberList = authorityService.getTeamMemberList(teamName);
+		ListReqDto listReqDto = ListReqDto.builder().page(1).pageSize(8).build();
+		AdminAuthMemberListDto teamMemberList = authorityService.getTeamMemberList(listReqDto, teamName);
 
 		System.out.println(teamMemberList.toString());
 	}

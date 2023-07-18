@@ -21,11 +21,9 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 
 	List<UserProject> findAllByProfile_userNickName(String userNickName);
 
-	UserProject findByProject(Optional<Project> project);
-
 	List<UserProject> findAllByProfile(Profile teamMember);
 
 	Optional<UserProject> findByProject_ProjectNameAndAndProfile_UserNickName(String projectName, String userNickName);
 
-	List<Profile> findProfileByProject(Optional<Project> project);
+	List<UserProject> findByProfile(Profile user);
 }
