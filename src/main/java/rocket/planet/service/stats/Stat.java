@@ -44,8 +44,8 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 		this.unit = unit;
 	}
 
-	public List<LabelAndStatDto> getStats() {
-		List<LabelAndStatDto> rst = new ArrayList<>();
+	public LabelAndStatDto getStats() {
+		LabelAndStatDto dto = null;
 		if (entity instanceof Department) {
 			// 부문 통계
 			Department department = (Department)entity;
@@ -65,8 +65,8 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 						map.put(techName, 1 / size);
 					}
 				}
-				rst.add(LabelAndStatDto.builder().data(map).build());
 
+				dto = LabelAndStatDto.builder().data(map).build();
 			} else if (category instanceof CareerStats) {
 				// 경력별 통계
 
@@ -82,7 +82,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 						map.put(higherBound + "년 이하", map.get(higherBound + "년 이하") + 1);
 					}
 				}
-				rst.add(LabelAndStatDto.builder().data(map).build());
+				dto = LabelAndStatDto.builder().data(map).build();
 			} else if (category instanceof TeamStats) {
 				// 팀별 통계
 				map = new HashMap<>();
@@ -97,7 +97,8 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 						map.put(team.getTeamName(), 1 / size);
 					}
 				}
-				rst.add(LabelAndStatDto.builder().data(map).build());
+				dto = LabelAndStatDto.builder().data(map).build();
+
 			} else if (category instanceof PjtPartRateStats) {
 				// 프로젝트 참여도 통계
 				map = new HashMap<>();
@@ -110,7 +111,8 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				size = size == 0 ? 1 : size;
 				map.put("참여 중", onWorkingProfiles.size() / size);
 				map.put("미 참여", noWorkingProfiles.size() / size);
-				rst.add(LabelAndStatDto.builder().data(map).build());
+				dto = LabelAndStatDto.builder().data(map).build();
+
 			}
 
 		} else if (entity instanceof Team) {
@@ -132,7 +134,8 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 						map.put(techName, 1 / size);
 					}
 				}
-				rst.add(LabelAndStatDto.builder().data(map).build());
+				dto = LabelAndStatDto.builder().data(map).build();
+
 			} else if (category instanceof CareerStats) {
 				// 경력별 통계
 
@@ -155,7 +158,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			}
 
 		}
-		return rst;
+		return dto;
 	}
 
 	private Map<String, Double> makeCareerMap() {
