@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
 import rocket.planet.repository.jpa.profile.ProfileRepositoryCustom;

@@ -50,8 +50,9 @@ public class OrgTest {
 		Profile captain = profileRepository.findByUserNickName("captain").get();
 		Profile radar = profileRepository.findByUserNickName("radar").get();
 		Profile pl = profileRepository.findByUserNickName("plpl").get();
+		Profile star = profileRepository.findByUserNickName("star").get();
 
-        System.out.println(admin);
+
         Org adminOrg = Org.builder()
                 .profile(admin)
                 .company(company)
@@ -112,6 +113,16 @@ public class OrgTest {
                 .orgStatus(true)
                 .build();
         orgRepository.save(plOrg);
+		Org starOrg = Org.builder()
+				.profile(star)
+				.company(company)
+				.department(hrDept)
+				.team(hrTeam)
+				.orgStartDate(LocalDate.now())
+				.orgInviter(admin.getUserName())
+				.orgStatus(true)
+				.build();
+		orgRepository.save(starOrg);
 
 
 
