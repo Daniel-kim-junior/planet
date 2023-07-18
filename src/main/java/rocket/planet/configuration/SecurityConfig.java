@@ -73,7 +73,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated();
 		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
 			.authenticationProvider(
-				jwtAuthenticationProvider).getOrBuild(), accessTokenRedisRepository), LogoutFilter.class);
+				jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class);
 		http.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class);
 
 		http.exceptionHandling()
@@ -87,7 +87,7 @@ public class SecurityConfig {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(false); // 쿠키를 받을건지
 		configuration.setAllowedOrigins(List.of("*"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"));
 		configuration.addAllowedHeader("*");
 
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

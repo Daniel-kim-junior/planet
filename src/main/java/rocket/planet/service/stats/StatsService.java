@@ -25,7 +25,9 @@ import rocket.planet.util.exception.NoSuchTeamException;
 @Service
 @RequiredArgsConstructor
 public class StatsService {
+
 	private final DeptRepository deptRepository;
+
 	private final ProfileRepository profileRepository;
 
 	private final PfTechRepository pfTechRepository;
@@ -82,14 +84,19 @@ public class StatsService {
 		Team team = Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
 			.orElseThrow(NoSuchTeamException::new);
 
+		List<ResponseStatDto> res = new ArrayList<>();
+
 		// TODO: 2021-07-22 팀별 통계
 		if (isDevelop(department)) {
+			List<LabelAndStatDto> statList = getDetailStats(team, pfTechRepository,
+				TechStats.builder().name("기술별").build(), dto.getUnit());
+			res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
 
 		} else {
 
 		}
 
-		return null;
+		return res;
 	}
 
 	private <T extends JpaRepository, E> List<LabelAndStatDto> getDetailStats(E entity, T repository,

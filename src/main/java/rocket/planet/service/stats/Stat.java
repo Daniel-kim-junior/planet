@@ -48,10 +48,11 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 		List<LabelAndStatDto> rst = new ArrayList<>();
 		if (entity instanceof Department) {
 			// 부문 통계
+			Department department = (Department)entity;
 			if (category instanceof TechStats) {
 				// 부문에 해당하는 프로필들의 기술 통계
 				final List<ProfileTech> profileTechList = ((PfTechRepository)repository).findTechStatsByProfileDepartment(
-					((Department)entity).getDeptName());
+					(department).getDeptName());
 				double size = profileTechList.size();
 				String techName;
 				map = new HashMap<>();
@@ -70,7 +71,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// 경력별 통계
 
 				final List<Profile> profileList = ((ProfileRepository)repository).findCareerStatsByDepartment(
-					((Department)entity).getDeptName());
+					(department).getDeptName());
 				map = makeCareerMap();
 
 				for (Profile profile : profileList) {
@@ -87,7 +88,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				map = new HashMap<>();
 
 				final List<Team> teamList = ((TeamRepository)repository).findTeamStatsByDeptName(
-					((Department)entity).getDeptName());
+					(department).getDeptName());
 				double size = teamList.size();
 				for (Team team : teamList) {
 					if (map.containsKey(team.getTeamName())) {
@@ -101,9 +102,9 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// 프로젝트 참여도 통계
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
-					((Department)entity).getDeptName());
+					(department).getDeptName());
 				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
-					((Department)entity).getDeptName());
+					(department).getDeptName());
 
 				double size = onWorkingProfiles.size() + noWorkingProfiles.size();
 				size = size == 0 ? 1 : size;
@@ -114,6 +115,44 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 		} else if (entity instanceof Team) {
 			// 팀 통계
+			Team team = (Team)entity;
+			if (category instanceof TechStats) {
+				// 부문에 해당하는 프로필들의 기술 통계
+				final List<ProfileTech> profileTechList = ((PfTechRepository)repository).findTechStatsByProfileTeam(
+					team.getTeamName());
+				double size = profileTechList.size();
+				String techName;
+				map = new HashMap<>();
+				for (ProfileTech tech : profileTechList) {
+					techName = tech.getTech().getTechName();
+					if (map.containsKey(techName)) {
+						map.put(techName,
+							map.get(techName) + 1 / size);
+					} else {
+						map.put(techName, 1 / size);
+					}
+				}
+				rst.add(LabelAndStatDto.builder().data(map).build());
+			} else if (category instanceof CareerStats) {
+				// 경력별 통계
+
+				final List<Profile> profileList = ((ProfileRepository)repository).findCareerStatsByTeam(
+					team.getTeamName());
+
+			} else if (category instanceof PjtPartRateStats) {
+				// 프로젝트 참여도 통계
+				map = new HashMap<>();
+				// final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+				// 	team.getTeamName());
+				// final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+				// 	team.getTeamName());
+
+				// double size = onWorkingProfiles.size() + noWorkingProfiles.size();
+				// size = size == 0 ? 1 : size;
+				// map.put("참여 중", onWorkingProfiles.size() / size);
+				// map.put("미 참여", noWorkingProfiles.size() / size);
+				// rst.add(LabelAndStatDto.builder().data(map).build());
+			}
 
 		}
 		return rst;

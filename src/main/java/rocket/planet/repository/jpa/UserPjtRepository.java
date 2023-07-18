@@ -31,7 +31,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 	List<Profile> findProfileByProject(Optional<Project> project);
 
 	@Query(
-		"select up "
+		"select distinct up "
 			+ "from UserProject up "
 			+ "JOIN FETCH up.project p "
 			+ "JOIN FETCH up.profile pf "
@@ -43,7 +43,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 	List<UserProject> findPjtPartCountByDepartment(String deptName);
 
 	@Query(
-		"select up "
+		"select distinct up "
 			+ "from UserProject up "
 			+ "JOIN FETCH up.project p "
 			+ "JOIN FETCH up.profile pf "
