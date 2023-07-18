@@ -36,7 +36,6 @@ public class StatsController {
 	@GetMapping("/entire")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RADAR')")
 	public ResponseEntity<?> entireStatsList(EntireStatsReqDto dto) {
-		// 팀이 개발인지 비 개발인지에 따라 다른 로직을 수행한다.
 		return ResponseEntity.ok().body(adminRadarService.getEntireStats(dto));
 	}
 }
