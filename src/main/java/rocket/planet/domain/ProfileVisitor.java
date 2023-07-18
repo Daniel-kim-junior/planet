@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import rocket.planet.dto.profile.ProfileDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -52,5 +53,10 @@ public class ProfileVisitor {
 				", 방문시간 =" + visitTime +
 				'}';
 	}
+
+	public void updateVisitTime() {
+		this.visitTime = LocalDate.now();
+	}
+
 }
 
