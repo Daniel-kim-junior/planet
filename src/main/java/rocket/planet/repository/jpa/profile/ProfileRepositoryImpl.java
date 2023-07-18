@@ -16,9 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -59,27 +57,41 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
 
         String replacedKeyword = keyword.replaceAll("\\s+", "");
 
-        List<Profile> searchProfiles = queryFactory.selectFrom(qProfile)
-            .where(
-            qProfile.userName.containsIgnoreCase(replacedKeyword)
-                    .or(qProfile.userNickName.equalsIgnoreCase(replacedKeyword))
-            .or(qProfile.org.any().department.deptName.containsIgnoreCase(replacedKeyword))
-            .or(qProfile.org.any().team.teamName.containsIgnoreCase(replacedKeyword))
-            .or(qProfile.userProject.any().project.projectName.containsIgnoreCase(replacedKeyword))
-                .or(qProfile.profileTech.any().tech.techName.equalsIgnoreCase(replacedKeyword)
-                        .or(qProfile.profileTech.any().tech.techName.startsWithIgnoreCase(replacedKeyword))
-                ))
-            .fetch();
+        List<Profile> equalsSearch = queryFactory.selectFrom(qProfile)
+                .where(
+                        qProfile.userNickName.equalsIgnoreCase(replacedKeyword)
+                                .or(qProfile.org.any().department.deptName.eq(replacedKeyword))
+                                .or(qProfile.org.any().team.teamName.eq(replacedKeyword))
+                                .or(qProfile.userProject.any().project.projectName.eq(replacedKeyword))
+                                .or(qProfile.profileTech.any().tech.techName.equalsIgnoreCase(replacedKeyword))
+                )
+                .fetch();
 
-        List<Profile> distinctProfiles = searchProfiles.stream()
-                .distinct()
-                .collect(Collectors.toList());
-        return distinctProfiles;
+        List<Profile> searchProfiles;
 
+        if (equalsSearch.isEmpty()) {
+            List<Profile> startsWithSearch = queryFactory.selectFrom(qProfile)
+                    .where(
+                            qProfile.userNickName.startsWithIgnoreCase(replacedKeyword)
+                                    .or(qProfile.org.any().department.deptName.containsIgnoreCase(replacedKeyword))
+                                    .or(qProfile.org.any().team.teamName.containsIgnoreCase(replacedKeyword))
+                                    .or(qProfile.userProject.any().project.projectName.containsIgnoreCase(replacedKeyword))
+                                    .or(qProfile.profileTech.any().tech.techName.startsWithIgnoreCase(replacedKeyword))
+                    )
+                    .fetch();
+
+            searchProfiles = startsWithSearch;
+        } else {
+            searchProfiles = equalsSearch;
         }
 
+        Set<Profile> distinctProfiles = new LinkedHashSet<>(searchProfiles);
+        return new ArrayList<>(distinctProfiles);
 
     }
+
+
+}
 
 
 

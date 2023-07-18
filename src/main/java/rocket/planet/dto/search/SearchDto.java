@@ -1,7 +1,6 @@
 package rocket.planet.dto.search;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,11 +10,15 @@ public class SearchDto {
 
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SearchReqDto {
         private String keyword;
     }
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SearchResDto {
         private String userNickName;
         private SearchOrgResDto userOrg;
@@ -24,12 +27,16 @@ public class SearchDto {
     }
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SearchTechResDto {
         private String techName;
     }
 
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SearchOrgResDto {
         private String deptName;
         private String teamName;
@@ -38,6 +45,8 @@ public class SearchDto {
 
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SearchUserPjtStatusResDto {
         private String projectName;
         private LocalDate userPjtCloseDt;
