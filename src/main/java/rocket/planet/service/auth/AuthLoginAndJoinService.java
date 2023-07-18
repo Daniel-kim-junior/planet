@@ -44,6 +44,7 @@ import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
 import rocket.planet.util.exception.AlreadyExistsIdException;
+import rocket.planet.util.exception.IdVerifiedException;
 import rocket.planet.util.exception.JwtInvalidException;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
@@ -313,14 +314,14 @@ public class AuthLoginAndJoinService {
 		Claims claims = getClaimsWithValidCheck(refreshToken);
 
 		RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(claims.getSubject())
-			.orElseThrow(() -> new UsernameNotFoundException("다시 로그인 해주세요"));
+			.orElseThrow(() -> new JwtInvalidException("Refresh Token이 만료되었습니다."));
 
 		if (checkRefreshTokenInRedis(refreshToken, redisRefreshToken)) {
 			return getReissueResponseDto(refreshToken, claims);
 		}
 
 		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
+			.orElseThrow(() -> new IdVerifiedException());
 
 		return completeLogin(findUserByJwtSubject);
 	}
@@ -336,13 +337,16 @@ public class AuthLoginAndJoinService {
 		User user = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(NoSuchEmailException::new);
 		String roles = roleIssue(claims.get("roles").toString());
-
+		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString());
+		accessTokenRedisRepository.save(AccessToken.builder().token(accessToken)
+			.email(user.getUserId())
+			.build());
 		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
 			.authOrg(getProfileToAuthOrg(user.getProfile()))
 			.authRole(roleIssue(roles))
 			.userNickName(idToUserNickName(claims.getSubject()))
-			.accessToken(jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString()))
+			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
 	}

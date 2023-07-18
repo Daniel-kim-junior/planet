@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ProfileRepositoryCustom {
     Optional<Profile> selectProfileByUserNickName(String userNickName);
 
+    List<Profile> selectProfilesBySearchKeyword(String keyword);
 }

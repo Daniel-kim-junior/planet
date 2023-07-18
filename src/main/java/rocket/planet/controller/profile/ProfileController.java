@@ -76,7 +76,7 @@ public class ProfileController {
     @DeleteMapping("/certs")
     public ResponseEntity<String> userCertRemove(@RequestParam("certUid")String cetUidString) {
         profileService.removeCertification(cetUidString);
-        return ResponseEntity.ok().body("자격증 등록번호가" + cetUidString + "인 자격증을 삭제했습니다.");
+        return ResponseEntity.ok().body("자격증을 삭제했습니다.");
     }
     @PostMapping("/tech")
     public ResponseEntity<String> userProfileTechAdd(@RequestBody ProfileDto.TechRegisterReqDto techReqDto) {
@@ -86,7 +86,7 @@ public class ProfileController {
     @DeleteMapping("/tech")
     public ResponseEntity<String> userProfileTechRemove(@RequestParam("userTechId")String userTechIdString) {
         profileService.removeUserTech(userTechIdString);
-        return ResponseEntity.ok().body("테크 등록번호가 " + userTechIdString + "인 기술을 삭제하였습니다.");
+        return ResponseEntity.ok().body("기술을 삭제하였습니다.");
     }
     @PatchMapping("/inside")
     public ResponseEntity<String> userInsidePjtModify(@RequestBody ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
@@ -99,6 +99,13 @@ public class ProfileController {
         profileService.changeUserPwd(newPwdReqDto);
         return ResponseEntity.ok().body("비밀번호를 변경하였습니다.");
     }
+
+    @PostMapping("/visitor-log")
+    public ResponseEntity<String> visitorLogAdd(@RequestBody ProfileDto.VisitorReqDto visitorReqDto) {
+        profileService.addProfileVisitor(visitorReqDto);
+        return ResponseEntity.ok().body(visitorReqDto.getVisitorNickName() + "님이 " + visitorReqDto.getOwnerNickName() + "님의 프로필을 방문하였습니다.");
+    }
+
 
 
 }

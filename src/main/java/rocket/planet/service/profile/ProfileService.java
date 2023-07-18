@@ -10,12 +10,14 @@ import org.springframework.web.server.ResponseStatusException;
 import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.*;
+import rocket.planet.util.exception.UserLogException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 import rocket.planet.util.security.UserDetailsImpl;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,14 +34,17 @@ public class ProfileService {
     private final PfTechRepository pfTechRepository;
     private final UserPjtRepository userPjtRepository;
     private final UserRepository userRepository;
+    private final PvisitorRepository pvisitorRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private Exception handlePasswordMatchException;
+
 
     @Transactional
     public ProfileDto.ProfileResDto getProfileDetailByUserNickName(String userNickName) {
 
         Optional<Profile> profile = profileRepository.selectProfileByUserNickName(userNickName);
+        List<ProfileVisitor> profileVisitor = pvisitorRepository.findByOwner_UserNickName(userNickName);
+
         return profile.map(profileD -> {
             List<Org> orgList = profileD.getOrg();
             List<UserProject> projectList = profileD.getUserProject();
@@ -50,7 +55,6 @@ public class ProfileService {
             ProfileDto.OrgResDto orgDto = orgList.stream()
                     .findFirst()
                     .map(org -> ProfileDto.OrgResDto.builder()
-                            .orgStatus(org.isOrgStatus())
                             .deptName(org.getDepartment().getDeptName())
                             .teamName(org.getTeam().getTeamName())
                             .build())
@@ -69,6 +73,7 @@ public class ProfileService {
                     .map(project -> ProfileDto.ClosedInsideProjectResDto.builder()
                             .projectName(project.getProject().getProjectName())
                             .projectDesc(project.getProject().getProjectDesc())
+                            .teamName(project.getProject().getTeam().getTeamName())
                             .userPjtJoinDt(project.getUserPjtJoinDt())
                             .userPjtCloseDt(project.getUserPjtCloseDt())
                             .userPjtDesc(project.getUserPjtDesc())
@@ -106,12 +111,20 @@ public class ProfileService {
                             .build())
                     .collect(Collectors.toList());
 
+            List<ProfileDto.VisitorResDto> visitors = profileVisitor.stream()
+                    .map(pVisitor -> ProfileDto.VisitorResDto.builder()
+                            .visitorNickName(pVisitor.getVisitor().getUserNickName())
+                            .visitorRole(pVisitor.getVisitor().getRole().toString())
+                            .build())
+                    .collect(Collectors.toList());
+
             return ProfileDto.ProfileResDto.builder()
                     .userId(profileD.getUserId())
                     .userNickName(profileD.getUserNickName())
                     .org(orgDto)
                     .userInProgressProject(inProgressProjectList)
                     .userClosedProject(closedProjectDtoList)
+                    .visitor(visitors)
                     .role(profileD.getRole().toString())
                     .profileDisplay(profileD.isProfileDisplay())
                     .profileCareer(profileD.getProfileCareer())
@@ -210,32 +223,32 @@ public class ProfileService {
     public void addUserTech(ProfileDto.TechRegisterReqDto techReqDto) {
         Optional<Profile> existingProfile = profileRepository.findByUserNickName(techReqDto.getUserNickName());
         Optional<Tech> existingTech = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName());
-            if (checkTech(techReqDto.getTechName())) {
+        if (checkTech(techReqDto.getTechName())) {
 
-                if (existingProfile.isPresent() && existingTech.isPresent()) {
-                    Profile profile = existingProfile.get();
-                    Tech tech = existingTech.get();
+            if (existingProfile.isPresent() && existingTech.isPresent()) {
+                Profile profile = existingProfile.get();
+                Tech tech = existingTech.get();
 
-                    // 이미 등록된 기술의 경우 중복 등록 불가능
-                    boolean isTechAlreadyRegistered = pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName());
-                    if (isTechAlreadyRegistered) {
-                        throw new UserTechException("이미 등록된 기술입니다.");
-                    }
-
-                    // 사용자는 최대 다섯 개의 기술만 등록 가능
-                    List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
-                    if (userTechList.size() >= 5) {
-                        throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
-                    }
-                    ProfileTech userTech = ProfileTech.builder()
-                            .profile(profile)
-                            .tech(tech)
-                            .build();
-                    pfTechRepository.save(userTech);
+                // 이미 등록된 기술의 경우 중복 등록 불가능
+                boolean isTechAlreadyRegistered = pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName());
+                if (isTechAlreadyRegistered) {
+                    throw new UserTechException("이미 등록된 기술입니다.");
                 }
-            } else {
-                throw new UserTechException("등록되지 않은 기술로 추가할 수 없습니다.");
+
+                // 사용자는 최대 다섯 개의 기술만 등록 가능
+                List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
+                if (userTechList.size() >= 5) {
+                    throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
+                }
+                ProfileTech userTech = ProfileTech.builder()
+                        .profile(profile)
+                        .tech(tech)
+                        .build();
+                pfTechRepository.save(userTech);
             }
+        } else {
+            throw new UserTechException("등록되지 않은 기술로 추가할 수 없습니다.");
+        }
 
     }
 
@@ -262,6 +275,28 @@ public class ProfileService {
             throw new UserPwdCheckException("변경하려는 비밀번호가 동일하지 않습니다.");
         }
         user.get().changeUserPwd(newPwdReqDto);
+    }
+
+    @Transactional
+    public void addProfileVisitor(ProfileDto.VisitorReqDto visitorReqDto) {
+        Optional<Profile> pOwner = profileRepository.findByUserNickName(visitorReqDto.getOwnerNickName());
+        Optional<Profile> pVisitor = profileRepository.findByUserNickName(visitorReqDto.getVisitorNickName());
+        Optional<ProfileVisitor> duplicateV = pvisitorRepository.findByVisitor_UserNickNameAndOwner_UserNickName(visitorReqDto.getVisitorNickName(),visitorReqDto.getOwnerNickName());
+
+        if (duplicateV.isPresent()) {
+            duplicateV.get().updateVisitTime();
+        } else {
+            if (!visitorReqDto.getVisitorNickName().equals(visitorReqDto.getOwnerNickName())) {
+                ProfileVisitor profileVisitor = ProfileVisitor.builder()
+                        .visitor(pVisitor.get())
+                        .owner(pOwner.get())
+                        .build();
+                pvisitorRepository.save(profileVisitor);
+            }
+
+        }
+
+
     }
 }
 

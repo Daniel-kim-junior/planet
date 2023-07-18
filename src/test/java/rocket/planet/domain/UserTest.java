@@ -153,6 +153,27 @@ public class UserTest {
 		profileRepository.save(plProfile);
 		savePl.updateProfile(plProfile);
 
+		User starUser = User.builder()
+				.userPwd(passwordEncoder.encode("star111!"))
+				.userLock(false)
+				.lastPwdModifiedDt(LocalDate.now())
+				.userId("star@gmail.com")
+				.build();
+		User saveStar = userRepository.save(starUser);
+		Profile starProfile = Profile.builder()
+				.profileBirthDt(LocalDate.of(1997, 11, 07))
+				.role(Role.CREW)
+				.userId(starUser.getUserId())
+				.profileStartDate(LocalDate.of(2021, 8, 22))
+				.userNickName(Profile.idToUserNickName(starUser.getUserId()))
+				.userName("이별별")
+				.profileDisplay(true)
+				.profileCareer(2)
+				.profileAnnualStatus(false)
+				.build();
+		profileRepository.save(starProfile);
+		savePl.updateProfile(starProfile);
+
 	}
 
 }
