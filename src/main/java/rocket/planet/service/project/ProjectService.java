@@ -79,7 +79,7 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public UserProject registerProject(ProjectRegisterReqDto registerDto) {
+	public void registerProject(ProjectRegisterReqDto registerDto) {
 		Team team = teamRepository.findByTeamName(registerDto.getTeamName());
 		OrgType teamType = team.getTeamType();
 		ProjectStatus status = ProjectStatus.ONGOING;
@@ -101,12 +101,12 @@ public class ProjectService {
 
 		Project newProject = projectRepository.save(project);
 
-		return registerMemberToProject(registerDto, newProject);
+		registerMemberToProject(registerDto, newProject);
 
 	}
 
 	@Transactional
-	public UserProject registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
+	public void registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
 		List<String> membersList = registerDto.getProjectMember();
 
 		for (String member : membersList) {
@@ -119,7 +119,7 @@ public class ProjectService {
 				.userPjtDesc("")
 				.build();
 
-			return userPjtRepository.save(newProject);
+			userPjtRepository.save(newProject);
 		}
 
 		// Project Leader 등록
@@ -130,7 +130,6 @@ public class ProjectService {
 			.authorizerNickName(registerDto.getUserNickName()).build()
 		);
 
-		return null;
 	}
 
 	@Transactional
@@ -230,6 +229,7 @@ public class ProjectService {
 
 	@Transactional
 	public List<ProjectCloseResDto> getProjecReqList(String teamName) {
+
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
 		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);

@@ -1,7 +1,6 @@
 package rocket.planet.controller.project;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static rocket.planet.dto.admin.AdminDto.*;
 import static rocket.planet.dto.project.ProjectUpdateDto.*;
 
 import java.time.LocalDate;
@@ -15,10 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import rocket.planet.domain.AuthType;
-import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.ProjectStatus;
-import rocket.planet.domain.UserProject;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
@@ -55,6 +51,7 @@ class ProjectControllerTest {
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")
 	@Test
+	@Rollback(value = false)
 	void 프로젝트_생성_테스트() {
 
 		List<String> memberList = new ArrayList<>();
@@ -113,15 +110,15 @@ class ProjectControllerTest {
 		// 	.projectEndDt(LocalDate.of(2023, 8, 7))
 		// 	.build();
 
-		UserProject newproject = projectService.registerProject(project1);
+		projectService.registerProject(project1);
 
 		// 프로젝트 리더 등록
-		ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
-			.authType(AuthType.PROJECT)
-			.authTargetId(newproject.getProject().getId())
-			.authorizerNickName(project1.getUserNickName())
-			.authNickName(project1.getProjectLeader())
-			.build());
+		// ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
+		// 	.authType(AuthType.PROJECT)
+		// 	.authTargetId(newproject.getProject().getId())
+		// 	.authorizerNickName(project1.getUserNickName())
+		// 	.authNickName(project1.getProjectLeader())
+		// 	.build());
 
 		// projectService.registerProject(project2);
 		// projectService.registerProject(project3);
