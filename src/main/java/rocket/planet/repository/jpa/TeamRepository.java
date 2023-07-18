@@ -20,4 +20,11 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 	void deleteByTeamName(String name);
 
 	Optional<Team> findByDepartment_DeptNameAndTeamName(String deptName, String teamName);
+
+	@Query("SELECT t FROM Team t "
+		+ "JOIN FETCH t.department d "
+		+ "WHERE d.deptName = :deptName "
+		+ "group by t.teamName")
+	List<Team> findTeamStatsByDeptName(@Param("deptName") String deptName);
+
 }
