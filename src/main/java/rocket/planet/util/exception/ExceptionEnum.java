@@ -45,7 +45,9 @@ public enum ExceptionEnum {
 
 	PASSWORD_MATCH_EXCEPTION("UE012", "이전 비밀번호와 동일합니다"),
 
-	ALREADY_EXISTS_DEPT_EXCEPTION("UE013", "이미 존재하는 부서입니다");
+	ALREADY_EXISTS_DEPT_EXCEPTION("UE013", "이미 존재하는 부서입니다"),
+
+	INVALID_JWT_EXCEPTION("UE014", "유효하지 않은 토큰입니다");
 
 	private HttpStatus httpStatus;
 	private final String code;
