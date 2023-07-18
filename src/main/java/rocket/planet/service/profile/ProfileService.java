@@ -223,32 +223,32 @@ public class ProfileService {
     public void addUserTech(ProfileDto.TechRegisterReqDto techReqDto) {
         Optional<Profile> existingProfile = profileRepository.findByUserNickName(techReqDto.getUserNickName());
         Optional<Tech> existingTech = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName());
-            if (checkTech(techReqDto.getTechName())) {
+        if (checkTech(techReqDto.getTechName())) {
 
-                if (existingProfile.isPresent() && existingTech.isPresent()) {
-                    Profile profile = existingProfile.get();
-                    Tech tech = existingTech.get();
+            if (existingProfile.isPresent() && existingTech.isPresent()) {
+                Profile profile = existingProfile.get();
+                Tech tech = existingTech.get();
 
-                    // 이미 등록된 기술의 경우 중복 등록 불가능
-                    boolean isTechAlreadyRegistered = pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName());
-                    if (isTechAlreadyRegistered) {
-                        throw new UserTechException("이미 등록된 기술입니다.");
-                    }
-
-                    // 사용자는 최대 다섯 개의 기술만 등록 가능
-                    List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
-                    if (userTechList.size() >= 5) {
-                        throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
-                    }
-                    ProfileTech userTech = ProfileTech.builder()
-                            .profile(profile)
-                            .tech(tech)
-                            .build();
-                    pfTechRepository.save(userTech);
+                // 이미 등록된 기술의 경우 중복 등록 불가능
+                boolean isTechAlreadyRegistered = pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName());
+                if (isTechAlreadyRegistered) {
+                    throw new UserTechException("이미 등록된 기술입니다.");
                 }
-            } else {
-                throw new UserTechException("등록되지 않은 기술로 추가할 수 없습니다.");
+
+                // 사용자는 최대 다섯 개의 기술만 등록 가능
+                List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
+                if (userTechList.size() >= 5) {
+                    throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
+                }
+                ProfileTech userTech = ProfileTech.builder()
+                        .profile(profile)
+                        .tech(tech)
+                        .build();
+                pfTechRepository.save(userTech);
             }
+        } else {
+            throw new UserTechException("등록되지 않은 기술로 추가할 수 없습니다.");
+        }
 
     }
 
@@ -281,15 +281,22 @@ public class ProfileService {
     public void addProfileVisitor(ProfileDto.VisitorReqDto visitorReqDto) {
         Optional<Profile> pOwner = profileRepository.findByUserNickName(visitorReqDto.getOwnerNickName());
         Optional<Profile> pVisitor = profileRepository.findByUserNickName(visitorReqDto.getVisitorNickName());
-        if (!visitorReqDto.getVisitorNickName().equals(visitorReqDto.getOwnerNickName())) {
-            ProfileVisitor profileVisitor = ProfileVisitor.builder()
-                    .visitor(pVisitor.get())
-                    .owner(pOwner.get())
-                    .build();
-            pvisitorRepository.save(profileVisitor);
+        Optional<ProfileVisitor> duplicateV = pvisitorRepository.findByVisitor_UserNickNameAndOwner_UserNickName(visitorReqDto.getVisitorNickName(),visitorReqDto.getOwnerNickName());
+
+        if (duplicateV.isPresent()) {
+            duplicateV.get().updateVisitTime();
+        } else {
+            if (!visitorReqDto.getVisitorNickName().equals(visitorReqDto.getOwnerNickName())) {
+                ProfileVisitor profileVisitor = ProfileVisitor.builder()
+                        .visitor(pVisitor.get())
+                        .owner(pOwner.get())
+                        .build();
+                pvisitorRepository.save(profileVisitor);
+            }
+
         }
+
+
     }
-
-
 }
 

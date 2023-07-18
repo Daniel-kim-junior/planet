@@ -27,4 +27,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "where d.deptName = :deptName")
 	List<Profile> findCareerStatsByDepartment(String deptName);
 
+
 }
