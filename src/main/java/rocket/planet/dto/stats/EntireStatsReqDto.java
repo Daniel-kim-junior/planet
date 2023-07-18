@@ -2,21 +2,21 @@ package rocket.planet.dto.stats;
 
 import static lombok.AccessLevel.*;
 
-import java.util.Map;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
-public class LabelAndStatDto {
+@Getter
+public class EntireStatsReqDto {
 
-	private Map<String, Integer> data;
+	private String companyName;
+
+	private int unit;
 
 	@Builder
-	public LabelAndStatDto(Map<String, Integer> data) {
-		this.data = data;
+	public EntireStatsReqDto(String companyName, int unit) {
+		this.companyName = companyName;
+		this.unit = unit;
 	}
-
 }
