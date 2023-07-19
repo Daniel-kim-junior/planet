@@ -6,6 +6,7 @@ import javax.validation.constraints.Email;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSendException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -59,6 +60,13 @@ public class ExceptionAdvice {
 	public CommonErrorDto jwtInvalidException(JwtInvalidException e) {
 		log.error("INTERNAL JWT INVALID EXCEPTION", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.INVALID_JWT_EXCEPTION);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public CommonErrorDto jwtInvalidException(AccessDeniedException e) {
+		log.error("Access Denied", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.SECURITY_ACCESS_EXCEPTION);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
