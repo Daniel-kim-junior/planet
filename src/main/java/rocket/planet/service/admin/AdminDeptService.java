@@ -80,6 +80,5 @@ public class AdminDeptService {
 		return AdminResDto.builder()
 				.message(activeReqDtoDept.getDeptName() + " 부문은 비활성화되었으며 해당 부문에 속하는 유저들의 '부문없음'으로 소속이 변경되었습니다.")
 				.build();
-
 	}
 }

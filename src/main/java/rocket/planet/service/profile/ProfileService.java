@@ -280,14 +280,11 @@ public class ProfileService {
 
 	@Transactional
 	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto) {
-		Optional<User> user = userRepository.findByUserId(newPwdReqDto.getUserId());
-		if (passwordEncoder.matches(newPwdReqDto.getUserPwd(), user.get().getUserPwd())) {
+		User user = userRepository.findByUserId(newPwdReqDto.getUserId()).orElseThrow(() -> new UserPwdCheckException("유저를 찾을 수 없습니다."));
+		if (passwordEncoder.matches(newPwdReqDto.getUserPwd(), user.getUserPwd())) {
 			throw new UserPwdCheckException("이전에 사용하던 비밀번호와 동일합니다.");
 		}
-		if (!newPwdReqDto.getUserPwd().equals(newPwdReqDto.getUserPwdCheck())) {
-			throw new UserPwdCheckException("변경하려는 비밀번호가 동일하지 않습니다.");
-		}
-		user.get().changeUserPwd(newPwdReqDto);
+		user.changeUserPwd(newPwdReqDto);
 	}
 
 	@Transactional
