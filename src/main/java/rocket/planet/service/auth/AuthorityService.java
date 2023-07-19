@@ -79,7 +79,7 @@ public class AuthorityService {
 
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
-		Optional<Authority> authority = pfAuthRepository.findAuthorityByProfile(user);
+		Optional<Authority> authority = Optional.ofNullable(pfAuthRepository.findByProfile(user).get().getAuthority());
 		if (authority.isPresent()) {
 			if (authority.get().getAuthTargetId().equals(department.getId())
 				|| authority.get().getAuthTargetId().equals(team.getId())) {

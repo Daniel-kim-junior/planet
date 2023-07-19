@@ -18,11 +18,8 @@ import rocket.planet.domain.ProjectStatus;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
-import rocket.planet.repository.jpa.AuthRepository;
-import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
-import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.project.ProjectService;
 
 @SpringBootTest
@@ -32,21 +29,10 @@ class ProjectControllerTest {
 	private ProjectService projectService;
 
 	@Autowired
-	private AuthorityService authorityService;
-
-	@Autowired
 	private ProjectRepository projectRepository;
 
 	@Autowired
 	private UserPjtRepository userPjtRepository;
-
-	@Autowired
-	private AuthRepository authRepository;
-
-	@Autowired
-	private PfAuthRepository pfAuthRepository;
-
-	final String authorizerEmail = "@gmail.com";
 
 	@Transactional
 	@DisplayName("프로젝트 생성 테스트")

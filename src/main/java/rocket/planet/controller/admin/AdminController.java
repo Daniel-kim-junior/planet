@@ -2,8 +2,6 @@ package rocket.planet.controller.admin;
 
 import static rocket.planet.dto.admin.AdminDto.*;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,7 +63,7 @@ public class AdminController {
 	}
 
 	@PatchMapping("/user/orgs")
-	public ResponseEntity<String> orgModify(@ModelAttribute List<AdminOrgModifyReqDto> orgModifyReqList) {
+	public ResponseEntity<String> orgModify(@ModelAttribute AdminOrgModifyReqDto orgModifyReqList) {
 		teamService.modifyMemberOrg(orgModifyReqList);
 
 		return ResponseEntity.ok().body("사용자(들)의 소속을 변경하였습니다.");
@@ -73,6 +71,7 @@ public class AdminController {
 
 	@PatchMapping("/user/disable")
 	public ResponseEntity<String> userRemove(@RequestBody NameReqDto userNickName) {
+		System.out.println("getName-=====> " + userNickName.getName());
 		adminUserService.disabledUser(userNickName.getName());
 
 		return ResponseEntity.ok().body(userNickName.getName() + "를 퇴사 처리하였습니다.");
