@@ -13,14 +13,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import rocket.planet.domain.Department;
+import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.ProfileTech;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.stats.LabelAndStatDto;
+import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.PfTechRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
-import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 
 @NoArgsConstructor(access = PROTECTED)
@@ -34,7 +35,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 	private int unit;
 
-	private Map<String, Double> map;
+	private Map<String, Integer> map;
 
 	@Builder
 	public Stat(R repository, T category, E entity, int unit) {
@@ -53,16 +54,15 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// 부문에 해당하는 프로필들의 기술 통계
 				final List<ProfileTech> profileTechList = ((PfTechRepository)repository).findTechStatsByProfileDepartment(
 					(department).getDeptName());
-				double size = profileTechList.size();
 				String techName;
 				map = new HashMap<>();
 				for (ProfileTech tech : profileTechList) {
 					techName = tech.getTech().getTechName();
 					if (map.containsKey(techName)) {
 						map.put(techName,
-							map.get(techName) + 1 / size);
+							map.get(techName) + 1);
 					} else {
-						map.put(techName, 1 / size);
+						map.put(techName, 1);
 					}
 				}
 
@@ -71,7 +71,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// 경력별 통계
 
 				final List<Profile> profileList = ((ProfileRepository)repository).findCareerStatsByDepartment(
-					(department).getDeptName());
+					department.getDeptName());
 				map = makeCareerMap();
 
 				for (Profile profile : profileList) {
@@ -84,35 +84,56 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				}
 				dto = LabelAndStatDto.builder().data(map).build();
 			} else if (category instanceof TeamStats) {
-				// 팀별 통계
 				map = new HashMap<>();
+				// 부문에 해당하는 팀에 해당하는 프로필의 개수를 구하는 쿼리
 
-				final List<Team> teamList = ((TeamRepository)repository).findTeamStatsByDeptName(
-					(department).getDeptName());
-				double size = teamList.size();
-				for (Team team : teamList) {
-					if (map.containsKey(team.getTeamName())) {
-						map.put(team.getTeamName(), map.get(team.getTeamName()) + 1 / size);
+				final List<Org> orgList = ((OrgRepository)repository).findTeamStatsByDeptName(
+					department.getDeptName());
+				// TODO
+				String teamName;
+				for (Org org : orgList) {
+					teamName = org.getTeam().getTeamName();
+					if (map.containsKey(teamName)) {
+						map.put(teamName, map.get(teamName) + 1);
 					} else {
-						map.put(team.getTeamName(), 1 / size);
+						map.put(teamName, 1);
 					}
 				}
+
 				dto = LabelAndStatDto.builder().data(map).build();
 
 			} else if (category instanceof PjtPartRateStats) {
 				// 프로젝트 참여도 통계
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
-					(department).getDeptName());
+					department.getDeptName());
 				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
-					(department).getDeptName());
+					department.getDeptName());
 
-				double size = onWorkingProfiles.size() + noWorkingProfiles.size();
-				size = size == 0 ? 1 : size;
-				map.put("참여 중", onWorkingProfiles.size() / size);
-				map.put("미 참여", noWorkingProfiles.size() / size);
+				map.put("참여 중", onWorkingProfiles.size());
+				map.put("미 참여", noWorkingProfiles.size());
+
 				dto = LabelAndStatDto.builder().data(map).build();
 
+			} else if (category instanceof ProjectStats) {
+				// TODO 부문에 속한 팀들의 프로젝트 통계
+				map = new HashMap<>();
+
+				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByDept(
+					department.getDeptName());
+
+				// TODO
+				String projectName;
+				for (UserProject userProject : userProjectList) {
+					projectName = userProject.getProject().getProjectName();
+					if (map.containsKey(projectName)) {
+						map.put(projectName, map.get(projectName) + 1);
+					} else {
+						map.put(projectName, 1);
+					}
+				}
+
+				dto = LabelAndStatDto.builder().data(map).build();
 			}
 
 		} else if (entity instanceof Team) {
@@ -122,16 +143,16 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// 부문에 해당하는 프로필들의 기술 통계
 				final List<ProfileTech> profileTechList = ((PfTechRepository)repository).findTechStatsByProfileTeam(
 					team.getTeamName());
-				double size = profileTechList.size();
+
 				String techName;
 				map = new HashMap<>();
 				for (ProfileTech tech : profileTechList) {
 					techName = tech.getTech().getTechName();
 					if (map.containsKey(techName)) {
 						map.put(techName,
-							map.get(techName) + 1 / size);
+							map.get(techName) + 1);
 					} else {
-						map.put(techName, 1 / size);
+						map.put(techName, 1);
 					}
 				}
 				dto = LabelAndStatDto.builder().data(map).build();
@@ -141,35 +162,157 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				final List<Profile> profileList = ((ProfileRepository)repository).findCareerStatsByTeam(
 					team.getTeamName());
+				map = makeCareerMap();
+				for (Profile profile : profileList) {
+					if (profile.getProfileCareer() <= 0) {
+						map.put("경력 없음", map.get("경력 없음") + 1);
+					} else {
+						int higherBound = getHigherBound(new ArrayList<>(map.keySet()), profile.getProfileCareer());
+						map.put(higherBound + "년 이하", map.get(higherBound + "년 이하") + 1);
+					}
+				}
+				dto = LabelAndStatDto.builder().data(map).build();
+
+			} else if (category instanceof ProjectStats) {
+				map = new HashMap<>();
+
+				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByTeam(
+					team.getTeamName());
+
+				// TODO
+				// 팀에 속한 프로젝트 통계
+				String projectName;
+				for (UserProject userProject : userProjectList) {
+					projectName = userProject.getProject().getProjectName();
+					if (map.containsKey(projectName)) {
+						map.put(projectName, map.get(projectName) + 1);
+					} else {
+						map.put(projectName, 1);
+					}
+				}
+
+				dto = LabelAndStatDto.builder().data(map).build();
 
 			} else if (category instanceof PjtPartRateStats) {
 				// 프로젝트 참여도 통계
 				map = new HashMap<>();
-				// final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
-				// 	team.getTeamName());
-				// final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
-				// 	team.getTeamName());
+				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+					team.getTeamName());
+				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+					team.getTeamName());
 
-				// double size = onWorkingProfiles.size() + noWorkingProfiles.size();
-				// size = size == 0 ? 1 : size;
-				// map.put("참여 중", onWorkingProfiles.size() / size);
-				// map.put("미 참여", noWorkingProfiles.size() / size);
-				// rst.add(LabelAndStatDto.builder().data(map).build());
+				double size = onWorkingProfiles.size() + noWorkingProfiles.size();
+				map.put("참여 중", onWorkingProfiles.size());
+				map.put("미 참여", noWorkingProfiles.size());
+				dto = LabelAndStatDto.builder().data(map).build();
 			}
 
+		} else if (entity instanceof EntireStats) {
+			if (category instanceof TechStats) {
+				// 전체 프로필들의 기술 통계
+				final List<ProfileTech> profileTechList = ((PfTechRepository)repository).findTechStatsByProfileEntire();
+				String techName;
+				map = new HashMap<>();
+				for (ProfileTech tech : profileTechList) {
+					techName = tech.getTech().getTechName();
+					if (map.containsKey(techName)) {
+						map.put(techName,
+							map.get(techName) + 1);
+					} else {
+						map.put(techName, 1);
+					}
+				}
+				dto = LabelAndStatDto.builder().data(map).build();
+
+			} else if (category instanceof CareerStats) {
+				// 전체 경력별 통계
+
+				final List<Integer> profileList = ((ProfileRepository)repository).findCareerStatsByEntire();
+				map = makeCareerMap();
+				for (Integer career : profileList) {
+					if (career <= 0) {
+						map.put("경력 없음", map.get("경력 없음") + 1);
+					} else {
+						int higherBound = getHigherBound(new ArrayList<>(map.keySet()), career);
+						map.put(higherBound + "년 이하", map.get(higherBound + "년 이하") + 1);
+					}
+				}
+				dto = LabelAndStatDto.builder().data(map).build();
+
+			} else if (category instanceof TeamStats) {
+				// 전체 팀별 통계
+				map = new HashMap<>();
+
+				final List<Org> orgList = ((OrgRepository)repository).findStatsTeamByEntire();
+				String teamName;
+				for (Org org : orgList) {
+					teamName = org.getTeam().getTeamName();
+					if (map.containsKey(org.getTeam().getTeamName())) {
+						map.put(teamName, map.get(teamName) + 1);
+					} else {
+						map.put(teamName, 1);
+					}
+				}
+
+				dto = LabelAndStatDto.builder().data(map).build();
+
+			} else if (category instanceof PjtPartRateStats) {
+				// 프로젝트 참여도 통계
+				map = new HashMap<>();
+				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntire();
+				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntireClosed(
+				);
+
+				map.put("참여 중", onWorkingProfiles.size());
+				map.put("미 참여", noWorkingProfiles.size());
+				dto = LabelAndStatDto.builder().data(map).build();
+			} else if (category instanceof DeptStats) {
+				// 부문별 통계
+				map = new HashMap<>();
+				// TODO
+				final List<Org> orgList = ((OrgRepository)repository).findDeptStatsByEntire();
+				String deptName;
+				for (Org org : orgList) {
+					deptName = org.getDepartment().getDeptName();
+					if (map.containsKey(deptName)) {
+						map.put(deptName, map.get(deptName) + 1);
+					} else {
+						map.put(deptName, 1);
+					}
+				}
+				dto = LabelAndStatDto.builder().data(map).build();
+			} else if (category instanceof ProjectStats) {
+
+				map = new HashMap<>();
+				// TODO
+				// 전체 프로젝트 별 통계
+				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtPartCountByEntire();
+				String projectName;
+				for (UserProject userProject : userProjectList) {
+					projectName = userProject.getProject().getProjectName();
+					if (map.containsKey(projectName)) {
+						map.put(projectName, map.get(projectName) + 1);
+					} else {
+						map.put(projectName, 1);
+					}
+				}
+
+				dto = LabelAndStatDto.builder().data(map).build();
+
+			}
 		}
 		return dto;
 	}
 
-	private Map<String, Double> makeCareerMap() {
+	private Map<String, Integer> makeCareerMap() {
 
-		Map<String, Double> map = new LinkedHashMap<>();
+		Map<String, Integer> map = new LinkedHashMap<>();
 
 		for (int i = 0; i < 30; i += unit) {
 			if (i == 0) {
-				map.put("경력 없음", 0.0);
+				map.put("경력 없음", 0);
 			} else {
-				map.put(i + "년 이하", 0.0);
+				map.put(i + "년 이하", 0);
 			}
 		}
 

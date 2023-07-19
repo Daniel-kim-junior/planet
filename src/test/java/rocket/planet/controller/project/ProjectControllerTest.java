@@ -188,14 +188,14 @@ class ProjectControllerTest {
 
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(value = false)
 	void 프로젝트_마감_승인_테스트() {
 
 		String projectName = "스마트 시티 TF";
-		String userNickName = "pilot";
+		String userNickName = "plpl";
 		String role = "PILOT";
 
-		projectService.closeProjectApprove(projectName, userNickName, role);
+		projectService.closeProjectApprove(projectName, userNickName, role, false);
 
 	}
 
@@ -221,8 +221,8 @@ class ProjectControllerTest {
 
 	@Test
 	@Transactional
-	void 프로젝트_완수_인증_요청_테스트() {
-		List<ProjectCloseResDto> projectList = projectService.getProjecReqList("스마트팩토리");
+	void 프로젝트_완수_요청_리스트_조회_테스트() {
+		List<ProjectCloseResDto> projectList = projectService.getProjectReqList("스마트시티");
 
 		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);

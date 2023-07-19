@@ -28,6 +28,4 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 		+ "group by t.teamName")
 	List<Team> findTeamStatsByDeptName(@Param("deptName") String deptName);
 
-	Optional<Team> findByTeamInactive(boolean teamInactive);
-
 }

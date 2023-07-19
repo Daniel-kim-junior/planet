@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +24,7 @@ import rocket.planet.domain.Profile;
 import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.OrgRepository;
@@ -27,14 +32,13 @@ import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
-import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.util.common.PagingUtil;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthorityService {
 	private final AuthRepository authRepository;
-	private final UserRepository userRepository;
 	private final ProfileRepository profileRepository;
 	private final PfAuthRepository pfAuthRepository;
 	private final OrgRepository orgRepository;
@@ -75,10 +79,15 @@ public class AuthorityService {
 
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
-		if (pfAuthRepository.findByProfile(user).getAuthTargetId().equals(department.getId())
-			|| pfAuthRepository.findByProfile(user).getAuthTargetId().equals(team.getId())) {
-			pfAuthRepository.deleteByAuthorityAndProfile(pfAuthRepository.findByProfile(user), user);
-			authRepository.deleteById(pfAuthRepository.findByProfile(user).getId());
+		Optional<Authority> authority = pfAuthRepository.findByProfile(user);
+		if (authority.isPresent()) {
+			if (authority.get().getAuthTargetId().equals(department.getId())
+				|| authority.get().getAuthTargetId().equals(team.getId())) {
+
+				pfAuthRepository.deleteByAuthorityAndProfile(authority.get(), user);
+				authRepository.deleteById(authority.get().getId());
+
+			}
 		}
 
 		// 3. 권한 추가 & 4. 프로필-권한 추가
@@ -101,8 +110,10 @@ public class AuthorityService {
 	}
 
 	@Transactional
-	public List<AdminAuthMemberResDto> getTeamMemberList(String teamName) {
-		List<AdminAuthMemberResDto> teamMemberList = new ArrayList<>();
+	public AdminAuthMemberListDto getTeamMemberList(ListReqDto listReqDto, String teamName) {
+		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+
+		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
 		// 팀으로 소속 인원 찾기
 		Optional<Org> organization = orgRepository.findAllByTeam_TeamName(teamName).stream().findFirst();
@@ -115,7 +126,7 @@ public class AuthorityService {
 			boolean isActive = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
-			AdminAuthMemberResDto member = AdminAuthMemberResDto.builder()
+			AdminAuthMemberDto member = AdminAuthMemberDto.builder()
 				.userNickName(profile.getUserNickName())
 				.deptName(organization.get().getDepartment().getDeptName())
 				.teamName(organization.get().getTeam().getTeamName())
@@ -127,7 +138,19 @@ public class AuthorityService {
 			teamMemberList.add(member);
 		}
 
-		return teamMemberList;
+		// Paging
+		Page<AdminAuthMemberDto> memberList = getPagedResult(teamMemberList, pageable);
 
+		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
+			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+
+		return AdminAuthMemberListDto.builder().adminAuthMemberList(teamMemberList).pagingUtil(pagingUtil).build();
+
+	}
+
+	private Page<AdminAuthMemberDto> getPagedResult(List<AdminAuthMemberDto> teamMembers, Pageable pageable) {
+		int start = (int)pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
+		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
 	}
 }

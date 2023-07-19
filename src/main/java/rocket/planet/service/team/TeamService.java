@@ -1,5 +1,6 @@
 package rocket.planet.service.team;
 
+import static rocket.planet.dto.admin.AdminDto.*;
 import static rocket.planet.dto.team.TeamMemberDto.*;
 
 import java.time.LocalDate;
@@ -18,12 +19,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
+import rocket.planet.domain.Role;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.common.ListReqDto;
+import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
+import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.util.common.PagingUtil;
 
 @Service
@@ -35,6 +40,9 @@ public class TeamService {
 	private final OrgRepository orgRepository;
 	private final UserRepository userRepository;
 	private final UserPjtRepository userPjtRepository;
+	private final TeamRepository teamRepository;
+	private final DeptRepository deptRepository;
+	private final AuthorityService authorityService;
 
 	@Transactional
 	public TeamMemberListDto getMemberList(ListReqDto listReqDto, String teamName) {
@@ -60,6 +68,8 @@ public class TeamService {
 				.profileCareer(teamMember.getProfileCareer())
 				.profileStart(teamMember.getProfileStartDate())
 				.isActive(hasProject)
+				.deptName(organization.get().getDepartment().getDeptName())
+				.teamName(organization.get().getTeam().getTeamName())
 				.build();
 
 			teamMemberList.add(teamMemberDto);
@@ -80,5 +90,33 @@ public class TeamService {
 		int start = (int)pageable.getOffset();
 		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
+	}
+
+	@Transactional
+	public void modifyMemberOrg(List<AdminOrgModifyReqDto> orgModifyReqList) {
+
+		for (AdminOrgModifyReqDto orgReq : orgModifyReqList) {
+			// 소속 변경
+			Optional<Profile> user = profileRepository.findByUserNickName(orgReq.getUserNickName());
+			Optional<Org> oldOrg = orgRepository.findById(user.get().getOrg().get(0).getId());
+
+			// 권한 삭제
+			if (!user.get().getRole().equals(Role.CREW) && !user.get().getRole().equals(Role.PL)) {
+				authorityService.modifyAuthority(AdminAuthModifyReqDto.builder()
+					.userNickName(user.get().getUserNickName())
+					.role("CREW")
+					.deptName(orgReq.getDeptName())
+					.teamName(orgReq.getTeamName())
+					.build());
+			}
+
+			oldOrg.get()
+				.updateOrg(teamRepository.findByTeamName(orgReq.getTeamName()),
+					deptRepository.findByDeptName(orgReq.getDeptName()));
+
+			System.out.println("newOrg=========> " + oldOrg.toString());
+
+		}
+
 	}
 }

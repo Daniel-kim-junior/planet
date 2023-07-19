@@ -24,6 +24,8 @@ public class TeamMemberDto {
 		private LocalDate profileStart;
 		private int profileCareer;
 		private boolean isActive;
+		private String deptName;
+		private String teamName;
 	}
 
 	@Getter

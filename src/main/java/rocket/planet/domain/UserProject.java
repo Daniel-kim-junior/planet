@@ -88,16 +88,20 @@ public class UserProject {
 			'}';
 	}
 
-	public void toUserProjectCloseApprove() {
+	public void approveProjectClose() {
 		this.userPjtCloseApply = false;
 		this.userPjtCloseDt = LocalDate.now();
 	}
 
-	public void requestClose() {
+	public void rejectProjectClose() {
+		this.userPjtCloseApply = false;
+	}
+
+	public void requestProjectClose() {
 		this.userPjtCloseApply = true;
 	}
 
-	public void updateUserPjtDesc(ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
+	public void updateUserPjtDesc(ProfileDto.insideProjectUpdateReqDto insidePjtReqDto) {
 		this.userPjtDesc = insidePjtReqDto.getProjectDesc();
 	}
 
