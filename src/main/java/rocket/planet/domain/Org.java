@@ -84,11 +84,11 @@ public class Org extends BaseTime {
                 .build();
     }
 
-    public void hasNoTeam(Team team) {
-        this.team = team;
+    public void hasNoTeam() {
+        this.team = null;
     }
-    public void hasNoDept(Department dept) {
-        this.department = dept;
+    public void hasNoDept() {
+        this.department = null;
     }
 
 	@Override
