@@ -19,6 +19,8 @@ public class DeptTest {
     @Autowired
     private DeptRepository deptRepository;
 
+
+
     @Test
     @Rollback(false)
     public void createDepartmentTestData() {
@@ -63,6 +65,13 @@ public class DeptTest {
                 .build();
         deptRepository.saveAndFlush(ftDept);
 
+
+        Department noneDept = Department.builder()
+                .company(company)
+                .deptName("부문없음")
+                .deptType(OrgType.NONE)
+                .build();
+        deptRepository.saveAndFlush(noneDept);
 
 
     }

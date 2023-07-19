@@ -11,6 +11,7 @@ import rocket.planet.domain.*;
 import rocket.planet.dto.profile.*;
 import rocket.planet.repository.jpa.*;
 import rocket.planet.util.exception.UserLogException;
+import rocket.planet.util.exception.UserNotFoundException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 import rocket.planet.util.security.UserDetailsImpl;

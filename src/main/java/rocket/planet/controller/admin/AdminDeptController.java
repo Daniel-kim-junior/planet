@@ -3,14 +3,10 @@ package rocket.planet.controller.admin;
 import static rocket.planet.dto.admin.AdminDeptTeamDto.*;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+import rocket.planet.dto.admin.AdminDeptTeamDto;
 import rocket.planet.service.admin.AdminDeptService;
 
 @RestController
@@ -25,13 +21,13 @@ public class AdminDeptController {
 		return ResponseEntity.ok().body(adminDeptService.addDept(dto));
 	}
 
-	@DeleteMapping
-	public ResponseEntity<AdminResDto> deptRemove(@RequestBody AdminDeptTeamDelReqDto dto) throws Exception {
-		return ResponseEntity.ok().body(adminDeptService.removeDept(dto));
-	}
-
 	@PutMapping("/name")
 	public ResponseEntity<AdminResDto> deptModify(@RequestBody AdminDeptModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.modifyDept(dto));
+	}
+
+	@PatchMapping
+	public ResponseEntity<AdminResDto> teamActiveModify(@RequestBody AdminDeptTeamDto.UpdateDeptActiveReqDto deptReqDto) {
+		return ResponseEntity.ok().body(adminDeptService.modifyDeptActive(deptReqDto));
 	}
 }

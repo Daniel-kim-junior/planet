@@ -99,23 +99,4 @@ class AdminTeamServiceTest {
 				.build()));
 	}
 
-	@Test
-	void 팀_삭제_테스트() throws Exception {
-		// dto가 null일 경우
-		assertThrows(Exception.class, () -> adminTeamService.removeTeam(null));
-
-		// 팀이 존재하지 않을 경우
-		assertThrows(NoSuchTeamException.class, () -> adminTeamService.removeTeam(
-			AdminDeptTeamDelReqDto.builder()
-				.name("dktechin")
-				.build()));
-
-		// 팀이 존재하는 경우 삭제 완료
-		assertThat(adminTeamService.removeTeam(
-			AdminDeptTeamDelReqDto.builder()
-				.name("dk")
-				.build()).getMessage()).isEqualTo("팀이 삭제되었습니다");
-
-	}
-
 }

@@ -24,6 +24,8 @@ public class TeamTest {
         Department aiChatbotDept = deptRepository.findByDeptName("AI챗봇");
         Department ftDept = deptRepository.findByDeptName("기업솔루션");
         Department itOutDept = deptRepository.findByDeptName("IT아웃소싱");
+        Department noneDept = deptRepository.findByDeptName("부문없음");
+
 
         Team smartFactoryTeam = Team.builder()
                 .department(smartSolutionDept)
@@ -80,6 +82,14 @@ public class TeamTest {
                 .teamType(OrgType.DEVELOPMENT)
                 .build();
         teamRepository.saveAndFlush(itConsultingTeam);
+
+        Team noneTeam = Team.builder()
+                .department(noneDept)
+                .teamName("팀없음")
+                .teamDesc("팀이 없습니다.")
+                .teamType(OrgType.NONE)
+                .build();
+        teamRepository.saveAndFlush(noneTeam);
     }
 
 }
