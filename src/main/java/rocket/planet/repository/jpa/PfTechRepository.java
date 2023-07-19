@@ -20,8 +20,7 @@ public interface PfTechRepository extends JpaRepository<ProfileTech, UUID> {
 		+ "join fetch pt.profile p "
 		+ "join fetch p.org o "
 		+ "join fetch o.department d "
-		+ "where d.deptName = :deptName "
-		+ "and d.deptInactive = false ")
+		+ "where d.deptName = :deptName ")
 	List<ProfileTech> findTechStatsByProfileDepartment(String deptName);
 
 	@Query("select distinct pt "

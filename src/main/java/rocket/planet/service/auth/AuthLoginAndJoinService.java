@@ -329,7 +329,7 @@ public class AuthLoginAndJoinService {
 
 	/**
 	 * @param refreshToken
-	 * @param claims       Claim을 바탕으로 새로운 Token과 LoginResDto 생성
+	 * @param claims  Claim을 바탕으로 새로운 Token과 LoginResDto 생성
 	 * @return
 	 */
 
