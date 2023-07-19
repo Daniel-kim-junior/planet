@@ -28,7 +28,6 @@ public class SearchService {
            List<Org> org = result.getOrg();
            List<UserProject> pjt = result.getUserProject();
 
-
             List<SearchDto.SearchTechResDto> techList = userTechs.stream()
                     .map(usrTech -> SearchDto.SearchTechResDto.builder()
                             .techName(usrTech.getTech().getTechName())
@@ -37,12 +36,27 @@ public class SearchService {
 
             SearchDto.SearchOrgResDto teams = org.stream()
                     .findFirst()
-                    .map(team ->
-                        SearchDto.SearchOrgResDto.builder()
-                                .deptName(team.getDepartment().getDeptName())
-                                .teamName(team.getTeam().getTeamName())
-                                .userTeamType(team.getTeam().getTeamType().toString())
-                                .build())
+                    .map(team -> {
+                        Department department = team.getDepartment();
+                        String deptName = (department != null && department.getDeptName() != null)
+                                ? department.getDeptName()
+                                : "무소속";
+
+                        Team orgTeam = team.getTeam();
+                        String teamName = (orgTeam != null && orgTeam.getTeamName() != null)
+                                ? orgTeam.getTeamName()
+                                : "무소속";
+
+                        String userTeamType = (orgTeam != null && orgTeam.getTeamType() != null)
+                                ? orgTeam.getTeamType().toString()
+                                : "무소속";
+
+                        return SearchDto.SearchOrgResDto.builder()
+                                .deptName(deptName)
+                                .teamName(teamName)
+                                .userTeamType(userTeamType)
+                                .build();
+                    })
                     .orElse(null);
 
             List<SearchDto.SearchUserPjtStatusResDto> userPjts = pjt.stream()

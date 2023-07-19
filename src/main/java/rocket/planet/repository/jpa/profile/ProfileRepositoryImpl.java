@@ -45,7 +45,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
                 .leftJoin(qProfile.extPjtRecord, qPjtRecord)
                 .leftJoin(qProfile.certification, qCertification)
                 .leftJoin(qProfile.profileTech, qProfileTech)
-                .where(qProfile.userNickName.eq(userNickName))
+                .where(qProfile.profileStatus.eq(true),qProfile.userNickName.eq(userNickName))
                 .fetch();
         return profiles.stream().findFirst();
 
@@ -54,11 +54,10 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     @Override
     public List<Profile> selectProfilesBySearchKeyword(String keyword) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
         String replacedKeyword = keyword.replaceAll("\\s+", "");
-
         List<Profile> equalsSearch = queryFactory.selectFrom(qProfile)
                 .where(
+                        qProfile.profileStatus.eq(true),
                         qProfile.userNickName.equalsIgnoreCase(replacedKeyword)
                                 .or(qProfile.org.any().department.deptName.eq(replacedKeyword))
                                 .or(qProfile.org.any().team.teamName.eq(replacedKeyword))
@@ -72,6 +71,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
         if (equalsSearch.isEmpty()) {
             List<Profile> startsWithSearch = queryFactory.selectFrom(qProfile)
                     .where(
+                            qProfile.profileStatus.eq(true),
                             qProfile.userNickName.startsWithIgnoreCase(replacedKeyword)
                                     .or(qProfile.org.any().department.deptName.containsIgnoreCase(replacedKeyword))
                                     .or(qProfile.org.any().team.teamName.containsIgnoreCase(replacedKeyword))

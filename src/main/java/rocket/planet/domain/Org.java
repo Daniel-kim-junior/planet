@@ -40,11 +40,11 @@ public class Org extends BaseTime {
     @JoinColumn(name = "company_uid")
     private Company company;
 
-    @ManyToOne(fetch = LAZY, optional = false)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "dept_uid")
     private Department department;
 
-    @ManyToOne(fetch = LAZY, optional = false)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_uid")
     private Team team;
 
