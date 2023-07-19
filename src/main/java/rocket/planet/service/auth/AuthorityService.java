@@ -148,7 +148,7 @@ public class AuthorityService {
 
 	}
 
-	private Page<AdminAuthMemberDto> getPagedResult(List<AdminAuthMemberDto> teamMembers, Pageable pageable) {
+	public Page<AdminAuthMemberDto> getPagedResult(List<AdminAuthMemberDto> teamMembers, Pageable pageable) {
 		int start = (int)pageable.getOffset();
 		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
