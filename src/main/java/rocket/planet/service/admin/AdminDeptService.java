@@ -9,14 +9,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import rocket.planet.domain.Company;
-import rocket.planet.domain.Department;
-import rocket.planet.domain.Org;
-import rocket.planet.domain.OrgType;
+import rocket.planet.domain.*;
 import rocket.planet.dto.admin.AdminDeptTeamDto;
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.OrgRepository;
+import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.util.exception.AlreadyExistsDeptException;
 import rocket.planet.util.exception.NoSuchCompanyException;
 import rocket.planet.util.exception.NoSuchDeptException;
@@ -30,22 +28,25 @@ public class AdminDeptService {
 
 	private OrgRepository orgRepository;
 
-	public AdminDeptService(DeptRepository deptRepository, CompanyRepository companyRepository, OrgRepository orgRepository) {
+	private TeamRepository teamRepository;
+
+	public AdminDeptService(DeptRepository deptRepository, CompanyRepository companyRepository, OrgRepository orgRepository, TeamRepository teamRepository) {
 		this.deptRepository = deptRepository;
 		this.companyRepository = companyRepository;
 		this.orgRepository = orgRepository;
+		this.teamRepository = teamRepository;
 	}
 
 	@Transactional
 	public AdminResDto addDept(AdminDeptAddReqDto dto) throws Exception {
 
 		final Company dkTechIn = Optional.ofNullable(companyRepository.findByCompanyName("dktechin"))
-			.orElseThrow(NoSuchCompanyException::new);
+				.orElseThrow(NoSuchCompanyException::new);
 
 		Optional.ofNullable(deptRepository.findByDeptName(dto.getName()))
-			.ifPresent(e -> {
-				throw new AlreadyExistsDeptException();
-			});
+				.ifPresent(e -> {
+					throw new AlreadyExistsDeptException();
+				});
 
 		deptRepository.save(Department.defaultDept(dto, dkTechIn));
 
@@ -56,12 +57,12 @@ public class AdminDeptService {
 	public AdminResDto modifyDept(AdminDeptModReqDto dto) throws Exception {
 
 		final Department department = Optional.ofNullable(deptRepository.findByDeptName(dto.getTargetName()))
-			.orElseThrow(NoSuchDeptException::new);
+				.orElseThrow(NoSuchDeptException::new);
 
 		Optional.ofNullable(deptRepository.findByDeptName(dto.getChangeName()))
-			.ifPresent(e -> {
-				throw new AlreadyExistsDeptException();
-			});
+				.ifPresent(e -> {
+					throw new AlreadyExistsDeptException();
+				});
 
 		department.update(dto.getChangeName());
 
@@ -72,13 +73,17 @@ public class AdminDeptService {
 	public AdminResDto modifyDeptActive(AdminDeptTeamDto.UpdateDeptActiveReqDto activeReqDtoDept) {
 		Department dept = deptRepository.findByDeptName(activeReqDtoDept.getDeptName());
 		dept.updateDeptInactive();
-		Department noDept = deptRepository.findByDeptName("부문없음");
+		List<Team> inactiveTeams = teamRepository.findTeamNameByDeptName(dept.getDeptName());
+		for (Team team : inactiveTeams) {
+			team.updateTeamInactive();
+		}
 		List<Org> inactiveOrgs = orgRepository.findByDepartment_DeptInactive(true).orElse(Collections.emptyList());
 		for (Org org : inactiveOrgs) {
-			org.hasNoDept(noDept);
+			org.hasNoDept();
+			org.hasNoTeam();
 		}
 		return AdminResDto.builder()
-				.message(activeReqDtoDept.getDeptName() + " 부문은 비활성화되었으며 해당 부문에 속하는 유저들의 '부문없음'으로 소속이 변경되었습니다.")
+				.message(activeReqDtoDept.getDeptName() + " 부문은 비활성화되었으며 [ " + activeReqDtoDept.getDeptName() + " ] 부문에 속한 사원들은 현재 소속된 부문과 팀이 없습니다.")
 				.build();
 	}
 }

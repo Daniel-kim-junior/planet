@@ -70,14 +70,12 @@ public class AdminTeamService {
 	public AdminResDto modifyTeamActive(AdminDeptTeamDto.UpdateTeamActiveReqDto activeReqDtoTeam) {
 		Team team = teamRepository.findByTeamName(activeReqDtoTeam.getTeamName());
 		team.updateTeamInactive();
-		Team noTeam = teamRepository.findByTeamName("팀없음");
-
 		List<Org> inactiveOrgs = orgRepository.findByTeam_TeamInactive(true).orElse(Collections.emptyList());
 		for (Org org : inactiveOrgs) {
-			org.hasNoTeam(noTeam);
+			org.hasNoTeam();
 		}
 		return AdminResDto.builder()
-				.message(activeReqDtoTeam.getTeamName() + " 팀은 비활성화되었으며 해당 팀에 속하는 유저들의 '팀없음'으로 소속이 변경되었습니다.")
+				.message(activeReqDtoTeam.getTeamName() + " 팀은 비활성화되었으며 [ " + activeReqDtoTeam.getTeamName() + " ] 팀에 속한 사원들은 현재 소속된 팀이 없습니다.")
 				.build();
 
 	}
