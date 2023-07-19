@@ -170,6 +170,7 @@ public class AuthLoginAndJoinService {
 			loginResDto = makeLoginResBuilder(user, userName, authority);
 		} else {
 			authority = "ROLE_" + profile.getRole().name();
+			System.out.println(profile);
 			loginResDto = makeLoginResBuilder(user, userName, authority, profile);
 		}
 
@@ -336,8 +337,9 @@ public class AuthLoginAndJoinService {
 		Exception {
 		User user = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(NoSuchEmailException::new);
-		String roles = roleIssue(claims.get("roles").toString());
-		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString());
+		String roles = claims.get("roles").toString().substring(1, claims.get("roles").toString().length() - 1);
+
+		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), roles);
 		accessTokenRedisRepository.save(AccessToken.builder().token(accessToken)
 			.email(user.getUserId())
 			.build());

@@ -24,7 +24,8 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "from Profile p "
 			+ "join FETCH p.org o "
 			+ "JOIN FETCH o.department d "
-			+ "where d.deptName = :deptName")
+			+ "where d.deptName = :deptName "
+			+ "and p.profileStatus = true")
 	List<Profile> findCareerStatsByDepartment(String deptName);
 
 	@Query(
@@ -32,10 +33,11 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "from Profile p "
 			+ "join FETCH p.org o "
 			+ "JOIN FETCH o.team t "
-			+ "where t.teamName = :teamName")
+			+ "where t.teamName = :teamName "
+			+ "and p.profileStatus = true")
 	List<Profile> findCareerStatsByTeam(String teamName);
 
-	@Query("select p.profileCareer from Profile p ")
+	@Query("select p.profileCareer from Profile p where p.profileStatus = true")
 	List<Integer> findCareerStatsByEntire();
 
 }

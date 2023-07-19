@@ -12,7 +12,7 @@ public interface DeptRepository extends JpaRepository<Department, UUID> {
 
 	Department findByDeptName(String deptName);
 
-	@Query("SELECT d.deptName FROM Department d")
+	@Query("SELECT d.deptName FROM Department d where d.deptInactive = false")
 	List<String> findDeptNameAll();
 
 }

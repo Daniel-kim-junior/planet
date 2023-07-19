@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Department;
 import rocket.planet.domain.Team;
 import rocket.planet.dto.stats.DeptStatsReqDto;
@@ -25,20 +24,30 @@ import rocket.planet.util.exception.NoSuchDeptException;
 import rocket.planet.util.exception.NoSuchTeamException;
 
 @Service
-@RequiredArgsConstructor
 public class StatsService {
 
-	private final DeptRepository deptRepository;
+	private DeptRepository deptRepository;
 
-	private final ProfileRepository profileRepository;
+	private ProfileRepository profileRepository;
 
-	private final PfTechRepository pfTechRepository;
+	private PfTechRepository pfTechRepository;
 
-	private final UserPjtRepository userPjtRepository;
+	private UserPjtRepository userPjtRepository;
 
-	private final OrgRepository orgRepository;
+	private OrgRepository orgRepository;
 
-	private final TeamRepository teamRepository;
+	private TeamRepository teamRepository;
+
+	public StatsService(DeptRepository deptRepository, ProfileRepository profileRepository,
+		PfTechRepository pfTechRepository, UserPjtRepository userPjtRepository, OrgRepository orgRepository,
+		TeamRepository teamRepository) {
+		this.deptRepository = deptRepository;
+		this.profileRepository = profileRepository;
+		this.pfTechRepository = pfTechRepository;
+		this.userPjtRepository = userPjtRepository;
+		this.orgRepository = orgRepository;
+		this.teamRepository = teamRepository;
+	}
 
 	public List<ResponseStatDto> getDeptStats(DeptStatsReqDto dto) {
 
