@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 import rocket.planet.dto.profile.ProfileDto;
 
 import javax.persistence.*;
@@ -34,7 +35,7 @@ public class ProfileVisitor {
 	@JoinColumn(columnDefinition = "BINARY(16)", name = "profile_visitor_uid", nullable = false)
 	private Profile visitor;
 
-	@CreationTimestamp
+	@UpdateTimestamp
 	@Column(nullable = false)
 	private LocalDate visitTime;
 
