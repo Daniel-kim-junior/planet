@@ -66,7 +66,7 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
-			.antMatchers("/api/admin/**").hasRole("ADMIN")
+			// .antMatchers("/api/admin/**").hasRole("ADMIN")
 			// .antMatchers("/api/stats/**").hasAnyRole("ADMIN", "RADAR")
 			// .antMatchers("/api/stats/**").permitAll()
 			.anyRequest().authenticated();

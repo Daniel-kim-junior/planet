@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
@@ -19,8 +20,8 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 
 	@Query("select distinct p "
 		+ "from Profile p "
-		+ "where p.userNickName like %:nickname% and p.role != 'ADMIN'")
-	List<Profile> findByUserNickNameAndRole(String userNickName);
+		+ "where p.userNickName like %:userNickName% and p.role != 'ADMIN'")
+	List<Profile> findByUserNickNameAndRole(@Param("userNickName") String userNickName);
 
 	@Query(
 		"select distinct p "

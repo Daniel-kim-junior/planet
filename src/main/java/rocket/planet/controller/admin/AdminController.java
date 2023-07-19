@@ -50,14 +50,14 @@ public class AdminController {
 
 	@GetMapping("/user/auth/search")
 	public ResponseEntity<AdminAuthMemberListDto> userAuthSearch(@ModelAttribute ListReqDto listReqDto,
-		@RequestParam("userNickName") String userNickName) {
+		String userNickName) {
 		AdminAuthMemberListDto member = adminSearchService.searchAuthUser(listReqDto, userNickName);
 		return ResponseEntity.ok().body(member);
 	}
 
 	@GetMapping("/user/orgs/search")
 	public ResponseEntity<AdminMemberOrgListDto> userOrgSearch(@ModelAttribute ListReqDto listReqDto,
-		@RequestParam("userNickName") String userNickName) {
+		String userNickName) {
 		AdminMemberOrgListDto memberList = adminSearchService.searchOrgUser(listReqDto, userNickName);
 		return ResponseEntity.ok().body(memberList);
 	}
