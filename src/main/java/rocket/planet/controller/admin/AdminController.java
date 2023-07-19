@@ -63,7 +63,7 @@ public class AdminController {
 	}
 
 	@PatchMapping("/user/orgs")
-	public ResponseEntity<String> orgModify(@ModelAttribute AdminOrgModifyReqDto orgModifyReqList) {
+	public ResponseEntity<String> orgModify(@RequestBody AdminOrgModifyReqDto orgModifyReqList) {
 		teamService.modifyMemberOrg(orgModifyReqList);
 
 		return ResponseEntity.ok().body("사용자(들)의 소속을 변경하였습니다.");
