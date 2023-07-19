@@ -82,20 +82,5 @@ class AdminDeptServiceTest {
 				.changeName("dktechi").build()).getMessage()).isEqualTo("수정 완료");
 	}
 
-	@Test
-	void 부문_삭제_테스트() throws Exception {
-		// dto가 null일 경우
-		assertThrows(Exception.class, () -> adminDeptService.removeDept(null));
-
-		// 해당 부문이 존재하지 않는 경우
-		assertThrows(NoSuchDeptException.class, () -> adminDeptService.removeDept(
-			AdminDeptTeamDto.AdminDeptTeamDelReqDto.builder().name("dk").build()));
-
-		// 부문이 존재하는 경우 삭제 완료
-		assertThat(adminDeptService.removeDept(
-			AdminDeptTeamDto.AdminDeptTeamDelReqDto.builder().name("dktechin").build()).getMessage()).isEqualTo(
-			"삭제 완료");
-
-	}
 
 }

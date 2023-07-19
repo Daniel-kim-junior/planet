@@ -18,70 +18,78 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import rocket.planet.dto.admin.AdminDeptTeamDto;
+import rocket.planet.repository.jpa.TeamRepository;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Org extends BaseTime {
-	@Id
-	@GeneratedValue(generator = "uuid4")
-	@GenericGenerator(name = "UUID", strategy = "uuid4")
-	@Column(name = "org_uid", columnDefinition = "BINARY(16)")
-	private UUID id;
+    @Id
+    @GeneratedValue(generator = "uuid4")
+    @GenericGenerator(name = "UUID", strategy = "uuid4")
+    @Column(name = "org_uid", columnDefinition = "BINARY(16)")
+    private UUID id;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "profile_uid", nullable = false)
-	private Profile profile;
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "profile_uid", nullable = false)
+    private Profile profile;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "company_uid")
-	private Company company;
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "company_uid")
+    private Company company;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "dept_uid", nullable = false)
-	private Department department;
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "dept_uid")
+    private Department department;
 
-	@ManyToOne(fetch = LAZY, optional = false)
-	@JoinColumn(name = "team_uid", nullable = false)
-	private Team team;
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "team_uid")
+    private Team team;
 
-	@Column(name = "org_start_date")
-	private LocalDate orgStartDate;
+    @Column(name = "org_start_date")
+    private LocalDate orgStartDate;
 
-	@Column(name = "org_end_date")
-	private LocalDate orgEndDate;
+    @Column(name = "org_end_date")
+    private LocalDate orgEndDate;
 
-	@Column(name = "org_inviter")
-	private String orgInviter;
+    @Column(name = "org_inviter")
+    private String orgInviter;
 
-	@Column(name = "org_status")
-	private boolean orgStatus;
+    @Column(name = "org_status")
+    private boolean orgStatus;
 
-	@Builder
-	public Org(Company company, Profile profile, Department department, Team team, LocalDate orgStartDate,
-		LocalDate orgEndDate, String orgInviter, boolean orgStatus) {
-		this.company = company;
-		this.department = department;
-		this.team = team;
-		this.profile = profile;
-		this.orgStartDate = orgStartDate;
-		this.orgEndDate = orgEndDate;
-		this.orgInviter = orgInviter;
+    @Builder
+    public Org(Company company, Profile profile, Department department, Team team, LocalDate orgStartDate,
+               LocalDate orgEndDate, String orgInviter, boolean orgStatus) {
+        this.company = company;
+        this.department = department;
+        this.team = team;
+        this.profile = profile;
+        this.orgStartDate = orgStartDate;
+        this.orgEndDate = orgEndDate;
+        this.orgInviter = orgInviter;
+        this.orgStatus = orgStatus;
+    }
 
-		this.orgStatus = orgStatus;
+    public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
+                                     boolean orgStatus) {
+        return builder()
+                .company(company)
+                .profile(profile)
+                .department(department)
+                .team(team)
+                .orgStatus(orgStatus)
+                .build();
+    }
 
-	}
-
-	public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
-		boolean orgStatus) {
-		return builder()
-			.company(company)
-			.profile(profile)
-			.department(department)
-			.team(team)
-			.orgStatus(orgStatus)
-			.build();
-	}
+    public void hasNoTeam() {
+        this.team = null;
+    }
+    public void hasNoDept() {
+        this.department = null;
+    }
 
 	@Override
 	public String toString() {

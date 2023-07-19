@@ -104,7 +104,7 @@ public class User extends BaseTime {
 
 	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwdCheck());
+		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwd());
 		this.lastPwdModifiedDt = LocalDate.now();
 	}
 

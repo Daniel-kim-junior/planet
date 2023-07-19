@@ -2,6 +2,7 @@ package rocket.planet.dto.admin;
 
 import static lombok.AccessLevel.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,17 +56,6 @@ public class AdminDeptTeamDto {
 
 	@Getter
 	@NoArgsConstructor(access = PROTECTED)
-	public static class AdminDeptTeamDelReqDto {
-		private String name;
-
-		@Builder
-		public AdminDeptTeamDelReqDto(String name) {
-			this.name = name;
-		}
-	}
-
-	@Getter
-	@NoArgsConstructor(access = PROTECTED)
 	public static class AdminTeamAddReqDto {
 		private String teamName;
 
@@ -84,9 +74,30 @@ public class AdminDeptTeamDto {
 	@Getter
 	@Builder
 	public static class AdminResDto {
-
 		private String message;
 
+	}
+
+	@Getter
+	@NoArgsConstructor(access = PROTECTED)
+	public static class UpdateDeptActiveReqDto {
+		private String deptName;
+
+		@Builder
+		public UpdateDeptActiveReqDto(String deptName) {
+			this.deptName = deptName;
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = PROTECTED)
+	public static class UpdateTeamActiveReqDto {
+		private String teamName;
+
+		@Builder
+		public UpdateTeamActiveReqDto(String teamName) {
+			this.teamName = teamName;
+		}
 	}
 
 }
