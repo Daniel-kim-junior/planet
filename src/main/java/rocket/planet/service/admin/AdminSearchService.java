@@ -65,7 +65,7 @@ public class AdminSearchService {
 			AdminMemberOrgListDto.builder().memberList(teamMemberList).pagingUtil(pagingUtil).build();
 	}
 
-	private Page<AdminMemberOrgDto> getOrgPagedResult(List<AdminMemberOrgDto> teamMembers, Pageable pageable) {
+	public Page<AdminMemberOrgDto> getOrgPagedResult(List<AdminMemberOrgDto> teamMembers, Pageable pageable) {
 		int start = (int)pageable.getOffset();
 		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
@@ -104,7 +104,7 @@ public class AdminSearchService {
 
 	}
 
-	private Page<AdminAuthMemberDto> getAuthPagedResult(List<AdminAuthMemberDto> teamMembers, Pageable pageable) {
+	public Page<AdminAuthMemberDto> getAuthPagedResult(List<AdminAuthMemberDto> teamMembers, Pageable pageable) {
 		int start = (int)pageable.getOffset();
 		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());

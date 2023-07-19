@@ -86,7 +86,7 @@ public class TeamService {
 
 	}
 
-	private Page<TeamMemberInfoDto> getPagedResult(List<TeamMemberInfoDto> teamMembers, Pageable pageable) {
+	public Page<TeamMemberInfoDto> getPagedResult(List<TeamMemberInfoDto> teamMembers, Pageable pageable) {
 		int start = (int)pageable.getOffset();
 		int end = Math.min((start + pageable.getPageSize()), teamMembers.size());
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
