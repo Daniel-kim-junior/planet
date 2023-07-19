@@ -170,7 +170,6 @@ public class AuthLoginAndJoinService {
 			loginResDto = makeLoginResBuilder(user, userName, authority);
 		} else {
 			authority = "ROLE_" + profile.getRole().name();
-			System.out.println(profile);
 			loginResDto = makeLoginResBuilder(user, userName, authority, profile);
 		}
 
@@ -270,10 +269,15 @@ public class AuthLoginAndJoinService {
 
 	public AuthOrg getProfileToAuthOrg(Profile profile) throws Exception {
 		List<Org> org = profile.getOrg();
+
+		Optional<Company> company = Optional.ofNullable(org.get(0).getCompany());
+		Optional<Department> department = Optional.ofNullable(org.get(0).getDepartment());
+		Optional<Team> team = Optional.ofNullable(org.get(0).getTeam());
+
 		return AuthOrg.builder()
-			.companyName(org.get(0).getCompany().getCompanyName())
-			.deptName(org.get(0).getDepartment().getDeptName())
-			.teamName(org.get(0).getTeam().getTeamName()).build();
+			.companyName(company.isEmpty() ? null : company.get().getCompanyName())
+			.deptName(department.isEmpty() ? null : department.get().getDeptName())
+			.teamName(team.isEmpty() ? null : team.get().getTeamName()).build();
 	}
 
 	/**
