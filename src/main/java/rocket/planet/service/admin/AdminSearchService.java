@@ -47,8 +47,8 @@ public class AdminSearchService {
 			// 사용자 build
 			teamMemberList.add(AdminMemberOrgDto.builder()
 				.userNickName(user.getUserNickName())
-				.userEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
-				.profileStartDt(user.getProfileStartDate())
+				.profileEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
+				.profileStart(user.getProfileStartDate())
 				.userCareer(user.getProfileCareer())
 				.isActive(hasProject)
 				.deptName(user.getOrg().get(0).getDepartment().getDeptName())

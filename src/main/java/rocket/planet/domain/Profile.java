@@ -85,11 +85,14 @@ public class Profile extends BaseTime {
 	@Column(nullable = false, unique = true)
 	private String userId;
 
+	@Column
+	private boolean profileStatus;
+
 	@Builder
 	public Profile(LocalDate profileStartDate, LocalDate profileBirthDt, String userId, Role role,
 		boolean profileDisplay,
 		int profileCareer,
-		boolean profileAnnualStatus, String userName, String userNickName) {
+		boolean profileAnnualStatus, String userName, String userNickName, boolean profileStatus) {
 
 		this.profileStartDate = profileStartDate;
 		this.profileBirthDt = profileBirthDt;
@@ -100,6 +103,7 @@ public class Profile extends BaseTime {
 		this.profileCareer = profileCareer;
 		this.profileAnnualStatus = profileAnnualStatus;
 		this.userNickName = userNickName;
+		this.profileStatus = profileStatus;
 	}
 
 	public static Profile BasicInsertDtoToProfile(BasicInputReqDto dto, String id) {
@@ -113,6 +117,7 @@ public class Profile extends BaseTime {
 			.profileAnnualStatus(false)
 			.userName(dto.getUserName())
 			.userNickName(idToUserNickName(id))
+			.profileStatus(true)
 			.build();
 	}
 
@@ -151,6 +156,12 @@ public class Profile extends BaseTime {
 
 	public void updateRole(String role) {
 		this.role = Role.valueOf(role);
+
+	}
+
+	public void updateRetiredProfile() {
+		this.profileStatus = false;
+		this.org = null;
 
 	}
 

@@ -54,14 +54,14 @@ class AdminControllerTest {
 	void 권한_변경_테스트() {
 
 		AdminAuthModifyReqDto adminAuthModifyReqDto = AdminAuthModifyReqDto.builder()
-			.userNickName("crew")
+			.userNickName("pilot")
 			.deptName("AI챗봇")
 			.teamName("AI챗봇구축")
 			.role("PILOT")
 			.build();
 
 		authorityService.modifyAuthority(adminAuthModifyReqDto);
-		Profile profile = profileRepository.findByUserNickName("crew").orElseThrow();
+		Profile profile = profileRepository.findByUserNickName("pilot").orElseThrow();
 		System.out.println(profile.getRole());
 
 	}
@@ -69,11 +69,11 @@ class AdminControllerTest {
 	@Test
 	void 관리자_팀원_리스트_조회_테스트() {
 
-		String teamName = "AI챗봇구축";
+		String teamName = "인사";
 		ListReqDto listReqDto = ListReqDto.builder().page(1).pageSize(8).build();
 		AdminAuthMemberListDto teamMemberList = authorityService.getTeamMemberList(listReqDto, teamName);
 
-		System.out.println(teamMemberList.toString());
+		System.out.println(teamMemberList.getAdminAuthMemberList());
 	}
 
 	@Transactional
