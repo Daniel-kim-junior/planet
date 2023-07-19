@@ -64,7 +64,7 @@ public class SecurityConfig {
 			.and().sessionManagement().sessionCreationPolicy(STATELESS)
 			.and()
 			.authorizeRequests()
-			 .antMatchers("/**").permitAll()
+			.antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
 			// .antMatchers("/api/stats/**").hasAnyRole("ADMIN", "RADAR")

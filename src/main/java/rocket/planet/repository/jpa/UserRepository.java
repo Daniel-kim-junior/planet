@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import rocket.planet.domain.Profile;
 import rocket.planet.domain.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
@@ -13,4 +14,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	User findByProfile_Id(UUID adminProfileId);
 
+	Optional<User> findByProfile(Profile profile);
 }

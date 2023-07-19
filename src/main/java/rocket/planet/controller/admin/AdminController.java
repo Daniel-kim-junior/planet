@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.ListReqDto;
+import rocket.planet.dto.project.ProjectDto.NameReqDto;
 import rocket.planet.service.admin.AdminSearchService;
+import rocket.planet.service.admin.AdminUserService;
 import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.team.TeamService;
 
@@ -29,6 +31,7 @@ public class AdminController {
 	private final AuthorityService authorityService;
 	private final TeamService teamService;
 	private final AdminSearchService adminSearchService;
+	private final AdminUserService adminUserService;
 
 	@PatchMapping("/user/auth")
 	public ResponseEntity<String> authorityModify(@RequestBody AdminAuthModifyReqDto adminAuthModifyReqDto) {
@@ -68,4 +71,10 @@ public class AdminController {
 		return ResponseEntity.ok().body("사용자(들)의 소속을 변경하였습니다.");
 	}
 
+	@PatchMapping("/user/disable")
+	public ResponseEntity<String> userRemove(@RequestBody NameReqDto userNickName) {
+		adminUserService.disabledUser(userNickName.getName());
+
+		return ResponseEntity.ok().body(userNickName.getName() + "를 퇴사 처리하였습니다.");
+	}
 }

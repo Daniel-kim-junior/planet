@@ -79,7 +79,7 @@ public class AuthorityService {
 
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
-		Optional<Authority> authority = pfAuthRepository.findByProfile(user);
+		Optional<Authority> authority = pfAuthRepository.findAuthorityByProfile(user);
 		if (authority.isPresent()) {
 			if (authority.get().getAuthTargetId().equals(department.getId())
 				|| authority.get().getAuthTargetId().equals(team.getId())) {
@@ -116,10 +116,11 @@ public class AuthorityService {
 		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
 		// 팀으로 소속 인원 찾기
-		Optional<Org> organization = orgRepository.findAllByTeam_TeamName(teamName).stream().findFirst();
-		List<Profile> profileList = profileRepository.findByOrg(organization);
 
-		for (Profile profile : profileList) {
+		List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
+
+		for (Org org : organization) {
+			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
 
 			// 현재 진행중인 프로젝트 유무 확인
 			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
@@ -128,14 +129,15 @@ public class AuthorityService {
 
 			AdminAuthMemberDto member = AdminAuthMemberDto.builder()
 				.userNickName(profile.getUserNickName())
-				.deptName(organization.get().getDepartment().getDeptName())
-				.teamName(organization.get().getTeam().getTeamName())
+				.deptName(organization.get(0).getDepartment().getDeptName())
+				.teamName(organization.get(0).getTeam().getTeamName())
 				.profileStartDt(profile.getProfileStartDate())
 				.role(String.valueOf(profile.getRole()))
 				.isActive(isActive)
 				.build();
 
 			teamMemberList.add(member);
+
 		}
 
 		// Paging

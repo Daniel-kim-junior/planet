@@ -51,25 +51,26 @@ public class TeamService {
 		List<TeamMemberInfoDto> teamMemberList = new ArrayList<>();
 
 		// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
-		Optional<Org> organization = orgRepository.findAllByTeam_TeamName(teamName).stream().findFirst();
-		List<Profile> teamMemberProfileList = profileRepository.findByOrg(organization);
+		List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
 
-		// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
-		for (Profile teamMember : teamMemberProfileList) {
-			List<UserProject> projectList = userPjtRepository.findAllByProfile(teamMember);
+		for (Org org : organization) {
+			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
+
+			// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
+			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
 
 			// 프로젝트 마감 일자가 있으면 hasProject == true
 			boolean hasProject = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
 			TeamMemberInfoDto teamMemberDto = TeamMemberInfoDto.builder()
-				.userNickName(teamMember.getUserNickName())
-				.profileEmail(userRepository.findByProfile_Id(teamMember.getId()).getUserId())
-				.profileCareer(teamMember.getProfileCareer())
-				.profileStart(teamMember.getProfileStartDate())
+				.userNickName(profile.getUserNickName())
+				.profileEmail(userRepository.findByProfile_Id(profile.getId()).getUserId())
+				.profileCareer(profile.getProfileCareer())
+				.profileStart(profile.getProfileStartDate())
 				.isActive(hasProject)
-				.deptName(organization.get().getDepartment().getDeptName())
-				.teamName(organization.get().getTeam().getTeamName())
+				.deptName(organization.get(0).getDepartment().getDeptName())
+				.teamName(organization.get(0).getTeam().getTeamName())
 				.build();
 
 			teamMemberList.add(teamMemberDto);

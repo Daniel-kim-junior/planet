@@ -15,10 +15,10 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 
 	Optional<Profile> findByUserNickName(String userNickName);
 
-	List<Profile> findByOrg(Optional<Org> organization);
+	Profile findByOrg(Optional<Org> organization);
 
 	List<Profile> findByUserNickNameContains(String userNickName);
-  
+
 	@Query(
 		"select distinct p "
 			+ "from Profile p "
