@@ -19,6 +19,8 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 
 	List<Profile> findByOrg(Optional<Org> organization);
 
+	List<Profile> findByUserNickNameContains(String userNickName);
+  
 	@Query(
 		"select distinct p "
 			+ "from Profile p "

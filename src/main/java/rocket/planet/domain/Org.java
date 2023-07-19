@@ -85,14 +85,22 @@ public class Org extends BaseTime {
 
 	@Override
 	public String toString() {
-
-		return "소속{" +
-			"내 uuid=" + id +
-			", 소속 할당 담당자='" + orgInviter + '\'' +
-			", 현재 소속 여부=" + orgStatus +
+		return "Org{" +
+			"id=" + id +
+			", profile=" + profile +
+			", company=" + company +
+			", department=" + department +
+			", team=" + team +
+			", orgStartDate=" + orgStartDate +
+			", orgEndDate=" + orgEndDate +
+			", orgInviter='" + orgInviter + '\'' +
+			", orgStatus=" + orgStatus +
 			'}';
-
 	}
 
+	public void updateOrg(Team newTeam, Department newDept) {
+		this.team = newTeam;
+		this.department = newDept;
+	}
 }
 
