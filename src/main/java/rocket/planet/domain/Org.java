@@ -85,18 +85,6 @@ public class Org extends BaseTime {
                 .build();
     }
 
-    @Override
-    public String toString() {
-
-<<<<<<< HEAD
-        return "소속{" +
-                "내 uuid=" + id +
-                ", 소속 할당 담당자='" + orgInviter + '\'' +
-                ", 현재 소속 여부=" + orgStatus +
-                ", 팀 이름 =" + team +
-                '}';
-
-    }
     public void hasNoTeam(Team team) {
         this.team = team;
     }
