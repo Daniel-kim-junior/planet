@@ -47,9 +47,6 @@ public class User extends BaseTime {
 	@Column(nullable = false, unique = true)
 	private String userId;
 
-//	@OneToMany(mappedBy = "user")
-//	private List<ProfileVisitor> profileVisitor = new ArrayList<>();
-
 	@Builder
 	public User(Profile profile, String userPwd, boolean userLock,
 		String userId, LocalDate lastPwdModifiedDt) {
@@ -95,7 +92,7 @@ public class User extends BaseTime {
 
 	public void changeUserPwd(ProfileDto.UserNewPwdReqDto newPwdReqDto) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwdCheck());
+		this.userPwd = passwordEncoder.encode(newPwdReqDto.getUserPwd());
 		this.lastPwdModifiedDt = LocalDate.now();
 	}
 

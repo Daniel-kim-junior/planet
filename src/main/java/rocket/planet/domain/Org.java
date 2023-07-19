@@ -41,11 +41,11 @@ public class Org extends BaseTime {
     private Company company;
 
     @ManyToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "dept_uid", nullable = false)
+    @JoinColumn(name = "dept_uid")
     private Department department;
 
     @ManyToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "team_uid", nullable = false)
+    @JoinColumn(name = "team_uid")
     private Team team;
 
     @Column(name = "org_start_date")
@@ -71,7 +71,6 @@ public class Org extends BaseTime {
         this.orgEndDate = orgEndDate;
         this.orgInviter = orgInviter;
         this.orgStatus = orgStatus;
-
     }
 
     public static Org joinDefaultOrg(Company company, Profile profile, Department department, Team team,
