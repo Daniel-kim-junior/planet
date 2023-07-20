@@ -25,7 +25,7 @@ import rocket.planet.repository.redis.EmailFindConfirmRepository;
 import rocket.planet.repository.redis.EmailFindTokenRepository;
 import rocket.planet.repository.redis.EmailJoinConfirmRepository;
 import rocket.planet.repository.redis.EmailJoinTokenRepository;
-import rocket.planet.util.exception.NoSuchEmailException;
+import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 
 /*
@@ -77,7 +77,7 @@ public class EmailVerifyService {
 		boolean existUser = userRepository.findByUserId(email).isPresent();
 		if (existUser && StringUtils.pathEquals(type, "join")) {
 			CompletableFuture<String> future = new CompletableFuture<>();
-			future.completeExceptionally(new NoSuchEmailException());
+			future.completeExceptionally(new AlreadyExistsIdException());
 			return future;
 		}
 		String generateRandomString = makeRandomString(6);
@@ -125,15 +125,18 @@ public class EmailVerifyService {
 				emailFindConfirmRepository.save(EmailFindConfirm.builder()
 					.email(email).build());
 				emailFindTokenRepository.delete(emailFindToken);
+			} else {
+				throw new NoValidEmailTokenException();
 			}
 		} else if (StringUtils.pathEquals(type, "join")) {
 			EmailJoinToken emailJoinToken = emailJoinTokenRepository.findById(email)
 				.orElseThrow(NoValidEmailTokenException::new);
-			if (StringUtils.pathEquals(token.getToken(), reqToken)) {
+			if (StringUtils.pathEquals(emailJoinToken.getToken(), reqToken)) {
 				emailJoinConfirmRepository.save(EmailJoinConfirm.builder()
 					.email(email).build());
 				emailJoinTokenRepository.delete(emailJoinToken);
-
+			} else {
+				throw new NoValidEmailTokenException();
 			}
 		}
 		return EmailVerifyCheckResDto.builder().message(EMAIL_CONFIRM_TITLE).build();

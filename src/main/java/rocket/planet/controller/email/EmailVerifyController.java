@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.service.email.EmailVerifyService;
-import rocket.planet.util.exception.NoSuchEmailException;
 
 /*
  * 이메일 인증 컨트롤러
@@ -36,7 +35,7 @@ public class EmailVerifyController {
 			return ResponseEntity.ok().body(emailVerifyService.saveRedisToken(dto.getId(), gen.get(), dto.getType()));
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
-			throw new NoSuchEmailException();
+			throw new IllegalArgumentException();
 		}
 	}
 
