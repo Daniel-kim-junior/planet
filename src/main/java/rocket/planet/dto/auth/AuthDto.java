@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
 import rocket.planet.util.annotation.ValidPassword;
 
@@ -133,4 +134,47 @@ public class AuthDto {
 			this.password = password;
 		}
 	}
+
+	@NoArgsConstructor(access = PROTECTED)
+	public static class LogOutResDto {
+
+		private String message;
+
+		@Builder
+		public LogOutResDto(String message) {
+			this.message = message;
+		}
+	}
+
+	@NoArgsConstructor(access = PROTECTED)
+	public static class PasswordModifyResDto {
+
+		private String message;
+
+		@Builder
+		public PasswordModifyResDto(String message) {
+			this.message = message;
+		}
+
+	}
+
+	@Getter
+	@ToString
+	@NoArgsConstructor(access = PROTECTED)
+	public static class PasswordModifyReqDto {
+
+		@NotEmpty
+		@NotBlank
+		String id;
+
+		@ValidPassword
+		String password;
+
+		@Builder
+		public PasswordModifyReqDto(String id, String password) {
+			this.id = id;
+			this.password = password;
+		}
+	}
+
 }

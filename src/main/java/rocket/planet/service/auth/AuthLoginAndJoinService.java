@@ -229,7 +229,7 @@ public class AuthLoginAndJoinService {
 		Exception {
 
 		return LoginResDto.builder()
-			.authRole(roleIssue(authority))
+			.authRole(roleToClientRes(authority))
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.userNickName(idToUserNickName(userName))
 			.grantType(GRANT_TYPE)
@@ -252,7 +252,7 @@ public class AuthLoginAndJoinService {
 
 		AuthOrg authOrg = getProfileToAuthOrg(profile);
 		return LoginResDto.builder()
-			.authRole(roleIssue(authority))
+			.authRole(roleToClientRes(authority))
 			.authOrg(authOrg)
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.userNickName(idToUserNickName(userName))
@@ -339,25 +339,28 @@ public class AuthLoginAndJoinService {
 
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) throws
 		Exception {
+
 		User user = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(NoSuchEmailException::new);
-		String roles = claims.get("roles").toString().substring(1, claims.get("roles").toString().length() - 1);
 
-		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), roles);
+		String singleTonRole = claims.get("roles").toString();
+		String role = singleTonRole.substring(1, singleTonRole.length() - 1);
+		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), role);
+
 		accessTokenRedisRepository.save(AccessToken.builder().token(accessToken)
 			.email(user.getUserId())
 			.build());
 		return LoginResDto.builder()
 			.grantType(GRANT_TYPE)
 			.authOrg(getProfileToAuthOrg(user.getProfile()))
-			.authRole(roleIssue(roles))
+			.authRole(roleToClientRes(role))
 			.userNickName(idToUserNickName(claims.getSubject()))
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
 	}
 
-	private String roleIssue(String role) {
+	private String roleToClientRes(String role) {
 		String issueRole = role;
 
 		if (role.contains("[")) {
@@ -377,7 +380,7 @@ public class AuthLoginAndJoinService {
 	 * @return
 	 * @Redis에 저장된 RefreshToken과 요청된 RefreshToken 비교 (캐싱 활용)
 	 */
-	private boolean checkRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) throws
+	public boolean checkRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) throws
 		Exception {
 		return redisRefreshToken.getToken().equals(refreshToken) ? true : false;
 	}
@@ -480,7 +483,7 @@ public class AuthLoginAndJoinService {
 				.deptName(org.getDepartment().getDeptName())
 				.companyName(org.getCompany().getCompanyName()).build())
 			.userNickName(idToUserNickName(id))
-			.authRole(roleIssue(profile.getRole().name()))
+			.authRole(roleToClientRes(profile.getRole().name()))
 			.isThreeMonth(checkHasItBeenThreeMonthsSinceTheLastPasswordChange(user))
 			.build();
 	}

@@ -41,7 +41,7 @@ public class JsonWebTokenIssuer {
 		this.refreshExpireMin = refreshExpireMin;
 	}
 
-	private String createToken(String userName, String role, byte[] secretKeyBytes, int expireMin) {
+	public String createToken(String userName, String role, byte[] secretKeyBytes, int expireMin) {
 		Date now = new Date();
 		Claims claims = Jwts.claims().setSubject(userName);
 		claims.put(KEY_ROLES, Collections.singleton(role));

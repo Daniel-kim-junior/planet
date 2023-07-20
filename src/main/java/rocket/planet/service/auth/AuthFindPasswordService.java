@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Builder;
 import rocket.planet.domain.redis.EmailFindConfirm;
-import rocket.planet.dto.auth.PasswordModifyReqDto;
+import rocket.planet.dto.auth.AuthDto.PasswordModifyReqDto;
+import rocket.planet.dto.auth.AuthDto.PasswordModifyResDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.EmailFindConfirmRepository;
 import rocket.planet.util.exception.NoValidEmailTokenException;
@@ -32,7 +33,7 @@ public class AuthFindPasswordService {
 	}
 
 	@Transactional
-	public String modifyPassword(PasswordModifyReqDto dto) throws Exception {
+	public PasswordModifyResDto modifyPassword(PasswordModifyReqDto dto) throws Exception {
 
 		EmailFindConfirm emailConfirm = emailFindConfirmRepository.findById(dto.getId())
 			.orElseThrow(() -> new NoValidEmailTokenException());
@@ -44,6 +45,6 @@ public class AuthFindPasswordService {
 		});
 
 		emailFindConfirmRepository.delete(emailConfirm);
-		return SUCCESS;
+		return PasswordModifyResDto.builder().message(SUCCESS).build();
 	}
 }
