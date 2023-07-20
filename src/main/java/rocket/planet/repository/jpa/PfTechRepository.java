@@ -29,11 +29,15 @@ public interface PfTechRepository extends JpaRepository<ProfileTech, UUID> {
 		+ "join fetch pt.profile p "
 		+ "join fetch p.org o "
 		+ "join fetch o.team t "
-		+ "where t.teamName = :teamName ")
+		+ "where t.teamName = :teamName "
+		+ "and p.profileStatus = true ")
 	List<ProfileTech> findTechStatsByProfileTeam(String teamName);
 
-	@Query("select distinct pt from ProfileTech pt "
-		+ "join fetch pt.tech t")
+	@Query("select distinct pt "
+		+ "from ProfileTech pt "
+		+ "join fetch pt.profile pf "
+		+ "join fetch pt.tech t "
+		+ "where pf.profileStatus = true ")
 	List<ProfileTech> findTechStatsByProfileEntire();
 
 }

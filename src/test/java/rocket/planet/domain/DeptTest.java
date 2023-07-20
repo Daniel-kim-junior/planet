@@ -4,75 +4,75 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+
 import rocket.planet.repository.jpa.CompanyRepository;
-
 import rocket.planet.repository.jpa.DeptRepository;
-
-import java.util.UUID;
 
 @SpringBootTest
 public class DeptTest {
 
-    @Autowired
-    private CompanyRepository companyRepository;
+	@Autowired
+	private CompanyRepository companyRepository;
 
-    @Autowired
-    private DeptRepository deptRepository;
+	@Autowired
+	private DeptRepository deptRepository;
 
+	@Test
+	@Rollback(false)
+	public void createDepartmentTestData() {
 
+		Company company = Company.builder()
+			.companyName("dktechin")
+			.build();
+		companyRepository.saveAndFlush(company);
 
-    @Test
-    @Rollback(false)
-    public void createDepartmentTestData() {
+		Department smartSolutionDept = Department.builder()
+			.company(company)
+			.deptName("스마트솔루션")
+			.deptType(OrgType.DEVELOPMENT)
+			.deptInactive(false)
+			.build();
+		deptRepository.saveAndFlush(smartSolutionDept);
 
-        Company company = Company.builder()
-                .companyName("dktechin")
-                .build();
-        companyRepository.saveAndFlush(company);
+		Department smartFactoryDept = Department.builder()
+			.company(company)
+			.deptName("IT아웃소싱")
+			.deptInactive(false)
+			.deptType(OrgType.DEVELOPMENT)
+			.build();
+		deptRepository.saveAndFlush(smartFactoryDept);
 
-        Department smartSolutionDept = Department.builder()
-                .company(company)
-                .deptName("스마트솔루션")
-                .deptType(OrgType.DEVELOPMENT)
-                .build();
-        deptRepository.saveAndFlush(smartSolutionDept);
+		Department hrDept = Department.builder()
+			.company(company)
+			.deptName("경영지원")
+			.deptInactive(false)
+			.deptType(OrgType.NON_DEVELOPMENT)
+			.build();
+		deptRepository.saveAndFlush(hrDept);
 
-        Department smartFactoryDept = Department.builder()
-                .company(company)
-                .deptName("IT아웃소싱")
-                .deptType(OrgType.DEVELOPMENT)
-                .build();
-        deptRepository.saveAndFlush(smartFactoryDept);
+		Department aiChatbotDept = Department.builder()
+			.company(company)
+			.deptName("AI챗봇")
+			.deptInactive(false)
+			.deptType(OrgType.DEVELOPMENT)
+			.build();
+		deptRepository.saveAndFlush(aiChatbotDept);
 
-        Department hrDept = Department.builder()
-                .company(company)
-                .deptName("경영지원")
-                .deptType(OrgType.NON_DEVELOPMENT)
-                .build();
-        deptRepository.saveAndFlush(hrDept);
+		Department ftDept = Department.builder()
+			.company(company)
+			.deptName("기업솔루션")
+			.deptInactive(false)
+			.deptType(OrgType.DEVELOPMENT)
+			.build();
+		deptRepository.saveAndFlush(ftDept);
 
-        Department aiChatbotDept = Department.builder()
-                .company(company)
-                .deptName("AI챗봇")
-                .deptType(OrgType.DEVELOPMENT)
-                .build();
-        deptRepository.saveAndFlush(aiChatbotDept);
+		Department noneDept = Department.builder()
+			.company(company)
+			.deptName("부문없음")
+			.deptInactive(false)
+			.deptType(OrgType.NONE)
+			.build();
+		deptRepository.saveAndFlush(noneDept);
 
-        Department ftDept = Department.builder()
-                .company(company)
-                .deptName("기업솔루션")
-                .deptType(OrgType.DEVELOPMENT)
-                .build();
-        deptRepository.saveAndFlush(ftDept);
-
-
-        Department noneDept = Department.builder()
-                .company(company)
-                .deptName("부문없음")
-                .deptType(OrgType.NONE)
-                .build();
-        deptRepository.saveAndFlush(noneDept);
-
-
-    }
+	}
 }

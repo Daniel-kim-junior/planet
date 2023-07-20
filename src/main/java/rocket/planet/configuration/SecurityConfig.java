@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,8 +32,7 @@ import rocket.planet.util.security.JwtExceptionHandlerFilter;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-	prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -61,21 +60,20 @@ public class SecurityConfig {
 			.formLogin()
 			.disable()
 			.cors().configurationSource(corsConfigurationSource())
-			.and().sessionManagement().sessionCreationPolicy(STATELESS)
+			.and()
+			.sessionManagement().sessionCreationPolicy(STATELESS)
 			.and()
 			.authorizeRequests()
 			.antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
-			// .antMatchers("/api/stats/**").hasAnyRole("ADMIN", "RADAR")
-			// .antMatchers("/api/stats/**").permitAll()
-			.anyRequest().authenticated();
-		http.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
-			.authenticationProvider(
-				jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class);
-		http.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class);
-
-		http.exceptionHandling()
+			.anyRequest().authenticated()
+			.and()
+			.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
+				.authenticationProvider(
+					jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class)
+			.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class)
+			.exceptionHandling()
 			.authenticationEntryPoint(customAuthenticationEntryPoint) // 인증되지 않은 사용자가 접근하려 할 때
 			.accessDeniedHandler(customAccessDeniedHandler); // 인가되지 않은 사용자가 접근하려 할 때
 		return http.build();

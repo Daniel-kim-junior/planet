@@ -1,7 +1,12 @@
 package rocket.planet.controller.admin;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import rocket.planet.dto.admin.AdminDeptTeamDto;
@@ -18,7 +23,7 @@ public class AdminTeamController {
 	private final AdminTeamService adminTeamService;
 
 	@PutMapping("/name")
-	public ResponseEntity<AdminResDto> teamList(@RequestBody AdminTeamModReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamModify(@RequestBody AdminTeamModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.modifyTeam(dto));
 	}
 
@@ -28,7 +33,8 @@ public class AdminTeamController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<AdminResDto> teamActiveModify(@RequestBody AdminDeptTeamDto.UpdateTeamActiveReqDto teamReqDto) {
+	public ResponseEntity<AdminResDto> teamActiveModify(
+		@RequestBody AdminDeptTeamDto.UpdateTeamActiveReqDto teamReqDto) {
 		return ResponseEntity.ok().body(adminTeamService.modifyTeamActive(teamReqDto));
 	}
 

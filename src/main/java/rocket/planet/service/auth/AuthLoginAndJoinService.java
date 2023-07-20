@@ -269,10 +269,15 @@ public class AuthLoginAndJoinService {
 
 	public AuthOrg getProfileToAuthOrg(Profile profile) throws Exception {
 		List<Org> org = profile.getOrg();
+
+		Optional<Company> company = Optional.ofNullable(org.get(0).getCompany());
+		Optional<Department> department = Optional.ofNullable(org.get(0).getDepartment());
+		Optional<Team> team = Optional.ofNullable(org.get(0).getTeam());
+
 		return AuthOrg.builder()
-			.companyName(org.get(0).getCompany().getCompanyName())
-			.deptName(org.get(0).getDepartment().getDeptName())
-			.teamName(org.get(0).getTeam().getTeamName()).build();
+			.companyName(company.isEmpty() ? null : company.get().getCompanyName())
+			.deptName(department.isEmpty() ? null : department.get().getDeptName())
+			.teamName(team.isEmpty() ? null : team.get().getTeamName()).build();
 	}
 
 	/**
@@ -328,7 +333,7 @@ public class AuthLoginAndJoinService {
 
 	/**
 	 * @param refreshToken
-	 * @param claims       Claim을 바탕으로 새로운 Token과 LoginResDto 생성
+	 * @param claims  Claim을 바탕으로 새로운 Token과 LoginResDto 생성
 	 * @return
 	 */
 
@@ -336,8 +341,9 @@ public class AuthLoginAndJoinService {
 		Exception {
 		User user = userRepository.findByUserId(claims.getSubject())
 			.orElseThrow(NoSuchEmailException::new);
-		String roles = roleIssue(claims.get("roles").toString());
-		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), claims.get("roles").toString());
+		String roles = claims.get("roles").toString().substring(1, claims.get("roles").toString().length() - 1);
+
+		String accessToken = jwtIssuer.createAccessToken(claims.getSubject(), roles);
 		accessTokenRedisRepository.save(AccessToken.builder().token(accessToken)
 			.email(user.getUserId())
 			.build());

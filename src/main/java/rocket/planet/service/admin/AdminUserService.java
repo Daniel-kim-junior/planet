@@ -1,10 +1,9 @@
 package rocket.planet.service.admin;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.User;
 import rocket.planet.dto.admin.AdminDto.AdminAuthModifyReqDto;
@@ -13,30 +12,35 @@ import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.auth.AuthorityService;
 
 @Service
+@RequiredArgsConstructor
 public class AdminUserService {
-	private ProfileRepository profileRepository;
-	private UserRepository userRepository;
+	private final ProfileRepository profileRepository;
+	private final UserRepository userRepository;
 
-	private AuthorityService authorityService;
+	private final AuthorityService authorityService;
 
 	@Transactional
 	public void disabledUser(String userNickName) {
-		Optional<Profile> user = profileRepository.findByUserNickName(userNickName);
 
-		Optional<User> retiredUser = userRepository.findByProfile(user.get());
+		Profile user = profileRepository.findByUserNickName(userNickName).orElseThrow();
+		System.out.println("user=========> " + user);
 
+		User retiredUser = userRepository.findByProfile(user);
+		System.out.println("oldProfile=========> " + user + "\noldUser========>" + retiredUser);
 		// user lock & 퇴사일 & 비밀번호/비밀번호 변경일/생성일 삭제
-		retiredUser.get().updateRetiredUser();
+		retiredUser.updateRetiredUser();
 
 		// 소속/role 삭제, 권한 삭제, 프로필 권한 삭제
 		authorityService.modifyAuthority(
 			AdminAuthModifyReqDto.builder()
-				.teamName(user.get().getOrg().get(0).getTeam().getTeamName())
-				.deptName(user.get().getOrg().get(0).getDepartment().getDeptName())
+				.teamName(user.getOrg().get(0).getTeam().getTeamName())
+				.deptName(user.getOrg().get(0).getDepartment().getDeptName())
 				.userNickName(userNickName)
 				.role("GUEST").build());
 
-		user.get().updateRetiredProfile();
+		user.updateRetiredProfile();
+
+		System.out.println("newProfile=========> " + user + "\nnewUser========>" + retiredUser);
 
 	}
 }

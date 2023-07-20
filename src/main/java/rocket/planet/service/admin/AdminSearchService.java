@@ -34,8 +34,9 @@ public class AdminSearchService {
 		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
 		List<AdminMemberOrgDto> teamMemberList = new ArrayList<>();
 
+		System.out.println("userNickName====> " + userNickName);
 		// nickname이 포함된 유저 검색
-		List<Profile> userList = profileRepository.findByUserNickNameContains(userNickName);
+		List<Profile> userList = profileRepository.findByUserNickNameAndRole(userNickName);
 
 		for (Profile user : userList) {
 
@@ -71,12 +72,13 @@ public class AdminSearchService {
 		return new PageImpl<>(teamMembers.subList(start, end), pageable, teamMembers.size());
 	}
 
+	@Transactional
 	public AdminAuthMemberListDto searchAuthUser(ListReqDto listReqDto, String userNickName) {
 		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
 		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
 		// 닉네임이 포함됨 userList
-		List<Profile> userList = profileRepository.findByUserNickNameContains(userNickName);
+		List<Profile> userList = profileRepository.findByUserNickNameAndRole(userNickName);
 
 		for (Profile user : userList) {
 			// 현재 진행 중인 프로젝트 유무
