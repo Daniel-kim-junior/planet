@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocket.planet.dto.common.CommonResDto;
+import rocket.planet.util.exception.DuplicateException;
 import rocket.planet.util.exception.ReqNotFoundException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
@@ -200,19 +201,24 @@ public class ProfileService {
     }
 
     @Transactional
-    public CommonResDto addOusideProject(ProfileDto.OutsideProjectRegisterReqDto registerResDto, String loginUser) {
-        Profile profile = profileRepository.findByUserNickName(registerResDto.getUserNickName()).orElseThrow(() -> new ReqNotFoundException("님의 프로필은 존재하지 않습니다."));
+    public CommonResDto addOusideProject(ProfileDto.OutsideProjectRegisterReqDto registerReqDto, String loginUser) {
+        Profile profile = profileRepository.findByUserNickName(registerReqDto.getUserNickName()).orElseThrow(() -> new ReqNotFoundException("님의 프로필은 존재하지 않습니다."));
         if (!profile.getUserNickName().equals(loginUser)) {
-            throw new AccessDeniedException(loginUser + "님은 " + registerResDto.getUserNickName() + "님의 사외프로젝트를 추가할 권한이 없습니다.");
+            throw new AccessDeniedException(loginUser + "님은 " + registerReqDto.getUserNickName() + "님의 사외프로젝트를 추가할 권한이 없습니다.");
         }
+        Optional<PjtRecord> pjtR = pjtRecordRepository.findByPjtName(registerReqDto.getPjtName());
+        if (pjtR.isPresent()) {
+            throw new DuplicateException("중복되는 이름을 가진 사외프로젝트가 존재합니다. 이미 프로젝트명을 수정해주세요.");
+        }
+
         PjtRecord pjtRecord = PjtRecord.builder()
                 .profile(profile)
-                .pjtName(registerResDto.getPjtName())
-                .pjtTech(registerResDto.getPjtTech())
-                .pjtDesc(registerResDto.getPjtDesc())
-                .pjtStartDt(registerResDto.getPjtStartDt())
-                .pjtEndDt(registerResDto.getPjtEndDt())
-                .pjtUserTech(registerResDto.getPjtUserTech())
+                .pjtName(registerReqDto.getPjtName())
+                .pjtTech(registerReqDto.getPjtTech())
+                .pjtDesc(registerReqDto.getPjtDesc())
+                .pjtStartDt(registerReqDto.getPjtStartDt())
+                .pjtEndDt(registerReqDto.getPjtEndDt())
+                .pjtUserTech(registerReqDto.getPjtUserTech())
                 .build();
         pjtRecordRepository.save(pjtRecord);
         return CommonResDto.builder().message("외부프로젝트 생성이 완료되었습니다.").build();
@@ -298,7 +304,6 @@ public class ProfileService {
         return CommonResDto.builder().message(techReqDto.getUserNickName() + "님의 프로필에 " + techReqDto.getTechName() + " 기술을 등록하였습니다.").build();
     }
 
-
     @Transactional
     public CommonResDto removeUserTech(String userTechIdString, String loginUser) {
         UUID userTechId = UUID.fromString(userTechIdString);
@@ -327,7 +332,7 @@ public class ProfileService {
         User user = userRepository.findByUserId(newPwdReqDto.getUserId())
                 .orElseThrow(() -> new UserPwdCheckException("유저를 찾을 수 없습니다."));
 
-        if (user.getProfile().getUserNickName().equals(loginUser)) {
+        if (!user.getProfile().getUserNickName().equals(loginUser)) {
             throw new AccessDeniedException(loginUser + "님은 " + user.getProfile().getUserNickName() + "님의 비밀번호를 변경할 수 없습니다.");
         }
 
