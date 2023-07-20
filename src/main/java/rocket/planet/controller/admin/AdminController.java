@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.dto.project.ProjectDto.NameReqDto;
 import rocket.planet.service.admin.AdminSearchService;
@@ -32,47 +33,42 @@ public class AdminController {
 	private final AdminUserService adminUserService;
 
 	@PatchMapping("/user/auth")
-	public ResponseEntity<String> authorityModify(@RequestBody AdminAuthModifyReqDto adminAuthModifyReqDto) {
-		authorityService.modifyAuthority(adminAuthModifyReqDto);
+	public ResponseEntity<CommonResDto> authorityModify(@RequestBody AdminAuthModifyReqDto adminAuthModifyReqDto) {
 
-		return ResponseEntity.ok().body(adminAuthModifyReqDto.getUserNickName() + "님의 권한이 수정되었습니다.");
+		return ResponseEntity.ok().body(authorityService.modifyAuthority(adminAuthModifyReqDto));
 	}
 
 	@GetMapping("/user/auth")
 	public ResponseEntity<AdminAuthMemberListDto> adminTeamMemberList(@ModelAttribute ListReqDto listReqDto,
 		@RequestParam String teamName) {
 
-		AdminAuthMemberListDto teamMemberList = authorityService.getTeamMemberList(listReqDto, teamName);
-
-		return ResponseEntity.ok().body(teamMemberList);
+		return ResponseEntity.ok().body(authorityService.getTeamMemberList(listReqDto, teamName));
 
 	}
 
 	@GetMapping("/user/auth/search")
 	public ResponseEntity<AdminAuthMemberListDto> userAuthSearch(@ModelAttribute ListReqDto listReqDto,
 		String userNickName) {
-		AdminAuthMemberListDto member = adminSearchService.searchAuthUser(listReqDto, userNickName);
-		return ResponseEntity.ok().body(member);
+
+		return ResponseEntity.ok().body(adminSearchService.searchAuthUser(listReqDto, userNickName));
 	}
 
 	@GetMapping("/user/orgs/search")
 	public ResponseEntity<AdminMemberOrgListDto> userOrgSearch(@ModelAttribute ListReqDto listReqDto,
 		String userNickName) {
-		AdminMemberOrgListDto memberList = adminSearchService.searchOrgUser(listReqDto, userNickName);
-		return ResponseEntity.ok().body(memberList);
+
+		return ResponseEntity.ok().body(adminSearchService.searchOrgUser(listReqDto, userNickName));
 	}
 
 	@PatchMapping("/user/orgs")
-	public ResponseEntity<String> orgModify(@RequestBody AdminOrgModifyReqDto orgModifyReqList) {
-		teamService.modifyMemberOrg(orgModifyReqList);
+	public ResponseEntity<CommonResDto> orgModify(@RequestBody AdminOrgModifyReqDto orgModifyReqList) {
 
-		return ResponseEntity.ok().body("사용자(들)의 소속을 변경하였습니다.");
+		return ResponseEntity.ok().body(teamService.modifyMemberOrg(orgModifyReqList));
 	}
 
 	@PatchMapping("/user/disable")
-	public ResponseEntity<String> userRemove(@RequestBody NameReqDto userNickName) {
-		adminUserService.disabledUser(userNickName.getName());
+	public ResponseEntity<CommonResDto> userRemove(@RequestBody NameReqDto userNickName) {
 
-		return ResponseEntity.ok().body(userNickName.getName() + "를 퇴사 처리하였습니다.");
+		return ResponseEntity.ok().body(adminUserService.disabledUser(userNickName.getName()));
 	}
 }
