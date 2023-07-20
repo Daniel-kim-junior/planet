@@ -1,8 +1,5 @@
 package rocket.planet.controller.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,29 +13,25 @@ import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
-import rocket.planet.repository.jpa.ProjectRepository;
-import rocket.planet.repository.jpa.UserPjtRepository;
+import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.service.admin.AdminUserService;
 import rocket.planet.service.auth.AuthorityService;
-import rocket.planet.service.project.ProjectService;
 import rocket.planet.service.team.TeamService;
 
 @SpringBootTest
 class AdminControllerTest {
 
 	@Autowired
-	private ProjectService projectService;
-
-	@Autowired
 	private AuthorityService authorityService;
 
 	@Autowired
-	private ProjectRepository projectRepository;
-
-	@Autowired
-	private UserPjtRepository userPjtRepository;
-
-	@Autowired
 	private ProfileRepository profileRepository;
+
+	@Autowired
+	private TeamService teamService;
+
+	@Autowired
+	private AdminUserService adminUserService;
 
 	@Autowired
 	private AuthRepository authRepository;
@@ -47,7 +40,7 @@ class AdminControllerTest {
 	private PfAuthRepository pfAuthRepository;
 
 	@Autowired
-	private TeamService teamService;
+	private UserRepository userRepository;
 
 	@Test
 	@Transactional
@@ -79,13 +72,28 @@ class AdminControllerTest {
 	@Transactional
 	@Test
 	void 관리자_직원_소속_변경_테스트() {
-		List<AdminOrgModifyReqDto> orgModifyReqList = new ArrayList<>();
-		orgModifyReqList.add(
-			AdminOrgModifyReqDto.builder().userNickName("crew").deptName("AI챗봇").teamName("AI챗봇구축").build());
-		orgModifyReqList.add(
-			AdminOrgModifyReqDto.builder().userNickName("pilot").deptName("스마트솔루션").teamName("스마트팩토리").build());
+		AdminOrgModifyReqDto orgModify1 = AdminOrgModifyReqDto.builder()
+			.userNickName("crew")
+			.deptName("AI챗봇")
+			.teamName("AI챗봇구축")
+			.build();
+		// AdminOrgModifyReqDto orgModify2 = AdminOrgModifyReqDto.builder().userNickName("pilot").deptName("스마트솔루션").teamName("스마트팩토리").build()
 
-		teamService.modifyMemberOrg(orgModifyReqList);
+		teamService.modifyMemberOrg(orgModify1);
+
+	}
+
+	@Test
+	@Transactional
+	void 퇴사자_처리_테스트() {
+		adminUserService.disabledUser("captain");
+		//
+		// assertThat(authRepository.count()).isEqualTo(0);
+		// assertThat(pfAuthRepository.count()).isEqualTo(0);
+
+		System.out.println("profile=======> " + profileRepository.findByUserNickName("plpl").get());
+		System.out.println(
+			"user==========>" + userRepository.findByProfile(profileRepository.findByUserNickName("plpl").get()));
 
 	}
 }

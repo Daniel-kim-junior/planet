@@ -94,30 +94,26 @@ public class TeamService {
 	}
 
 	@Transactional
-	public void modifyMemberOrg(List<AdminOrgModifyReqDto> orgModifyReqList) {
+	public void modifyMemberOrg(AdminOrgModifyReqDto orgModifyReqList) {
 
-		for (AdminOrgModifyReqDto orgReq : orgModifyReqList) {
-			// 소속 변경
-			Optional<Profile> user = profileRepository.findByUserNickName(orgReq.getUserNickName());
-			Optional<Org> oldOrg = orgRepository.findById(user.get().getOrg().get(0).getId());
+		// 소속 변경
+		Optional<Profile> user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName());
 
-			// 권한 삭제
-			if (!user.get().getRole().equals(Role.CREW) && !user.get().getRole().equals(Role.PL)) {
-				authorityService.modifyAuthority(AdminAuthModifyReqDto.builder()
-					.userNickName(user.get().getUserNickName())
-					.role("CREW")
-					.deptName(orgReq.getDeptName())
-					.teamName(orgReq.getTeamName())
-					.build());
-			}
+		Optional<Org> oldOrg = orgRepository.findById(user.get().getOrg().get(0).getId());
 
-			oldOrg.get()
-				.updateOrg(teamRepository.findByTeamName(orgReq.getTeamName()),
-					deptRepository.findByDeptName(orgReq.getDeptName()));
-
-			System.out.println("newOrg=========> " + oldOrg.toString());
-
+		// 권한 삭제
+		if (!user.get().getRole().equals(Role.CREW) && !user.get().getRole().equals(Role.PL)) {
+			authorityService.modifyAuthority(AdminAuthModifyReqDto.builder()
+				.userNickName(user.get().getUserNickName())
+				.role("CREW")
+				.deptName(orgModifyReqList.getDeptName())
+				.teamName(orgModifyReqList.getTeamName())
+				.build());
 		}
+
+		oldOrg.get()
+			.updateOrg(teamRepository.findByTeamName(orgModifyReqList.getTeamName()),
+				deptRepository.findByDeptName(orgModifyReqList.getDeptName()));
 
 	}
 }
