@@ -34,7 +34,6 @@ public class AdminSearchService {
 		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
 		List<AdminMemberOrgDto> teamMemberList = new ArrayList<>();
 
-		System.out.println("userNickName====> " + userNickName);
 		// nickname이 포함된 유저 검색
 		List<Profile> userList = profileRepository.findByUserNickNameAndRole(userNickName);
 

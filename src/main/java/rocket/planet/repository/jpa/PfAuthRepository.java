@@ -15,7 +15,5 @@ public interface PfAuthRepository extends JpaRepository<ProfileAuthority, UUID> 
 
 	void deleteByAuthorityAndProfile(Authority auth, Profile user);
 
-	Optional<Authority> findAuthorityByProfile(Profile user);
-
 	Optional<ProfileAuthority> findByProfile(Profile user);
 }

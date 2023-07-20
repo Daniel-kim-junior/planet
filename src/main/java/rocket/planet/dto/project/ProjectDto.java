@@ -23,7 +23,7 @@ public class ProjectDto {
 	public static class CloseReqDto {
 		private String name;
 		private String userNickName;
-		private boolean isApprove;
+		private String isApprove;
 		private String role;
 
 	}

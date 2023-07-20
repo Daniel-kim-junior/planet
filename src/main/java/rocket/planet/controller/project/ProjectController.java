@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectNameReqDto;
@@ -46,10 +47,10 @@ public class ProjectController {
 	}
 
 	@PostMapping("/management/projects")
-	public ResponseEntity<String> projectSave(@RequestBody ProjectRegisterReqDto registerReqDto) {
-		projectService.registerProject(registerReqDto);
+	public ResponseEntity<CommonResDto> projectSave(@RequestBody ProjectRegisterReqDto registerReqDto) {
+		CommonResDto res = projectService.registerProject(registerReqDto);
 
-		return ResponseEntity.ok().body("프로젝트 생성이 완료되었습니다.");
+		return ResponseEntity.ok().body(res);
 	}
 
 	@PatchMapping("/management/projects")
@@ -76,7 +77,7 @@ public class ProjectController {
 	@PatchMapping("/management/projects/confirm")
 	public ResponseEntity<String> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
 		String result = projectService.closeProjectApprove(closeReqDto.getName(),
-			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.isApprove());
+			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.getIsApprove());
 
 		return ResponseEntity.ok().body(result);
 	}

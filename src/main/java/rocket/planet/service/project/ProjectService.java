@@ -22,6 +22,7 @@ import rocket.planet.domain.Project;
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectDetailResDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
@@ -78,10 +79,11 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public void registerProject(ProjectRegisterReqDto registerDto) {
+	public CommonResDto registerProject(ProjectRegisterReqDto registerDto) {
 		// 프로젝트 이름 중복 error 처리
 		Team team = teamRepository.findByTeamName(registerDto.getTeamName());
 		OrgType teamType = team.getTeamType();
+
 		ProjectStatus status = ProjectStatus.ONGOING;
 
 		if (registerDto.getProjectStartDt().isAfter(LocalDate.now()))
@@ -103,6 +105,7 @@ public class ProjectService {
 
 		registerMemberToProject(registerDto, newProject);
 
+		return CommonResDto.builder().message("Good").build();
 	}
 
 	@Transactional
@@ -171,13 +174,13 @@ public class ProjectService {
 
 	@Transactional
 	public String closeProjectApprove(String projectName,
-		String userNickName, String role, boolean isApprove) {
+		String userNickName, String role, String isApprove) {
 		// todo: error 처리 -> 권한 확인
 
 		UserProject requestedProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
 			userNickName);
 
-		if (isApprove) {
+		if (isApprove.equals("true")) {
 			requestedProject.approveProjectClose();
 			return "마감 요청을 승인하였습니다.";
 		} else {
@@ -246,7 +249,7 @@ public class ProjectService {
 					ProjectCloseResDto requestedProject = ProjectCloseResDto.builder()
 						.projectName(project.getProjectName())
 						.projectLeader(projectLeader.getUserNickName())
-						.userName(userProject.getProfile().getUserName())
+						.userNickName(userProject.getProfile().getUserNickName())
 						.projectStartDt(project.getProjectStartDt())
 						.projectEndDt(project.getProjectEndDt())
 						.build();
