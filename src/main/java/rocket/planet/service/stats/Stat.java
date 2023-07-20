@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -91,8 +92,13 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 					department.getDeptName());
 				// TODO
 				String teamName;
+				Optional<Team> team;
 				for (Org org : orgList) {
-					teamName = org.getTeam().getTeamName();
+					team = Optional.ofNullable(org.getTeam());
+					if (team.isEmpty()) {
+						continue;
+					}
+					teamName = team.get().getTeamName();
 					if (map.containsKey(teamName)) {
 						map.put(teamName, map.get(teamName) + 1);
 					} else {
@@ -201,7 +207,6 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
 					team.getTeamName());
 
-				double size = onWorkingProfiles.size() + noWorkingProfiles.size();
 				map.put("참여 중", onWorkingProfiles.size());
 				map.put("미 참여", noWorkingProfiles.size());
 				dto = LabelAndStatDto.builder().data(map).build();
@@ -245,9 +250,14 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				final List<Org> orgList = ((OrgRepository)repository).findStatsTeamByEntire();
 				String teamName;
+				Optional<Team> team;
 				for (Org org : orgList) {
-					teamName = org.getTeam().getTeamName();
-					if (map.containsKey(org.getTeam().getTeamName())) {
+					team = Optional.ofNullable(org.getTeam());
+					if (team.isEmpty()) {
+						continue;
+					}
+					teamName = team.get().getTeamName();
+					if (map.containsKey(teamName)) {
 						map.put(teamName, map.get(teamName) + 1);
 					} else {
 						map.put(teamName, 1);
@@ -272,8 +282,16 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				// TODO
 				final List<Org> orgList = ((OrgRepository)repository).findDeptStatsByEntire();
 				String deptName;
+				Optional<Department> department;
 				for (Org org : orgList) {
-					deptName = org.getDepartment().getDeptName();
+
+					department = Optional.ofNullable(org.getDepartment());
+
+					if (department.isEmpty()) {
+						continue;
+					}
+					deptName = department.get().getDeptName();
+
 					if (map.containsKey(deptName)) {
 						map.put(deptName, map.get(deptName) + 1);
 					} else {

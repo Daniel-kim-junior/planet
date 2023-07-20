@@ -2,10 +2,10 @@ package rocket.planet.dto.admin;
 
 import static lombok.AccessLevel.*;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.util.annotation.ValidDept;
 
 public class AdminDeptTeamDto {
 
@@ -14,6 +14,7 @@ public class AdminDeptTeamDto {
 	public static class AdminDeptAddReqDto {
 		private String name;
 
+		@ValidDept
 		private String deptType;
 
 		@Builder

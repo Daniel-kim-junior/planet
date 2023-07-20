@@ -38,6 +38,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.department d "
 			+ "where d.deptName = :deptName "
+			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findPjtPartCountByDepartment(String deptName);
@@ -50,6 +51,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.department d "
 			+ "where d.deptName = :deptName "
+			+ "and pf.profileStatus = true "
 			+ "and (up.userPjtCloseApply = true "
 			+ "or p.projectStatus != 'ONGOING') ")
 	List<UserProject> findPjtPartCountByDepartmentClosed(String deptName);
@@ -62,6 +64,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName "
+			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findPjtPartCountByTeam(String teamName);
@@ -74,6 +77,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName "
+			+ "and pf.profileStatus = true "
 			+ "and (up.userPjtCloseApply = true "
 			+ "or p.projectStatus != 'ONGOING') ")
 	List<UserProject> findPjtPartCountByTeamClosed(String teamName);
@@ -81,17 +85,21 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 	@Query(
 		"select distinct up "
 			+ "from UserProject up "
+			+ "JOIN FETCH up.profile pf "
 			+ "JOIN FETCH up.project p "
 			+ "where up.userPjtCloseApply = false "
+			+ "and pf.profileStatus = true "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findPjtPartCountByEntire();
 
 	@Query(
 		"select distinct up "
 			+ "from UserProject up "
+			+ "JOIN FETCH up.profile pf "
 			+ "JOIN FETCH up.project p "
-			+ "where up.userPjtCloseApply = true "
-			+ "or p.projectStatus != 'ONGOING' ")
+			+ "where (up.userPjtCloseApply = true "
+			+ "or p.projectStatus != 'ONGOING')"
+			+ "and pf.profileStatus = true ")
 	List<UserProject> findPjtPartCountByEntireClosed();
 
 	@Query(
@@ -102,6 +110,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName "
+			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findProjectStatsByTeam(String teamName);
@@ -114,6 +123,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.department d "
 			+ "where d.deptName = :deptName "
+			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findProjectStatsByDept(String deptName);

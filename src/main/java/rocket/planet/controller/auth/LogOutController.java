@@ -1,5 +1,6 @@
 package rocket.planet.controller.auth;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ public class LogOutController {
 	private final AccessTokenRedisRepository accessTokenRedisRepository;
 
 	@PostMapping("/api/logout")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_RADAR', 'ROLE_CAPTAIN', 'ROLE_PILOT', 'ROLE_CREW', 'ROLE_GUEST', 'ROLE_PL')")
 	public String logOut(@RequestHeader("Authorization") String token,
 		@AuthenticationPrincipal(expression = "user") User user) throws RedisException {
 		refreshTokenRedisRepository.deleteById(user.getUserId());

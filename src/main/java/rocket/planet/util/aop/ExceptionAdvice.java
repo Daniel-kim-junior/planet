@@ -18,8 +18,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
+import rocket.planet.util.annotation.ValidDept;
 import rocket.planet.util.annotation.ValidPassword;
-import rocket.planet.util.exception.*;
+import rocket.planet.util.exception.AlreadyExistsDeptException;
+import rocket.planet.util.exception.AlreadyExistsIdException;
+import rocket.planet.util.exception.ExceptionEnum;
+import rocket.planet.util.exception.IdMismatchException;
+import rocket.planet.util.exception.JwtInvalidException;
+import rocket.planet.util.exception.NoSuchEmailException;
+import rocket.planet.util.exception.NoSuchEmailTokenException;
+import rocket.planet.util.exception.NoValidEmailTokenException;
+import rocket.planet.util.exception.PasswordMatchException;
+import rocket.planet.util.exception.PasswordMismatchException;
+import rocket.planet.util.exception.Temp30MinuteLockException;
+import rocket.planet.util.exception.UserLogException;
+import rocket.planet.util.exception.UserNotFoundException;
+import rocket.planet.util.exception.UserPwdCheckException;
+import rocket.planet.util.exception.UserTechException;
 
 /*
  * 예외 처리를 위한 어드바이스(AOP)
@@ -73,6 +88,9 @@ public class ExceptionAdvice {
 			} else if (field != null && field.isAnnotationPresent(ValidPassword.class)) {
 				log.error("PasswordValidException", e.getClass().getSimpleName(), e.getMessage());
 				return getCommonErrorDto(ExceptionEnum.PASSWORD_NOT_VALID_EXCEPTION);
+			} else if (field != null && field.isAnnotationPresent(ValidDept.class)) {
+				log.error("OrgTypeValidException", e.getClass().getSimpleName(), e.getMessage());
+				return getCommonErrorDto(ExceptionEnum.INVALID_ORG_TYPE_EXCEPTION);
 			}
 		}
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
@@ -176,6 +194,7 @@ public class ExceptionAdvice {
 		log.error("handleUserNotFoundException", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
+
 	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
 		return CommonErrorDto.builder().code(exceptionEnum.getCode()).message(exceptionEnum.getMessage()).build();
 	}

@@ -69,6 +69,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new JwtInvalidException("using illegal argument like null", illegalArgumentException);
 		}
 		PlanetUser planetUser = (PlanetUser)planetUserDetailsService.loadUserByUsername(claims.getSubject());
+
 		accessTokenRedisRepository.findById(planetUser.getUsername())
 			.orElseThrow(() -> new JwtInvalidException("Invalid JWT token"));
 		return new JwtAuthenticationToken(planetUser, "", createGrantedAuthorities(claims));
