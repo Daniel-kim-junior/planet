@@ -135,6 +135,9 @@ public class AuthorityService {
 
 		for (Org org : organization) {
 			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
+			if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
+				|| !profile.isProfileStatus())
+				continue;
 
 			// 현재 진행중인 프로젝트 유무 확인
 			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);

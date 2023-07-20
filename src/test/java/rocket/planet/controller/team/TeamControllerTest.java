@@ -19,7 +19,7 @@ class TeamControllerTest {
 	@Test
 	@Transactional
 	void 팀멤버_조회_테스트() {
-		String teamName = "AI챗봇구축";
+		String teamName = "인사";
 		ListReqDto listReqDto = ListReqDto.builder()
 			.page(1)
 			.pageSize(8)

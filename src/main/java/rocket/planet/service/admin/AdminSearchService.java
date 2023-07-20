@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Profile;
+import rocket.planet.domain.Role;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
@@ -39,6 +40,8 @@ public class AdminSearchService {
 
 		for (Profile user : userList) {
 
+			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || !user.isProfileStatus())
+				continue;
 			// 현재 진행 중인 프로젝트 유무
 			List<UserProject> projectList = userPjtRepository.findByProfile(user);
 			boolean hasProject = projectList.stream()
@@ -82,6 +85,9 @@ public class AdminSearchService {
 		for (Profile user : userList) {
 			// 현재 진행 중인 프로젝트 유무
 			List<UserProject> projectList = userPjtRepository.findByProfile(user);
+
+			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || !user.isProfileStatus())
+				continue;
 			boolean hasProject = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 

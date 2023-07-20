@@ -71,7 +71,6 @@ public class AdminController {
 
 	@PatchMapping("/user/disable")
 	public ResponseEntity<String> userRemove(@RequestBody NameReqDto userNickName) {
-		System.out.println("getName-=====> " + userNickName.getName());
 		adminUserService.disabledUser(userNickName.getName());
 
 		return ResponseEntity.ok().body(userNickName.getName() + "를 퇴사 처리하였습니다.");
