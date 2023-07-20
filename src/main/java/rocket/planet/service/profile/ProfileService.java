@@ -64,12 +64,16 @@ public class ProfileService {
 			List<Certification> certList = profileD.getCertification();
 
 			ProfileDto.OrgResDto orgDto = orgList.stream()
-				.findFirst()
-				.map(org -> ProfileDto.OrgResDto.builder()
-					.deptName(org.getDepartment().getDeptName())
-					.teamName(org.getTeam().getTeamName())
-					.build())
-				.orElse(null);
+					.findFirst()
+					.map(org -> {
+						String deptName = (org.getDepartment() != null) ? org.getDepartment().getDeptName() : "무소속";
+						String teamName = (org.getTeam() != null) ? org.getTeam().getTeamName() : "무소속";
+						return ProfileDto.OrgResDto.builder()
+								.deptName(deptName)
+								.teamName(teamName)
+								.build();
+					})
+					.orElse(null);
 
 			List<ProfileDto.UserInProgressProjectResDto> inProgressProjectList = projectList.stream()
 				.filter(project -> project.getUserPjtCloseDt().equals(LocalDate.of(2999, 12, 31)))
