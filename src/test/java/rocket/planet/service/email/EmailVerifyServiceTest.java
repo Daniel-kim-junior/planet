@@ -1,24 +1,49 @@
 package rocket.planet.service.email;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mail.javamail.JavaMailSender;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import rocket.planet.repository.jpa.UserRepository;
+import rocket.planet.repository.redis.EmailFindConfirmRepository;
+import rocket.planet.repository.redis.EmailFindTokenRepository;
+import rocket.planet.repository.redis.EmailJoinConfirmRepository;
+import rocket.planet.repository.redis.EmailJoinTokenRepository;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class EmailVerifyServiceTest {
 
-	@Autowired
-	private MockMvc mockMvc;
-	@Autowired
+	@InjectMocks
 	private EmailVerifyService emailVerifyService;
-	@Autowired
-	private ObjectMapper objectMapper;
+
+	@Mock
+	private UserRepository userRepository;
+
+	@Mock
+	private JavaMailSender mailSender;
+
+	@Mock
+	private EmailJoinTokenRepository emailJoinTokenRepository;
+
+	@Mock
+	private EmailJoinConfirmRepository emailJoinConfirmRepository;
+
+	@Mock
+	private EmailFindTokenRepository emailFindTokenRepository;
+
+	@Mock
+	private EmailFindConfirmRepository emailFindConfirmRepository;
+
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+
+	}
 
 	@DisplayName("메일 인증 서비스 - 랜덤 문자열 추출")
 	@Test

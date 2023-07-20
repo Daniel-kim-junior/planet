@@ -29,13 +29,11 @@ public class EmailVerifyController {
 	private final EmailVerifyService emailVerifyService;
 
 	@PostMapping(value = "/email-verify", headers = "Accept=application/json", produces = "application/json")
-	public ResponseEntity<String> emailVerify(
+	public ResponseEntity<EmailVerifyResDto> emailVerify(
 		@Valid @RequestBody EmailDuplicateCheckAndSendEmailReqDto dto) {
-		String email = dto.getId();
-		CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(email, dto.getType());
+		final CompletableFuture<String> gen = emailVerifyService.saveLimitTimeAndSendEmail(dto);
 		try {
-			emailVerifyService.saveRedisToken(email, gen.get().toString(), dto.getType());
-			return ResponseEntity.ok().body("이메일 전송을 완료했습니다");
+			return ResponseEntity.ok().body(emailVerifyService.saveRedisToken(dto.getId(), gen.get(), dto.getType()));
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 			throw new NoSuchEmailException();
@@ -43,7 +41,8 @@ public class EmailVerifyController {
 	}
 
 	@PostMapping(value = "/email-verify/check", headers = "Accept=application/json", produces = "application/json")
-	public ResponseEntity<String> emailVerifyCheck(@Valid @RequestBody EmailVerifyCheckReqDto dto) throws
+	public ResponseEntity<EmailVerifyCheckResDto> emailVerifyCheck(
+		@Valid @RequestBody EmailVerifyCheckReqDto dto) throws
 		RedisException {
 		return ResponseEntity.ok()
 			.body(emailVerifyService.checkByRedisEmailTokenAndSaveToken(dto.getId(), dto.getCode(), dto.getType()));
