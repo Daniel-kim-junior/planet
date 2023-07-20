@@ -20,7 +20,7 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 
 	@Query("select distinct p "
 		+ "from Profile p "
-		+ "where p.userNickName like %:userNickName% and p.role != 'ADMIN'")
+		+ "where p.userNickName like %:userNickName% and p.role != 'ADMIN' and p.role != 'RADAR'")
 	List<Profile> findByUserNickNameAndRole(@Param("userNickName") String userNickName);
 
 	@Query(

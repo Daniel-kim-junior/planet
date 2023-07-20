@@ -22,6 +22,7 @@ import rocket.planet.domain.Department;
 import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.ProfileAuthority;
+import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.common.ListReqDto;
@@ -33,6 +34,8 @@ import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.util.common.PagingUtil;
+import rocket.planet.util.exception.NoAccessAuthorityException;
+import rocket.planet.util.exception.NoUserNickNameException;
 
 @Service
 @RequiredArgsConstructor
@@ -70,25 +73,36 @@ public class AuthorityService {
 
 	@Transactional
 	public void modifyAuthority(AdminAuthModifyReqDto adminAuthModifyReqDto) {
-		Department department = deptRepository.findByDeptName(adminAuthModifyReqDto.getDeptName());
-		Team team = teamRepository.findByTeamName(adminAuthModifyReqDto.getTeamName());
+		Optional<Department> department = Optional.ofNullable(
+			deptRepository.findByDeptName(adminAuthModifyReqDto.getDeptName()));
+		Optional<Team> team = Optional.ofNullable(teamRepository.findByTeamName(adminAuthModifyReqDto.getTeamName()));
+
+		if (department.isEmpty() && team.isEmpty()) {
+			throw new NoAccessAuthorityException();
+		}
 
 		// 1. 프로필에서 역할 수정
-		Profile user = profileRepository.findByUserNickName(adminAuthModifyReqDto.getUserNickName()).orElseThrow();
-		user.updateRole(adminAuthModifyReqDto.getRole());
+		Profile user = profileRepository.findByUserNickName(adminAuthModifyReqDto.getUserNickName()).orElseThrow(
+			NoUserNickNameException::new);
 
 		// 2. 프로필-권한에서 권한 삭제
 		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
-		Optional<Authority> authority = Optional.ofNullable(pfAuthRepository.findByProfile(user).get().getAuthority());
-		if (authority.isPresent()) {
-			if (authority.get().getAuthTargetId().equals(department.getId())
-				|| authority.get().getAuthTargetId().equals(team.getId())) {
+		if (!user.getRole().equals(Role.CREW)) {
+			// captain이나 pilot인 경우
+			Optional<ProfileAuthority> profileAuthority = Optional.ofNullable(
+				pfAuthRepository.findByProfile(user).orElseThrow(NoAccessAuthorityException::new));
 
-				pfAuthRepository.deleteByAuthorityAndProfile(authority.get(), user);
-				authRepository.deleteById(authority.get().getId());
-
+			if (profileAuthority.isPresent()) {
+				Authority authority = profileAuthority.get().getAuthority();
+				pfAuthRepository.deleteByAuthorityAndProfile(authority, user);
+				authRepository.deleteById(authority.getId());
+			} else {
+				throw new NoAccessAuthorityException();
 			}
 		}
+
+		// 프로필에 있는 role 변경
+		user.updateRole(adminAuthModifyReqDto.getRole());
 
 		// 3. 권한 추가 & 4. 프로필-권한 추가
 		if (adminAuthModifyReqDto.getRole().equals("PILOT")) {
@@ -96,14 +110,14 @@ public class AuthorityService {
 				.authNickName(user.getUserNickName())
 				.authorizerNickName("admin")
 				.authType(AuthType.TEAM)
-				.authTargetId(team.getId())
+				.authTargetId(team.get().getId())
 				.build());
 		} else if (adminAuthModifyReqDto.getRole().equals("CAPTAIN")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
 				.authorizerNickName("admin")
 				.authType(AuthType.DEPARTMENT)
-				.authTargetId(department.getId())
+				.authTargetId(department.get().getId())
 				.build());
 		}
 

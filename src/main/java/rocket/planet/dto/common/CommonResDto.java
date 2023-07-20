@@ -1,8 +1,12 @@
 package rocket.planet.dto.common;
 
-import lombok.*;
+import static lombok.AccessLevel.*;
 
-import static lombok.AccessLevel.PROTECTED;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @ToString
@@ -10,5 +14,5 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PROTECTED)
 public class CommonResDto {
-    private String message;
+	private String message;
 }

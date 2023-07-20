@@ -97,14 +97,14 @@ public class TeamService {
 	public void modifyMemberOrg(AdminOrgModifyReqDto orgModifyReqList) {
 
 		// 소속 변경
-		Optional<Profile> user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName());
+		Profile user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName()).orElseThrow();
 
-		Optional<Org> oldOrg = orgRepository.findById(user.get().getOrg().get(0).getId());
+		Optional<Org> oldOrg = orgRepository.findById(user.getOrg().get(0).getId());
 
 		// 권한 삭제
-		if (!user.get().getRole().equals(Role.CREW) && !user.get().getRole().equals(Role.PL)) {
+		if (!user.getRole().equals(Role.CREW) && !user.getRole().equals(Role.PL)) {
 			authorityService.modifyAuthority(AdminAuthModifyReqDto.builder()
-				.userNickName(user.get().getUserNickName())
+				.userNickName(user.getUserNickName())
 				.role("CREW")
 				.deptName(orgModifyReqList.getDeptName())
 				.teamName(orgModifyReqList.getTeamName())
@@ -112,7 +112,8 @@ public class TeamService {
 		}
 
 		oldOrg.get()
-			.updateOrg(teamRepository.findByTeamName(orgModifyReqList.getTeamName()),
+			.updateOrg(
+				teamRepository.findByTeamName(orgModifyReqList.getTeamName()),
 				deptRepository.findByDeptName(orgModifyReqList.getDeptName()));
 
 	}

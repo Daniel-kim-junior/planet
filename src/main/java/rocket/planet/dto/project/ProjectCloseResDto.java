@@ -16,7 +16,7 @@ import lombok.ToString;
 @Builder
 public class ProjectCloseResDto {
 	private String projectName;
-	private String userName;
+	private String userNickName;
 	private String projectLeader;
 	private LocalDate projectStartDt;
 	private LocalDate projectEndDt;

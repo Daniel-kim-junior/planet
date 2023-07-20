@@ -25,14 +25,17 @@ import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.ExceptionEnum;
 import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.JwtInvalidException;
+import rocket.planet.util.exception.NoAccessAuthorityException;
+import rocket.planet.util.exception.NoAuthorityException;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoSuchEmailTokenException;
+import rocket.planet.util.exception.NoUserNickNameException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMatchException;
 import rocket.planet.util.exception.PasswordMismatchException;
+import rocket.planet.util.exception.ReqNotFoundException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
 import rocket.planet.util.exception.UserLogException;
-import rocket.planet.util.exception.UserNotFoundException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 
@@ -42,6 +45,10 @@ import rocket.planet.util.exception.UserTechException;
 @Slf4j
 @RestControllerAdvice
 public class ExceptionAdvice {
+
+	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
+		return CommonErrorDto.builder().code(exceptionEnum.getCode()).message(exceptionEnum.getMessage()).build();
+	}
 
 	@ExceptionHandler(IdMismatchException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -195,8 +202,24 @@ public class ExceptionAdvice {
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 
-	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
-		return CommonErrorDto.builder().code(exceptionEnum.getCode()).message(exceptionEnum.getMessage()).build();
+	@ExceptionHandler(NoAccessAuthorityException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoAccessAuthorityException(NoAccessAuthorityException e) {
+		log.error("NoAccessAuthorityException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.NO_ACCESS_AUTHORITY_EXCEPTION);
 	}
 
+	@ExceptionHandler(NoUserNickNameException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoUserNickNameException(NoAccessAuthorityException e) {
+		log.error("NoUserNickNameException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.NO_USERNICKNAME_EXCEPTION);
+	}
+
+	@ExceptionHandler(NoAuthorityException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleNoAuthorityException(NoAuthorityException e) {
+		log.error("NoAuthorityException", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.NO_AUTHORITY_EXCEPTION);
+	}
 }

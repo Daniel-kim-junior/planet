@@ -10,6 +10,7 @@ import rocket.planet.dto.admin.AdminDto.AdminAuthModifyReqDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.auth.AuthorityService;
+import rocket.planet.util.exception.NoUserNickNameException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +23,9 @@ public class AdminUserService {
 	@Transactional
 	public void disabledUser(String userNickName) {
 
-		Profile user = profileRepository.findByUserNickName(userNickName).orElseThrow();
-		System.out.println("user=========> " + user);
-
+		Profile user = profileRepository.findByUserNickName(userNickName).orElseThrow(NoUserNickNameException::new);
 		User retiredUser = userRepository.findByProfile(user);
-		System.out.println("oldProfile=========> " + user + "\noldUser========>" + retiredUser);
+
 		// user lock & 퇴사일 & 비밀번호/비밀번호 변경일/생성일 삭제
 		retiredUser.updateRetiredUser();
 
@@ -39,8 +38,6 @@ public class AdminUserService {
 				.role("GUEST").build());
 
 		user.updateRetiredProfile();
-
-		System.out.println("newProfile=========> " + user + "\nnewUser========>" + retiredUser);
 
 	}
 }
