@@ -4,6 +4,7 @@ import antlr.StringUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -33,7 +34,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     private final QProfileAuthority qProfileAuthority = QProfileAuthority.profileAuthority;
     private final QPjtRecord qPjtRecord = QPjtRecord.pjtRecord;
 
-
+    Role excludedRole = Role.ADMIN;
     @Override
     public Optional<Profile> selectProfileByUserNickName(String userNickName) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
@@ -58,6 +59,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
         List<Profile> equalsSearch = queryFactory.selectFrom(qProfile)
                 .where(
                         qProfile.profileStatus.eq(true),
+                        qProfile.role.ne(Expressions.constant(excludedRole)),
                         qProfile.userNickName.equalsIgnoreCase(replacedKeyword)
                                 .or(qProfile.org.any().department.deptName.eq(replacedKeyword))
                                 .or(qProfile.org.any().team.teamName.eq(replacedKeyword))
@@ -72,6 +74,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
             List<Profile> startsWithSearch = queryFactory.selectFrom(qProfile)
                     .where(
                             qProfile.profileStatus.eq(true),
+                            qProfile.role.ne(Expressions.constant(excludedRole)),
                             qProfile.userNickName.startsWithIgnoreCase(replacedKeyword)
                                     .or(qProfile.org.any().department.deptName.containsIgnoreCase(replacedKeyword))
                                     .or(qProfile.org.any().team.teamName.containsIgnoreCase(replacedKeyword))
