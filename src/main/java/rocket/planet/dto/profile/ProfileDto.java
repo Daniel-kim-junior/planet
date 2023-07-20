@@ -197,6 +197,7 @@ public class ProfileDto {
     public static class UserNewPwdReqDto{
         private String userId;
         private String userPwd;
+        private String userPwdCheck;
     }
 
     @Getter

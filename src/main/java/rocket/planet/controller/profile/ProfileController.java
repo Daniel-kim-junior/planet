@@ -1,15 +1,21 @@
 package rocket.planet.controller.profile;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rocket.planet.domain.Profile;
 import rocket.planet.domain.ProfileTech;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.dto.profile.ProfileDto;
 
 import rocket.planet.service.profile.ProfileService;
+import rocket.planet.util.security.PlanetUser;
 
 import java.util.UUID;
 
@@ -28,82 +34,72 @@ public class ProfileController {
     }
 
     @PatchMapping("/{userNickName}")
-    public ResponseEntity<String> profileModify(@RequestBody ProfileDto.ProfileUpDateResDto profileUpDateResDto) {
-        log.info("updateResDto : {}", profileUpDateResDto);
-        profileService.modifyProfile(profileUpDateResDto);
-        return ResponseEntity.ok().body(profileUpDateResDto.getUserNickName() + "님의 프로필 수정이 완료되었습니다.");
+    public ResponseEntity<CommonResDto> profileModify(@RequestBody ProfileDto.ProfileUpDateResDto profileUpDateResDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.modifyProfile(profileUpDateResDto, loginUser));
     }
     @PatchMapping("/display/{userNickName}")
-    public ResponseEntity<String> profileDisplayModify(@RequestBody ProfileDto.ProfileDisplayUpDateResDto displayUpDateResDto) {
-        profileService.modifyProfileDisplay(displayUpDateResDto);
-        if (displayUpDateResDto.isProfileDisplay()) {
-            return ResponseEntity.ok().body(displayUpDateResDto.getUserNickName() + "님의 프로필이 공개로 변경되었습니다.");
-        } else {
-            return ResponseEntity.ok().body(displayUpDateResDto.getUserNickName() + "님의 프로필이 비공개로 변경되었습니다.");
-        }
+    public ResponseEntity<CommonResDto> profileDisplayModify(@RequestBody ProfileDto.ProfileDisplayUpDateResDto displayUpDateResDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.modifyProfileDisplay(displayUpDateResDto, loginUser));
+
     }
     @PatchMapping("/annual/{userNickName}")
-    public ResponseEntity<String> profileAnnualModify(@RequestBody ProfileDto.AnnualUpDateResDto annualUpDateResDto) {
-        profileService.modifyAnnualStatus(annualUpDateResDto);
-        if (annualUpDateResDto.isProfileAnnualStatus()) {
-            return ResponseEntity.ok().body(annualUpDateResDto.getUserNickName() + "님의 상태가 휴가중으로 변경되었습니다.");
-        } else {
-            return ResponseEntity.ok().body(annualUpDateResDto.getUserNickName() + "님의 상태가 출근으로 변경되었습니다.");
-        }
+    public ResponseEntity<CommonResDto> profileAnnualModify(@RequestBody ProfileDto.AnnualUpDateResDto annualUpDateResDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.modifyAnnualStatus(annualUpDateResDto, loginUser));
     }
 
     @PostMapping("/outside")
-    public ResponseEntity<String> outsideProjectAdd(@RequestBody ProfileDto.OutsideProjectRegisterReqDto registerReqDto) {
-        profileService.addOusideProject(registerReqDto);
-        return ResponseEntity.ok().body("외부프로젝트 생성이 완료되었습니다.");
+    public ResponseEntity<CommonResDto> outsideProjectAdd(@RequestBody ProfileDto.OutsideProjectRegisterReqDto registerReqDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.addOusideProject(registerReqDto, loginUser));
     }
     @PatchMapping("/outside")
-    public ResponseEntity<String> outsideProjectModify(@RequestBody ProfileDto.OutsideProjectUpdateReqDto updateReqDto) {
-        log.info("updateResDto : {}", updateReqDto);
-        profileService.modifyOusideProject(updateReqDto);
-        return ResponseEntity.ok().body("외부프로젝트 수정이 완료되었습니다.");
+    public ResponseEntity<CommonResDto> outsideProjectModify(@RequestBody ProfileDto.OutsideProjectUpdateReqDto updateReqDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.modifyOusideProject(updateReqDto, loginUser));
     }
     @DeleteMapping("/outside")
-    public ResponseEntity<String> outsideProjectRemove(@RequestParam("pjtUid") String pjtUidString) {
-        profileService.removeOutsideProject(pjtUidString);
-        return ResponseEntity.ok().body("프로젝트 번호가 " + pjtUidString + "인 프로젝트를 삭제하였습니다.");
+    public ResponseEntity<CommonResDto> outsideProjectRemove(@RequestParam("pjtUid") String pjtUidString, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.removeOutsideProject(pjtUidString, loginUser));
     }
     @PostMapping("/certs")
-    public ResponseEntity<String> certAdd(@RequestBody ProfileDto.CertRegisterResDto certRegisterResDto) {
-        profileService.addCertification(certRegisterResDto);
-        return ResponseEntity.ok().body("자격증 생성이 완료되었습니다.");
+    public ResponseEntity<CommonResDto> certAdd(@RequestBody ProfileDto.CertRegisterResDto certRegisterResDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.addCertification(certRegisterResDto, loginUser));
     }
     @DeleteMapping("/certs")
-    public ResponseEntity<String> userCertRemove(@RequestParam("certUid")String cetUidString) {
-        profileService.removeCertification(cetUidString);
-        return ResponseEntity.ok().body("자격증을 삭제했습니다.");
+    public ResponseEntity<CommonResDto> userCertRemove(@RequestParam("certUid")String cetUidString, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.removeCertification(cetUidString, loginUser));
     }
     @PostMapping("/tech")
-    public ResponseEntity<String> userProfileTechAdd(@RequestBody ProfileDto.TechRegisterReqDto techReqDto) {
-            profileService.addUserTech(techReqDto);
-            return ResponseEntity.ok().body(techReqDto.getUserNickName() + "님의 프로필에 " + techReqDto.getTechName() + "기술을 등록하였습니다.");
+    public ResponseEntity<CommonResDto> userProfileTechAdd(@RequestBody ProfileDto.TechRegisterReqDto techReqDto, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+            return ResponseEntity.ok().body(profileService.addUserTech(techReqDto, loginUser));
         }
     @DeleteMapping("/tech")
-    public ResponseEntity<String> userProfileTechRemove(@RequestParam("userTechId")String userTechIdString) {
-        profileService.removeUserTech(userTechIdString);
-        return ResponseEntity.ok().body("기술을 삭제하였습니다.");
+    public ResponseEntity<CommonResDto> userProfileTechRemove(@RequestParam("userTechId")String userTechIdString, @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.removeUserTech(userTechIdString, loginUser));
     }
     @PatchMapping("/inside")
-    public ResponseEntity<String> userInsidePjtModify(@RequestBody ProfileDto.insideProjectUpdateReqDto insidePjtReqDto){
-        profileService.modifyUserInsideProject(insidePjtReqDto);
-        return ResponseEntity.ok().body(insidePjtReqDto.getProjectName()+ "님의 " + insidePjtReqDto.getProjectName() + " 프로젝트를 상세이력을 수정하였습니다.");
+    public ResponseEntity<CommonResDto> userInsidePjtModify(@RequestBody ProfileDto.insideProjectUpdateReqDto insidePjtReqDto, @AuthenticationPrincipal(expression = "profile")Profile profile){
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.modifyUserInsideProject(insidePjtReqDto, loginUser));
     }
 
     @PatchMapping("/modify-pwd")
-    public ResponseEntity<String> userPwdModify(@RequestBody ProfileDto.UserNewPwdReqDto newPwdReqDto) {
-        profileService.changeUserPwd(newPwdReqDto);
-        return ResponseEntity.ok().body("비밀번호를 변경하였습니다.");
+    public ResponseEntity<CommonResDto> userPwdModify(@RequestBody ProfileDto.UserNewPwdReqDto newPwdReqDto , @AuthenticationPrincipal(expression = "profile")Profile profile) {
+        String loginUser = profile.getUserNickName();
+        return ResponseEntity.ok().body(profileService.changeUserPwd(newPwdReqDto, loginUser));
     }
 
     @PostMapping("/visitor-log")
-    public ResponseEntity<String> visitorLogAdd(@RequestBody ProfileDto.VisitorReqDto visitorReqDto) {
-        profileService.addProfileVisitor(visitorReqDto);
-        return ResponseEntity.ok().body(visitorReqDto.getVisitorNickName() + "님이 " + visitorReqDto.getOwnerNickName() + "님의 프로필을 방문하였습니다.");
+    public ResponseEntity<CommonResDto> visitorLogAdd(@RequestBody ProfileDto.VisitorReqDto visitorReqDto) {
+        return ResponseEntity.ok().body( profileService.addProfileVisitor(visitorReqDto));
     }
 
 
