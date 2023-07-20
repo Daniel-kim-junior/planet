@@ -27,6 +27,7 @@ import rocket.planet.domain.User;
 import rocket.planet.domain.redis.EmailJoinConfirm;
 import rocket.planet.domain.redis.LastLogin;
 import rocket.planet.domain.redis.LimitLogin;
+import rocket.planet.domain.redis.RefreshToken;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.AccessTokenRedisRepository;
 import rocket.planet.repository.redis.EmailJoinConfirmRepository;
@@ -34,6 +35,7 @@ import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
 import rocket.planet.util.exception.AlreadyExistsIdException;
+import rocket.planet.util.exception.JwtInvalidException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 import rocket.planet.util.exception.PasswordMismatchException;
 import rocket.planet.util.exception.Temp30MinuteLockException;
@@ -68,6 +70,10 @@ class AuthLoginAndJoinServiceTest {
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	private String secretKey = "4GizURzFENPe76rDFNhLuUbE0QnPKmmdZT2Y5JWc+dQiWguHh8JxtI/7wqLywTGeiKar25HQnlfBJzA5Z4lTTw";
+
+	private String token;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -105,6 +111,18 @@ class AuthLoginAndJoinServiceTest {
 		when(emailJoinConfirmRepository.findById("test@gmail.com")).thenReturn(Optional.empty());
 		when(emailJoinConfirmRepository.findById("admin@gmail.com")).thenReturn(
 			Optional.of(EmailJoinConfirm.builder().build()));
+
+		/**
+		 * jwt 토큰 테스트
+		 */
+		when(jwtWebTokenIssuer.createToken("test", Role.CREW.name(), secretKey.getBytes(), 10000))
+			.thenCallRealMethod();
+		when(refreshTokenRedisRepository.findById("test")).thenReturn(null);
+
+		when(jwtWebTokenIssuer.createToken("success", Role.CREW.name(), secretKey.getBytes(),
+			10000)).thenCallRealMethod();
+		when(refreshTokenRedisRepository.findById("success")).thenReturn(
+			Optional.of(RefreshToken.builder().token(token).email("success").build()));
 	}
 
 	@Test
@@ -208,5 +226,28 @@ class AuthLoginAndJoinServiceTest {
 		assertThrows(AlreadyExistsIdException.class, () -> {
 			authLoginAndJoinService.checkJoin(JoinReqDto.builder().id("admin@gmail.com").build());
 		});
+	}
+
+	@Test
+	void 엑세스_토큰_재요청_테스트() throws Exception {
+		/**
+		 * 유효하지 않은 jwt 토큰일때
+		 */
+		assertThrows(JwtInvalidException.class, () -> {
+			authLoginAndJoinService.makeReissue("Bearer sdidjfifd");
+		});
+
+		/**
+		 * 실패 jwt 토큰
+		 */
+		token = jwtWebTokenIssuer.createToken("test", Role.CREW.name(), secretKey.getBytes(), 10000);
+
+		/**
+		 * 다른 곳에서 만든 jwt 토큰 예외 발생
+		 */
+		assertThrows(JwtInvalidException.class, () -> {
+			authLoginAndJoinService.makeReissue("Bearer " + token);
+		});
+
 	}
 }

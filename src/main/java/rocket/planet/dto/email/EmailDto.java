@@ -68,4 +68,30 @@ public class EmailDto {
 			this.type = type;
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor(access = PROTECTED)
+	public static class EmailVerifyResDto {
+
+		private String message;
+
+		@Builder
+		public EmailVerifyResDto(String message) {
+			this.message = message;
+		}
+
+	}
+
+	@Getter
+	@NoArgsConstructor(access = PROTECTED)
+	public static class EmailVerifyCheckResDto {
+
+		private String message;
+
+		@Builder
+		public EmailVerifyCheckResDto(String message) {
+			this.message = message;
+		}
+
+	}
 }

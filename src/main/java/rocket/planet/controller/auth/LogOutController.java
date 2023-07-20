@@ -1,5 +1,8 @@
 package rocket.planet.controller.auth;
 
+import static rocket.planet.dto.auth.AuthDto.*;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,13 +24,15 @@ public class LogOutController {
 
 	private final AccessTokenRedisRepository accessTokenRedisRepository;
 
+	private final static String LOGOUT = "로그아웃 되었습니다";
+
 	@PostMapping("/api/logout")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_RADAR', 'ROLE_CAPTAIN', 'ROLE_PILOT', 'ROLE_CREW', 'ROLE_GUEST', 'ROLE_PL')")
-	public String logOut(@RequestHeader("Authorization") String token,
+	public ResponseEntity<LogOutResDto> logOut(@RequestHeader("Authorization") String token,
 		@AuthenticationPrincipal(expression = "user") User user) throws RedisException {
 		refreshTokenRedisRepository.deleteById(user.getUserId());
 		accessTokenRedisRepository.deleteById(user.getUserId());
 		SecurityContextHolder.clearContext();
-		return "LOGOUT";
+		return ResponseEntity.ok().body(LogOutResDto.builder().message(LOGOUT).build());
 	}
 }

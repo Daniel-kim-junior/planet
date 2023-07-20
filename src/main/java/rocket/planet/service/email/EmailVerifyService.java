@@ -1,5 +1,7 @@
 package rocket.planet.service.email;
 
+import static rocket.planet.dto.email.EmailDto.*;
+
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
@@ -12,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import io.lettuce.core.RedisException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.redis.EmailFindConfirm;
 import rocket.planet.domain.redis.EmailFindToken;
@@ -24,7 +25,7 @@ import rocket.planet.repository.redis.EmailFindConfirmRepository;
 import rocket.planet.repository.redis.EmailFindTokenRepository;
 import rocket.planet.repository.redis.EmailJoinConfirmRepository;
 import rocket.planet.repository.redis.EmailJoinTokenRepository;
-import rocket.planet.util.exception.NoSuchEmailException;
+import rocket.planet.util.exception.AlreadyExistsIdException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
 
 /*
@@ -35,7 +36,6 @@ import rocket.planet.util.exception.NoValidEmailTokenException;
  * 4. 인증번호가 일치하면 이메일 확인 객체를 저장한다
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailVerifyService {
 	private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -46,25 +46,38 @@ public class EmailVerifyService {
 	private static final String SEND_EMAIL_MESSAGE = "이메일 인증번호 전송을 완료했습니다";
 
 	private static final Long EXPIRE_TIME = 3L;
-	private final UserRepository userRepository;
-	private final JavaMailSender mailSender;
+	private UserRepository userRepository;
+	private JavaMailSender mailSender;
 
-	private final EmailJoinTokenRepository emailJoinTokenRepository;
+	private EmailJoinTokenRepository emailJoinTokenRepository;
 
-	private final EmailJoinConfirmRepository emailJoinConfirmRepository;
+	private EmailJoinConfirmRepository emailJoinConfirmRepository;
 
-	private final EmailFindTokenRepository emailFindTokenRepository;
+	private EmailFindTokenRepository emailFindTokenRepository;
 
-	private final EmailFindConfirmRepository emailFindConfirmRepository;
+	private EmailFindConfirmRepository emailFindConfirmRepository;
+
+	public EmailVerifyService(UserRepository userRepository, JavaMailSender mailSender,
+		EmailJoinTokenRepository emailJoinTokenRepository, EmailJoinConfirmRepository emailJoinConfirmRepository,
+		EmailFindTokenRepository emailFindTokenRepository, EmailFindConfirmRepository emailFindConfirmRepository) {
+		this.userRepository = userRepository;
+		this.mailSender = mailSender;
+		this.emailJoinTokenRepository = emailJoinTokenRepository;
+		this.emailJoinConfirmRepository = emailJoinConfirmRepository;
+		this.emailFindTokenRepository = emailFindTokenRepository;
+		this.emailFindConfirmRepository = emailFindConfirmRepository;
+	}
 
 	private EmailToken token;
 
 	@Async("customAsyncExecutor")
-	public CompletableFuture<String> saveLimitTimeAndSendEmail(String email, String type) {
+	public CompletableFuture<String> saveLimitTimeAndSendEmail(EmailDuplicateCheckAndSendEmailReqDto dto) {
+		String email = dto.getId();
+		String type = dto.getType();
 		boolean existUser = userRepository.findByUserId(email).isPresent();
 		if (existUser && StringUtils.pathEquals(type, "join")) {
 			CompletableFuture<String> future = new CompletableFuture<>();
-			future.completeExceptionally(new NoSuchEmailException());
+			future.completeExceptionally(new AlreadyExistsIdException());
 			return future;
 		}
 		String generateRandomString = makeRandomString(6);
@@ -75,7 +88,8 @@ public class EmailVerifyService {
 		return future;
 	}
 
-	public String saveRedisToken(String email, String generatedRandomString, String type) throws RedisException {
+	public EmailVerifyResDto saveRedisToken(String email, String generatedRandomString, String type) throws
+		RedisException {
 		if (StringUtils.pathEquals(type, "join")) {
 			token = EmailJoinToken.builder()
 				.email(email)
@@ -89,7 +103,7 @@ public class EmailVerifyService {
 				.build();
 			emailFindTokenRepository.save((EmailFindToken)token);
 		}
-		return SEND_EMAIL_MESSAGE;
+		return EmailVerifyResDto.builder().message(SEND_EMAIL_MESSAGE).build();
 	}
 
 	public void sendMail(String email, String sendEmailToken) throws MailSendException {
@@ -101,7 +115,8 @@ public class EmailVerifyService {
 	}
 
 	@Transactional
-	public String checkByRedisEmailTokenAndSaveToken(String email, String reqToken, String type) throws RedisException {
+	public EmailVerifyCheckResDto checkByRedisEmailTokenAndSaveToken(String email, String reqToken, String type) throws
+		RedisException {
 
 		if (StringUtils.pathEquals(type, "find")) {
 			EmailFindToken emailFindToken = emailFindTokenRepository.findById(email)
@@ -110,18 +125,21 @@ public class EmailVerifyService {
 				emailFindConfirmRepository.save(EmailFindConfirm.builder()
 					.email(email).build());
 				emailFindTokenRepository.delete(emailFindToken);
+			} else {
+				throw new NoValidEmailTokenException();
 			}
 		} else if (StringUtils.pathEquals(type, "join")) {
 			EmailJoinToken emailJoinToken = emailJoinTokenRepository.findById(email)
 				.orElseThrow(NoValidEmailTokenException::new);
-			if (StringUtils.pathEquals(token.getToken(), reqToken)) {
+			if (StringUtils.pathEquals(emailJoinToken.getToken(), reqToken)) {
 				emailJoinConfirmRepository.save(EmailJoinConfirm.builder()
 					.email(email).build());
 				emailJoinTokenRepository.delete(emailJoinToken);
-
+			} else {
+				throw new NoValidEmailTokenException();
 			}
 		}
-		return EMAIL_CONFIRM_TITLE;
+		return EmailVerifyCheckResDto.builder().message(EMAIL_CONFIRM_TITLE).build();
 	}
 
 	public String makeRandomString(int length) {

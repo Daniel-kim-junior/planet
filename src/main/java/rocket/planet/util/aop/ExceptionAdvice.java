@@ -96,13 +96,6 @@ public class ExceptionAdvice {
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
 	}
 
-	@ExceptionHandler(NoSuchEmailException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public CommonErrorDto handleNoSuchEmailException(NoSuchEmailException e) {
-		log.error("NoSuchEmailException", e.getClass().getSimpleName(), e.getMessage());
-		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_FOUND_EXCEPTION);
-	}
-
 	@ExceptionHandler(NoSuchEmailTokenException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleNoSuchEmailException(NoSuchEmailTokenException e) {
@@ -149,7 +142,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleAlreadyExistsIdException(AlreadyExistsIdException e) {
 		log.error("AlreadyExistsIdException", e.getClass().getSimpleName(), e.getMessage());
-		return getCommonErrorDto(ExceptionEnum.EMAIL_NOT_FOUND_EXCEPTION);
+		return getCommonErrorDto(ExceptionEnum.EMAIL_DUP_FOUND_EXCEPTION);
 	}
 
 	@ExceptionHandler({Exception.class, NullPointerException.class, IllegalArgumentException.class})
@@ -171,6 +164,13 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleUserTechException(UserTechException e) {
 		log.error("UserTechException", e.getClass().getSimpleName(), e.getMessage());
+		return CommonErrorDto.builder().message(e.getMessage()).build();
+	}
+
+	@ExceptionHandler(NoSuchEmailException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleUserIdNotFoundException(NoSuchEmailException e) {
+		log.error("NoSuchEmail", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 

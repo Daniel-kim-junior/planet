@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import rocket.planet.dto.auth.PasswordModifyReqDto;
+import rocket.planet.dto.auth.AuthDto.PasswordModifyReqDto;
+import rocket.planet.dto.auth.AuthDto.PasswordModifyResDto;
 import rocket.planet.service.auth.AuthFindPasswordService;
 
 @RestController
@@ -20,7 +21,8 @@ public class FindPasswordController {
 	private final AuthFindPasswordService authFindPasswordService;
 
 	@PatchMapping("/password/modify")
-	public ResponseEntity<String> passwordModify(@RequestBody @Valid PasswordModifyReqDto dto) throws Exception {
+	public ResponseEntity<PasswordModifyResDto> passwordModify(@RequestBody @Valid PasswordModifyReqDto dto) throws
+		Exception {
 		return ResponseEntity.ok().body(authFindPasswordService.modifyPassword(dto));
 	}
 
