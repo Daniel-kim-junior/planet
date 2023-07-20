@@ -36,7 +36,7 @@ public class PjtRecord {
 	@JoinColumn(name = "profile_uid", nullable = false)
 	private Profile profile;
 
-	@Column(name = "profile_pjt_name", nullable = false)
+	@Column(name = "profile_pjt_name", nullable = false, unique = true)
 	private String pjtName;
 
 	@Column(name = "profile_pjt_desc", nullable = false)
