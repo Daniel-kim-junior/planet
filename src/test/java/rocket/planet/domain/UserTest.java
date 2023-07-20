@@ -43,6 +43,7 @@ public class UserTest {
 			.userNickName(Profile.idToUserNickName(adminUser.getUserId()))
 			.profileDisplay(true)
 			.profileCareer(1)
+			.profileStatus(true)
 			.profileAnnualStatus(true)
 			.build();
 		profileRepository.save(adminProfile);
@@ -59,6 +60,7 @@ public class UserTest {
 			.profileBirthDt(LocalDate.of(1994, 1, 17))
 			.role(Role.CREW)
 			.userId(crewUser.getUserId())
+			.profileStatus(true)
 			.userName("김크루")
 			.userNickName(Profile.idToUserNickName(crewUser.getUserId()))
 			.profileStartDate(LocalDate.of(2021, 8, 22))
@@ -81,6 +83,7 @@ public class UserTest {
 			.role(Role.PILOT)
 			.userId(pilotUser.getUserId())
 			.userName("파일럿")
+			.profileStatus(true)
 			.profileStartDate(LocalDate.of(2021, 8, 22))
 			.userNickName(Profile.idToUserNickName(pilotUser.getUserId()))
 			.profileDisplay(true)
@@ -100,6 +103,7 @@ public class UserTest {
 		Profile captainProfile = Profile.builder()
 			.profileBirthDt(LocalDate.of(1999, 8, 23))
 			.role(Role.CAPTAIN)
+			.profileStatus(true)
 			.userId(captainUser.getUserId())
 			.profileStartDate(LocalDate.of(2021, 8, 22))
 			.userName("강캡틴")
@@ -124,6 +128,7 @@ public class UserTest {
 			.profileStartDate(LocalDate.of(2021, 8, 22))
 			.userId(radarUser.getUserId())
 			.userName("레이더")
+			.profileStatus(true)
 			.userNickName(Profile.idToUserNickName(radarUser.getUserId()))
 			.profileDisplay(true)
 			.profileCareer(7)
@@ -143,6 +148,7 @@ public class UserTest {
 			.profileBirthDt(LocalDate.of(1994, 7, 30))
 			.role(Role.CREW)
 			.userId(plUser.getUserId())
+			.profileStatus(true)
 			.profileStartDate(LocalDate.of(2021, 8, 22))
 			.userNickName(Profile.idToUserNickName(plUser.getUserId()))
 			.userName("홍피엘")
@@ -154,23 +160,24 @@ public class UserTest {
 		savePl.updateProfile(plProfile);
 
 		User starUser = User.builder()
-				.userPwd(passwordEncoder.encode("star111!"))
-				.userLock(false)
-				.lastPwdModifiedDt(LocalDate.now())
-				.userId("star@gmail.com")
-				.build();
+			.userPwd(passwordEncoder.encode("star111!"))
+			.userLock(false)
+			.lastPwdModifiedDt(LocalDate.now())
+			.userId("star@gmail.com")
+			.build();
 		User saveStar = userRepository.save(starUser);
 		Profile starProfile = Profile.builder()
-				.profileBirthDt(LocalDate.of(1997, 11, 07))
-				.role(Role.CREW)
-				.userId(starUser.getUserId())
-				.profileStartDate(LocalDate.of(2021, 8, 22))
-				.userNickName(Profile.idToUserNickName(starUser.getUserId()))
-				.userName("이별별")
-				.profileDisplay(true)
-				.profileCareer(2)
-				.profileAnnualStatus(false)
-				.build();
+			.profileBirthDt(LocalDate.of(1997, 11, 07))
+			.role(Role.CREW)
+			.userId(starUser.getUserId())
+			.profileStartDate(LocalDate.of(2021, 8, 22))
+			.userNickName(Profile.idToUserNickName(starUser.getUserId()))
+			.userName("이별별")
+			.profileStatus(true)
+			.profileDisplay(true)
+			.profileCareer(2)
+			.profileAnnualStatus(false)
+			.build();
 		profileRepository.save(starProfile);
 		savePl.updateProfile(starProfile);
 

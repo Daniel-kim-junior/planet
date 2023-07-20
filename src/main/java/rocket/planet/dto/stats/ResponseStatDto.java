@@ -10,12 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class ResponseStatDto {
 
+	private String type;
+
 	private String name;
 
 	private LabelAndStatDto labelAndStats;
 
 	@Builder
-	public ResponseStatDto(String name, LabelAndStatDto labelAndStats) {
+	public ResponseStatDto(String type, String name, LabelAndStatDto labelAndStats) {
+		this.type = type;
 		this.name = name;
 		this.labelAndStats = labelAndStats;
 	}

@@ -1,8 +1,8 @@
 package rocket.planet.controller.admin;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@WebMvcTest(AdminDeptController.class)
+@SpringBootTest
 class AdminDeptControllerTest {
 
 }

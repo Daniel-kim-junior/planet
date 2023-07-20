@@ -60,39 +60,39 @@ public class StatsService {
 			// 개발 부문인 경우
 			LabelAndStatDto statList = getDetailStats(department, pfTechRepository,
 				TechStats.builder().name("기술별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, profileRepository,
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, orgRepository,
 				TeamStats.builder().name("팀별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("팀별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("팀별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, userPjtRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 				.build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("circle").name("프로젝트 참여도").labelAndStats(statList).build());
 		} else {
 			LabelAndStatDto statList = getDetailStats(department, profileRepository,
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, orgRepository,
 				TeamStats.builder().name("팀별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("팀별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("팀별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, userPjtRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
 			statList = getDetailStats(department, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 				.build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("circle").name("프로젝트 참여도").labelAndStats(statList).build());
 		}
 
 		return res;
@@ -112,31 +112,31 @@ public class StatsService {
 			// 개발 부문인 경우
 			LabelAndStatDto statList = getDetailStats(team, pfTechRepository,
 				TechStats.builder().name("기술별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());
 
 			statList = getDetailStats(team, profileRepository,
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
 			statList = getDetailStats(team, userPjtRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
 			statList = getDetailStats(team, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 				.build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("circle").name("프로젝트 참여도").labelAndStats(statList).build());
 		} else {
 			LabelAndStatDto statList = getDetailStats(team, profileRepository,
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
 			statList = getDetailStats(team, userPjtRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트별").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
 			statList = getDetailStats(team, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 				.build(), dto.getUnit());
-			res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
+			res.add(ResponseStatDto.builder().type("circle").name("프로젝트 참여도").labelAndStats(statList).build());
 		}
 
 		return res;
@@ -149,28 +149,28 @@ public class StatsService {
 
 		LabelAndStatDto statList = getDetailStats(entireStats, orgRepository,
 			DeptStats.builder().name("부문별").build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("부문별").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("bar").name("부문별").labelAndStats(statList).build());
 
 		// 개발 부문인 경우
 		statList = getDetailStats(entireStats, pfTechRepository,
 			TechStats.builder().name("기술별").build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("기술별").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());
 
 		statList = getDetailStats(entireStats, profileRepository,
 			CareerStats.builder().name("경력별").build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("경력별").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
 		statList = getDetailStats(entireStats, orgRepository,
 			TeamStats.builder().name("팀별").build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("팀별").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("bar").name("팀별").labelAndStats(statList).build());
 
 		statList = getDetailStats(entireStats, userPjtRepository,
 			ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("프로젝트별").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
 		statList = getDetailStats(entireStats, userPjtRepository, PjtPartRateStats.builder().name("프로젝트 참여도")
 			.build(), dto.getUnit());
-		res.add(ResponseStatDto.builder().name("프로젝트 참여도").labelAndStats(statList).build());
+		res.add(ResponseStatDto.builder().type("circle").name("프로젝트 참여도").labelAndStats(statList).build());
 
 		return res;
 	}

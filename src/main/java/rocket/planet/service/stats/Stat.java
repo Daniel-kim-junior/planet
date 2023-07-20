@@ -207,7 +207,6 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
 					team.getTeamName());
 
-				double size = onWorkingProfiles.size() + noWorkingProfiles.size();
 				map.put("참여 중", onWorkingProfiles.size());
 				map.put("미 참여", noWorkingProfiles.size());
 				dto = LabelAndStatDto.builder().data(map).build();
