@@ -24,7 +24,7 @@ public class AdminDeptController {
 	private final AdminDeptService adminDeptService;
 
 	@PostMapping
-	public ResponseEntity<AdminResDto> deptAdd(@RequestBody @Valid AdminDeptAddReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> deptAdd(@Valid @RequestBody AdminDeptAddReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.addDept(dto));
 	}
 

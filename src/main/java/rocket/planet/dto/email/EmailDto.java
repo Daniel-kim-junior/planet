@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import rocket.planet.util.annotation.ValidEmailType;
 
 public class EmailDto {
 	@Getter
@@ -36,6 +37,7 @@ public class EmailDto {
 
 		@NotBlank
 		@NotEmpty
+		@ValidEmailType
 		private String type;
 
 		@Builder
@@ -59,6 +61,7 @@ public class EmailDto {
 
 		@NotBlank
 		@NotEmpty
+		@ValidEmailType
 		private String type;
 
 		@Builder

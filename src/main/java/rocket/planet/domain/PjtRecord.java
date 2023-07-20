@@ -36,7 +36,7 @@ public class PjtRecord {
 	@JoinColumn(name = "profile_uid", nullable = false)
 	private Profile profile;
 
-	@Column(name = "profile_pjt_name", nullable = false, unique = true)
+	@Column(name = "profile_pjt_name", nullable = false)
 	private String pjtName;
 
 	@Column(name = "profile_pjt_desc", nullable = false)
@@ -56,7 +56,7 @@ public class PjtRecord {
 
 	@Builder
 	public PjtRecord(Profile profile, String pjtName, String pjtDesc, LocalDate pjtStartDt, LocalDate pjtEndDt,
-					 String pjtTech, String pjtUserTech) {
+		String pjtTech, String pjtUserTech) {
 		this.profile = profile;
 		this.pjtName = pjtName;
 		this.pjtDesc = pjtDesc;
@@ -69,14 +69,14 @@ public class PjtRecord {
 	@Override
 	public String toString() {
 		return "프로젝트 사외 이력{" +
-				"프로필 uuid=" + id +
-				", 프로젝트 이름='" + pjtName + '\'' +
-				", 프로젝트 설명='" + pjtDesc + '\'' +
-				", 프로젝트 시작일=" + pjtStartDt +
-				", 프로젝트 종료일=" + pjtEndDt +
-				", 프로젝트 사용 기술='" + pjtTech + '\'' +
-				", 프로젝트에서 쓴 나의 기술='" + pjtUserTech + '\'' +
-				'}';
+			"프로필 uuid=" + id +
+			", 프로젝트 이름='" + pjtName + '\'' +
+			", 프로젝트 설명='" + pjtDesc + '\'' +
+			", 프로젝트 시작일=" + pjtStartDt +
+			", 프로젝트 종료일=" + pjtEndDt +
+			", 프로젝트 사용 기술='" + pjtTech + '\'' +
+			", 프로젝트에서 쓴 나의 기술='" + pjtUserTech + '\'' +
+			'}';
 	}
 
 	public void updatePjtRecord(ProfileDto.OutsideProjectUpdateReqDto outsideProject) {
@@ -86,6 +86,5 @@ public class PjtRecord {
 		this.pjtStartDt = outsideProject.getPjtStartDt();
 		this.pjtEndDt = outsideProject.getPjtEndDt();
 	}
-
 
 }

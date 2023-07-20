@@ -75,12 +75,12 @@ public class Project {
 
 	@Column(nullable = false)
 	@LastModifiedDate
-	private LocalDate lastModifiedDate;
+	private LocalDate lastModifiedDt;
 
 	@Builder
 	public Project(Team team, String projectName, String projectDesc, LocalDate projectStartDt,
 		LocalDate projectEndDt, String projectTech, ProjectStatus projectStatus, String projectLastModifiedBy,
-		OrgType projectType, LocalDate lastModifiedDate) {
+		OrgType projectType, LocalDate lastModifiedDt) {
 		this.team = team;
 		this.projectName = projectName;
 		this.projectDesc = projectDesc;
@@ -90,7 +90,7 @@ public class Project {
 		this.projectStatus = projectStatus;
 		this.projectLastModifiedBy = projectLastModifiedBy;
 		this.projectType = projectType;
-		this.lastModifiedDate = lastModifiedDate;
+		this.lastModifiedDt = lastModifiedDt;
 	}
 
 	@Override
@@ -105,7 +105,6 @@ public class Project {
 			", 프로젝트 상태=" + projectStatus +
 			", 프로젝트 마지막 수정자='" + projectLastModifiedBy + '\'' +
 			", 프로젝트 타입(개발/비개발)='" + projectType + '\'' +
-			", 마지막 수정일자=" + lastModifiedDate +
 			"}";
 	}
 

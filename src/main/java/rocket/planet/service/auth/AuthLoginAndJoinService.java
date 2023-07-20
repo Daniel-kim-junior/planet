@@ -44,7 +44,7 @@ import rocket.planet.repository.redis.LastLoginRepository;
 import rocket.planet.repository.redis.LimitLoginRepository;
 import rocket.planet.repository.redis.RefreshTokenRedisRepository;
 import rocket.planet.util.exception.AlreadyExistsIdException;
-import rocket.planet.util.exception.IdVerifiedException;
+import rocket.planet.util.exception.IdMismatchException;
 import rocket.planet.util.exception.JwtInvalidException;
 import rocket.planet.util.exception.NoSuchEmailException;
 import rocket.planet.util.exception.NoValidEmailTokenException;
@@ -118,7 +118,7 @@ public class AuthLoginAndJoinService {
 	public LoginResDto checkLogin(LoginReqDto dto) throws Exception {
 
 		User user = userRepository.findByUserId(dto.getId())
-			.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다"));
+			.orElseThrow(() -> new IdMismatchException("존재하지 않는 id 입니다"));
 
 		checkPasswordTryFiveValidation(dto, user);
 
@@ -326,7 +326,7 @@ public class AuthLoginAndJoinService {
 		}
 
 		User findUserByJwtSubject = userRepository.findByUserId(claims.getSubject())
-			.orElseThrow(() -> new IdVerifiedException());
+			.orElseThrow(() -> new IdMismatchException("존재 하지 않는 id 입니다"));
 
 		return completeLogin(findUserByJwtSubject);
 	}
