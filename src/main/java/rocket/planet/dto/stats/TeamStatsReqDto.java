@@ -2,6 +2,8 @@ package rocket.planet.dto.stats;
 
 import static lombok.AccessLevel.*;
 
+import javax.validation.constraints.Min;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ public class TeamStatsReqDto {
 
 	private String teamName;
 
+	@Min(1)
 	private int unit;
 
 	@Builder

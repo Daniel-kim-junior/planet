@@ -7,9 +7,11 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@ToString
 public class LabelAndStatDto {
 
 	private Map<String, Integer> data;

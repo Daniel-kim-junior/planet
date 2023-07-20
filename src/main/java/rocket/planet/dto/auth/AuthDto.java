@@ -5,6 +5,7 @@ import static lombok.AccessLevel.*;
 import java.time.LocalDate;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
@@ -53,6 +54,7 @@ public class AuthDto {
 		@NotBlank
 		private String teamName;
 
+		@Min(0)
 		private int career;
 
 		private LocalDate companyJoinDate;

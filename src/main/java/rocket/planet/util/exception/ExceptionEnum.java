@@ -54,7 +54,10 @@ public enum ExceptionEnum {
 	// Admin
 	NO_ACCESS_AUTHORITY_EXCEPTION("AD001", "접근 권한이 없는 사용자입니다."),
 	NO_USERNICKNAME_EXCEPTION("AD002", "해당하는 사용자는 존재하지 않습니다."),
-	NO_AUTHORITY_EXCEPTION("AD003", "해당하는 권한이 없는 사용자입니다.");
+	NO_AUTHORITY_EXCEPTION("AD003", "해당하는 권한이 없는 사용자입니다."),
+	INVALID_EMAIL_REQ_TYPE_EXCEPTION("UE016", "find, join 중 하나를 입력해주세요"),
+
+	MIN_NOT_UNIT_VALID_EXCEPTION("UE017", "유효하지 않은 숫자 단위 입니다");
 
 	private HttpStatus httpStatus;
 	private final String code;

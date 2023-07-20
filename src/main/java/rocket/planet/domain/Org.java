@@ -3,7 +3,6 @@ package rocket.planet.domain;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -46,27 +45,17 @@ public class Org extends BaseTime {
 	@JoinColumn(name = "team_uid")
 	private Team team;
 
-	@Column(name = "org_start_date")
-	private LocalDate orgStartDate;
-
-	@Column(name = "org_end_date")
-	private LocalDate orgEndDate;
-
-	@Column(name = "org_inviter")
-	private String orgInviter;
-
-	@Column(name = "org_status")
 	private boolean orgStatus;
 
+	private String orgInviter;
+
 	@Builder
-	public Org(Company company, Profile profile, Department department, Team team, LocalDate orgStartDate,
-		LocalDate orgEndDate, String orgInviter, boolean orgStatus) {
+	public Org(Company company, Profile profile, Department department, Team team, String orgInviter,
+		boolean orgStatus) {
 		this.company = company;
 		this.department = department;
 		this.team = team;
 		this.profile = profile;
-		this.orgStartDate = orgStartDate;
-		this.orgEndDate = orgEndDate;
 		this.orgInviter = orgInviter;
 		this.orgStatus = orgStatus;
 	}
@@ -98,8 +87,6 @@ public class Org extends BaseTime {
 			", company=" + company +
 			", department=" + department +
 			", team=" + team +
-			", orgStartDate=" + orgStartDate +
-			", orgEndDate=" + orgEndDate +
 			", orgInviter='" + orgInviter + '\'' +
 			", orgStatus=" + orgStatus +
 			'}';

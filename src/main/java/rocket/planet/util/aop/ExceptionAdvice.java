@@ -3,6 +3,7 @@ package rocket.planet.util.aop;
 import java.lang.reflect.Field;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSendException;
@@ -19,6 +20,7 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidDept;
+import rocket.planet.util.annotation.ValidEmailType;
 import rocket.planet.util.annotation.ValidPassword;
 import rocket.planet.util.exception.AlreadyExistsDeptException;
 import rocket.planet.util.exception.AlreadyExistsIdException;
@@ -98,6 +100,12 @@ public class ExceptionAdvice {
 			} else if (field != null && field.isAnnotationPresent(ValidDept.class)) {
 				log.error("OrgTypeValidException", e.getClass().getSimpleName(), e.getMessage());
 				return getCommonErrorDto(ExceptionEnum.INVALID_ORG_TYPE_EXCEPTION);
+			} else if (field != null && field.isAnnotationPresent(ValidEmailType.class)) {
+				log.error("InvalidEmailRequestType", e.getClass().getSimpleName(), e.getMessage());
+				return getCommonErrorDto(ExceptionEnum.INVALID_EMAIL_REQ_TYPE_EXCEPTION);
+			} else if (field != null && field.isAnnotationPresent(Min.class)) {
+				log.error("MinValidException", e.getClass().getSimpleName(), e.getMessage());
+				return getCommonErrorDto(ExceptionEnum.MIN_NOT_UNIT_VALID_EXCEPTION);
 			}
 		}
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);

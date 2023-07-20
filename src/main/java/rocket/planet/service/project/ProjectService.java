@@ -73,7 +73,7 @@ public class ProjectService {
 			.projectTech(project.get().getProjectTech())
 			.projectDesc(project.get().getProjectDesc())
 			.projectLastModifiedBy(project.get().getProjectLastModifiedBy())
-			.lastModifiedDate(project.get().getLastModifiedDate())
+			.lastModifiedDate(project.get().getLastModifiedDt())
 			.build();
 
 	}

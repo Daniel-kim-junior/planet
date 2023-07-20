@@ -21,7 +21,7 @@ public class FindPasswordController {
 	private final AuthFindPasswordService authFindPasswordService;
 
 	@PatchMapping("/password/modify")
-	public ResponseEntity<PasswordModifyResDto> passwordModify(@RequestBody @Valid PasswordModifyReqDto dto) throws
+	public ResponseEntity<PasswordModifyResDto> passwordModify(@Valid @RequestBody PasswordModifyReqDto dto) throws
 		Exception {
 		return ResponseEntity.ok().body(authFindPasswordService.modifyPassword(dto));
 	}

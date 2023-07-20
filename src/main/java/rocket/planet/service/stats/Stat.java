@@ -113,7 +113,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
 					department.getDeptName());
-				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
+				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartmentClosed(
 					department.getDeptName());
 
 				map.put("참여 중", onWorkingProfiles.size());
@@ -204,7 +204,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
 					team.getTeamName());
-				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeamClosed(
 					team.getTeamName());
 
 				map.put("참여 중", onWorkingProfiles.size());
@@ -337,7 +337,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 		return map;
 	}
 
-	private int getHigherBound(List<String> list, int c) {
+	public static int getHigherBound(List<String> list, int c) {
 		int lo = 1;
 		int hi = list.size() - 1;
 		while (lo <= hi) {

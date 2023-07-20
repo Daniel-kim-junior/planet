@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import rocket.planet.domain.Department;
+import rocket.planet.domain.OrgType;
 import rocket.planet.domain.Team;
 import rocket.planet.dto.stats.DeptStatsReqDto;
 import rocket.planet.dto.stats.EntireStatsReqDto;
@@ -102,7 +103,7 @@ public class StatsService {
 		Department department = Optional.ofNullable(deptRepository.findByDeptName(dto.getDeptName()))
 			.orElseThrow(NoSuchDeptException::new);
 
-		Team team = Optional.ofNullable(teamRepository.findByTeamName(dto.getTeamName()))
+		Team team = teamRepository.findTeamByDeptName(dto.getDeptName(), dto.getTeamName())
 			.orElseThrow(NoSuchTeamException::new);
 
 		List<ResponseStatDto> res = new ArrayList<>();
@@ -175,7 +176,7 @@ public class StatsService {
 		return res;
 	}
 
-	private <T extends JpaRepository, E> LabelAndStatDto getDetailStats(E entity, T repository,
+	public <T extends JpaRepository, E> LabelAndStatDto getDetailStats(E entity, T repository,
 		StatCategory category,
 		int unit) {
 		return Stat.builder()
@@ -187,8 +188,8 @@ public class StatsService {
 			.getStats();
 	}
 
-	private boolean isDevelop(Department department) {
-		return department.getDeptType().name().equals("DEVELOPMENT");
+	public boolean isDevelop(Department department) {
+		return department.getDeptType().equals(OrgType.DEVELOPMENT);
 	}
 
 }
