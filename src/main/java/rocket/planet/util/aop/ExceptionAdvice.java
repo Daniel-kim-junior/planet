@@ -170,10 +170,10 @@ public class ExceptionAdvice {
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 
-	@ExceptionHandler(UserNotFoundException.class)
+	@ExceptionHandler(ReqNotFoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public CommonErrorDto handleUserNotFoundException(UserNotFoundException e) {
-		log.error("handleUserNotFoundException", e.getClass().getSimpleName(), e.getMessage());
+	public CommonErrorDto handleReqNotFoundException(ReqNotFoundException e) {
+		log.error("handleReqNotFoundException", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
