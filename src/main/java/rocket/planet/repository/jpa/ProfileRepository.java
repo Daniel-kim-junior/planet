@@ -44,4 +44,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 	@Query("select p.profileCareer from Profile p where p.profileStatus = true")
 	List<Integer> findCareerStatsByEntire();
 
+	List<Profile> findAllByOrg(Object o);
 }

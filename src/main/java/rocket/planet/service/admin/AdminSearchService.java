@@ -48,14 +48,25 @@ public class AdminSearchService {
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
 			// 사용자 build
-			teamMemberList.add(AdminMemberOrgDto.builder()
-				.userNickName(user.getUserNickName())
-				.profileEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
-				.profileStart(user.getProfileStartDate())
-				.userCareer(user.getProfileCareer())
-				.isActive(hasProject)
-				.deptName(user.getOrg().get(0).getDepartment().getDeptName())
-				.teamName(user.getOrg().get(0).getTeam().getTeamName()).build());
+			if (user.getOrg() == null) {
+				teamMemberList.add(AdminMemberOrgDto.builder()
+					.userNickName(user.getUserNickName())
+					.profileEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
+					.profileStart(user.getProfileStartDate())
+					.userCareer(user.getProfileCareer())
+					.isActive(hasProject)
+					.deptName("무소속")
+					.teamName("무소속").build());
+			} else {
+				teamMemberList.add(AdminMemberOrgDto.builder()
+					.userNickName(user.getUserNickName())
+					.profileEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
+					.profileStart(user.getProfileStartDate())
+					.userCareer(user.getProfileCareer())
+					.isActive(hasProject)
+					.deptName(user.getOrg().get(0).getDepartment().getDeptName())
+					.teamName(user.getOrg().get(0).getTeam().getTeamName()).build());
+			}
 
 		}
 

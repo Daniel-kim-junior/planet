@@ -165,4 +165,8 @@ public class Profile extends BaseTime {
 
 	}
 
+	public void updateOrg(List<Org> org) {
+		this.org = org;
+	}
+
 }
