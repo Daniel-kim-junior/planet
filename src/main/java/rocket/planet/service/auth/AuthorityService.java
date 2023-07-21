@@ -138,7 +138,8 @@ public class AuthorityService {
 
 		for (Org org : organization) {
 			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
-			if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
+			if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR) || profile.getRole()
+				.equals(Role.GUEST)
 				|| !profile.isProfileStatus())
 				continue;
 

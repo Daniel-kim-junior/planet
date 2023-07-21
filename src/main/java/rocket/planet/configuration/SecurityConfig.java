@@ -64,9 +64,9 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/**").permitAll()
 			.antMatchers("/api/auth/**").permitAll()
-			// .antMatchers("/api/admin/**").hasRole("ADMIN")
+			.antMatchers("/api/admin/**").hasRole("ADMIN")
+			.antMatchers("/api/management/**").access("hasRole('CAPTAIN') or hasRole('PILOT') or hasRole('RADAR')")
 			.anyRequest().authenticated()
 			.and()
 			.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
