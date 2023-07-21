@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import rocket.planet.dto.auth.AuthDto.LoginResDto.AuthOrg;
-import rocket.planet.util.annotation.ValidPassword;
 
 public class AuthDto {
 
@@ -28,7 +27,6 @@ public class AuthDto {
 
 		@NotEmpty
 		@NotBlank
-		@ValidPassword
 		private String password;
 
 		@Builder
@@ -138,6 +136,7 @@ public class AuthDto {
 	}
 
 	@NoArgsConstructor(access = PROTECTED)
+	@Getter
 	public static class LogOutResDto {
 
 		private String message;
@@ -149,6 +148,7 @@ public class AuthDto {
 	}
 
 	@NoArgsConstructor(access = PROTECTED)
+	@Getter
 	public static class PasswordModifyResDto {
 
 		private String message;
@@ -172,7 +172,6 @@ public class AuthDto {
 
 		@NotBlank
 		@NotEmpty
-		@ValidPassword
 		String password;
 
 		@Builder
