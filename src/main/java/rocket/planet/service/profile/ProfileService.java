@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocket.planet.dto.common.CommonResDto;
+import rocket.planet.dto.search.SearchDto;
 import rocket.planet.util.exception.DuplicateException;
 import rocket.planet.util.exception.ReqNotFoundException;
 import rocket.planet.util.exception.UserPwdCheckException;
@@ -73,14 +74,15 @@ public class ProfileService {
             ProfileDto.OrgResDto orgDto = orgList.stream()
                     .findFirst()
                     .map(org -> {
-                        String deptName = (org.getDepartment() != null) ? org.getDepartment().getDeptName() : "무소속";
-                        String teamName = (org.getTeam() != null) ? org.getTeam().getTeamName() : "무소속";
                         return ProfileDto.OrgResDto.builder()
-                                .deptName(deptName)
-                                .teamName(teamName)
+                                .deptName(org.getDepartment().getDeptName())
+                                .teamName(org.getTeam().getTeamName())
                                 .build();
                     })
-                    .orElse(null);
+                    .orElseGet(() -> ProfileDto.OrgResDto.builder()
+                            .deptName("무소속")
+                            .teamName("무소속")
+                            .build());
 
             List<ProfileDto.UserInProgressProjectResDto> inProgressProjectList = projectList.stream()
                     .filter(project -> project.getUserPjtCloseDt().equals(LocalDate.of(2999, 12, 31)))
@@ -357,17 +359,14 @@ public class ProfileService {
 
     }
 
-
     @Transactional
     public CommonResDto addProfileVisitor(ProfileDto.VisitorReqDto visitorReqDto) {
-        Profile pOwner = profileRepository.findByUserNickName(visitorReqDto.getOwnerNickName()).orElseThrow(() -> new UserPwdCheckException("로그인 후 방문해주세요."));
+        Profile pOwner = profileRepository.findByUserNickName(visitorReqDto.getOwnerNickName()).orElseThrow(() -> new ReqNotFoundException("로그인 후 방문해주세요."));
 
-        Profile pVisitor = profileRepository.findByUserNickName(visitorReqDto.getVisitorNickName()).orElseThrow(() -> new UserPwdCheckException("해당 프로필은 존재하지 않습니다."));
-        ProfileVisitor duplicateV = pvisitorRepository.findByVisitor_UserNickNameAndOwner_UserNickName(
-                visitorReqDto.getVisitorNickName(), visitorReqDto.getOwnerNickName()).orElseThrow(() -> new UserPwdCheckException("유저를 찾을 수 없습니다."));
-
-        if (duplicateV != null) {
-            duplicateV.updateVisitTime();
+        Profile pVisitor = profileRepository.findByUserNickName(visitorReqDto.getVisitorNickName()).orElseThrow(() -> new ReqNotFoundException("해당 프로필은 존재하지 않습니다."));
+        Optional<ProfileVisitor> duplicateV = pvisitorRepository.findByVisitor_UserNickNameAndOwner_UserNickName(visitorReqDto.getVisitorNickName(), visitorReqDto.getOwnerNickName());
+        if (duplicateV.isPresent()) {
+            duplicateV.get().updateVisitTime();
         } else {
             if (!visitorReqDto.getVisitorNickName().equals(visitorReqDto.getOwnerNickName())) {
                 ProfileVisitor profileVisitor = ProfileVisitor.builder()
@@ -376,10 +375,8 @@ public class ProfileService {
                         .build();
                 pvisitorRepository.save(profileVisitor);
             }
-
         }
         return CommonResDto.builder().message(visitorReqDto.getVisitorNickName() + "님이 " + visitorReqDto.getOwnerNickName() + "님의 프로필을 방문하였습니다.").build();
-
     }
 }
 

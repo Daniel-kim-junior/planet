@@ -37,27 +37,17 @@ public class SearchService {
             SearchDto.SearchOrgResDto teams = org.stream()
                     .findFirst()
                     .map(team -> {
-                        Department department = team.getDepartment();
-                        String deptName = (department != null && department.getDeptName() != null)
-                                ? department.getDeptName()
-                                : "무소속";
-
-                        Team orgTeam = team.getTeam();
-                        String teamName = (orgTeam != null && orgTeam.getTeamName() != null)
-                                ? orgTeam.getTeamName()
-                                : "무소속";
-
-                        String userTeamType = (orgTeam != null && orgTeam.getTeamType() != null)
-                                ? orgTeam.getTeamType().toString()
-                                : "무소속";
-
                         return SearchDto.SearchOrgResDto.builder()
-                                .deptName(deptName)
-                                .teamName(teamName)
-                                .userTeamType(userTeamType)
+                                .deptName(team.getDepartment().getDeptName())
+                                .teamName(team.getTeam().getTeamName())
+                                .userTeamType(String.valueOf(team.getTeam().getTeamType()))
                                 .build();
                     })
-                    .orElse(null);
+                    .orElseGet(() -> SearchDto.SearchOrgResDto.builder()
+                            .deptName("무소속")
+                            .teamName("무소속")
+                            .userTeamType("무소속")
+                            .build());
 
             List<SearchDto.SearchUserPjtStatusResDto> userPjts = pjt.stream()
                     .filter(project -> project.getUserPjtCloseDt().equals(LocalDate.of(2999, 12, 31)))

@@ -50,68 +50,68 @@ public class OrgTest {
 		Profile pl = profileRepository.findByUserNickName("plpl").get();
 		Profile star = profileRepository.findByUserNickName("star").get();
 
-		Org adminOrg = Org.builder()
-			.profile(admin)
-			.company(company)
-			.department(hrDept)
-			.team(hrTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(adminOrg);
-		Org crewOrg = Org.builder()
-			.profile(crew)
-			.company(company)
-			.department(smartDept)
-			.team(smartCityTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(crewOrg);
-		Org pilotOrg = Org.builder()
-			.profile(pilot)
-			.company(company)
-			.department(aiChatbotDept)
-			.team(aiChatbotTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(pilotOrg);
-		Org captainOrg = Org.builder()
-			.profile(captain)
-			.company(company)
-			.department(smartDept)
-			.team(smartFactoryTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(captainOrg);
-		Org radarOrg = Org.builder()
-			.profile(radar)
-			.company(company)
-			.department(internalSysDept)
-			.team(internalSysTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(radarOrg);
-		Org plOrg = Org.builder()
-			.profile(pl)
-			.company(company)
-			.department(itConsultingDept)
-			.team(itConsultingTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
-		orgRepository.save(plOrg);
+        Org adminOrg = Org.builder()
+                .profile(admin)
+                .company(company)
+                .department(hrDept)
+                .team(hrTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(adminOrg);
+        Org crewOrg = Org.builder()
+                .profile(crew)
+                .company(company)
+                .department(smartDept)
+                .team(smartCityTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(crewOrg);
+        Org pilotOrg = Org.builder()
+                .profile(pilot)
+                .company(company)
+                .department(aiChatbotDept)
+                .team(aiChatbotTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(pilotOrg);
+        Org captainOrg = Org.builder()
+                .profile(captain)
+                .company(company)
+                .department(smartDept)
+                .team(smartFactoryTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(captainOrg);
+        Org radarOrg = Org.builder()
+                .profile(radar)
+                .company(company)
+                .department(internalSysDept)
+                .team(internalSysTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(radarOrg);
+        Org plOrg = Org.builder()
+                .profile(pl)
+                .company(company)
+                .department(itConsultingDept)
+                .team(itConsultingTeam)
+                .orgInviter(admin.getUserName())
+                .orgStatus(true)
+                .build();
+        orgRepository.save(plOrg);
 		Org starOrg = Org.builder()
-			.profile(star)
-			.company(company)
-			.department(hrDept)
-			.team(hrTeam)
-			.orgInviter(admin.getUserName())
-			.orgStatus(true)
-			.build();
+				.profile(star)
+				.company(company)
+				.department(hrDept)
+				.team(hrTeam)
+				.orgInviter(admin.getUserName())
+				.orgStatus(true)
+				.build();
 		orgRepository.save(starOrg);
 
 	}

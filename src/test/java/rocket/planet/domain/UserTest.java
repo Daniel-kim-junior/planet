@@ -80,7 +80,7 @@ public class UserTest {
 		User savePilot = userRepository.save(pilotUser);
 		Profile pilotProfile = Profile.builder()
 			.profileBirthDt(LocalDate.of(1994, 1, 17))
-			.role(Role.PILOT)
+			.role(Role.CREW)
 			.userId(pilotUser.getUserId())
 			.userName("파일럿")
 			.profileStatus(true)
@@ -99,10 +99,10 @@ public class UserTest {
 			.lastPwdModifiedDt(LocalDate.now())
 			.userId("captain@gmail.com")
 			.build();
-		User saveCaptain = userRepository.saveAndFlush(captainUser);
+		User saveCaptain = userRepository.save(captainUser);
 		Profile captainProfile = Profile.builder()
 			.profileBirthDt(LocalDate.of(1999, 8, 23))
-			.role(Role.CAPTAIN)
+			.role(Role.CREW)
 			.profileStatus(true)
 			.userId(captainUser.getUserId())
 			.profileStartDate(LocalDate.of(2021, 8, 22))
@@ -112,7 +112,7 @@ public class UserTest {
 			.profileCareer(15)
 			.profileAnnualStatus(false)
 			.build();
-		profileRepository.saveAndFlush(captainProfile);
+		profileRepository.save(captainProfile);
 		saveCaptain.updateProfile(captainProfile);
 
 		User radarUser = User.builder()
@@ -124,7 +124,7 @@ public class UserTest {
 		User saveRadar = userRepository.save(radarUser);
 		Profile radarProfile = Profile.builder()
 			.profileBirthDt(LocalDate.of(1997, 12, 20))
-			.role(Role.RADAR)
+			.role(Role.CREW)
 			.profileStartDate(LocalDate.of(2021, 8, 22))
 			.userId(radarUser.getUserId())
 			.userName("레이더")

@@ -72,7 +72,7 @@ public class AdminTeamService {
 		team.updateTeamInactive();
 		List<Org> inactiveOrgs = orgRepository.findByTeam_TeamInactive(true).orElse(Collections.emptyList());
 		for (Org org : inactiveOrgs) {
-			org.hasNoTeam();
+			orgRepository.delete(org);
 		}
 		return AdminResDto.builder()
 				.message(activeReqDtoTeam.getTeamName() + " 팀은 비활성화되었으며 [ " + activeReqDtoTeam.getTeamName() + " ] 팀에 속한 사원들은 현재 소속된 팀이 없습니다.")

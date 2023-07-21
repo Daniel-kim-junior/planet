@@ -23,29 +23,34 @@ class UserTechControllerTest {
 	@Autowired
 	private TechRepository techRepository;
 
-	@DisplayName("기술 테스트")
-	@Test
-	void 기술_등록_테스트() {
-		Profile crew = profileRepository.findByUserNickName("crew").get();
-		Tech tech = techRepository.findByTechNameIgnoreCase("kotlin").get();
-		ProfileDto.TechRegisterReqDto tech1 = ProfileDto.TechRegisterReqDto.builder()
-			.userNickName(crew.getUserNickName())
-			.techName(tech.getTechName())
-			.build();
-		// profileService.addUserTech(tech1);
+    @DisplayName("기술 테스트")
+    @Test
+    void 기술_등록_테스트() {
+        Profile crew = profileRepository.findByUserNickName("crew").get();
+        Tech tech = techRepository.findByTechNameIgnoreCase("kotlin").get();
+        ProfileDto.TechRegisterReqDto tech1 = ProfileDto.TechRegisterReqDto.builder()
+                .userNickName(crew.getUserNickName())
+                .techName(tech.getTechName())
+                .build();
+        profileService.addUserTech(tech1, crew.getUserNickName());
 
-		ProfileDto.TechRegisterReqDto tech2 = ProfileDto.TechRegisterReqDto.builder()
-			.userNickName(crew.getUserNickName())
-			.techName("아무기술")
-			.build();
-		// profileService.addUserTech(tech1);
+        ProfileDto.TechRegisterReqDto tech2 = ProfileDto.TechRegisterReqDto.builder()
+                .userNickName(crew.getUserNickName())
+                .techName("아무기술")
+                .build();
+        profileService.addUserTech(tech2, crew.getUserNickName());
 
-	}
 
-	@Test
-	@Transactional
-	void 기술_삭제_테스트() {
-		// profileService.removeUserTech("12e0f9df-5ad4-4cbe-b93f-f9c340e37858");
-	}
+    }
+
+    @Test
+    @Transactional
+    void 기술_삭제_테스트() {
+        Profile crew = profileRepository.findByUserNickName("crew").get();
+        Tech tech = techRepository.findByTechNameIgnoreCase("kotlin").get();
+        profileService.removeUserTech(String.valueOf(tech.getId()), crew.getUserNickName());
+    }
+
+
 
 }

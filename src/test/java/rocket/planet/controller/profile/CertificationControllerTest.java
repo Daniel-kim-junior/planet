@@ -8,12 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
+import rocket.planet.domain.Certification;
 import rocket.planet.domain.Profile;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.profile.ProfileDto;
 import rocket.planet.repository.jpa.CertRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.service.profile.ProfileService;
+import rocket.planet.util.exception.ReqNotFoundException;
+
+import java.time.LocalDate;
+import java.util.NoSuchElementException;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class CertificationControllerTest {
@@ -84,12 +93,25 @@ class CertificationControllerTest {
 		// profileService.addCertification(cert4);
 		// profileService.addCertification(cert5);
 
-	}
+    }
 
-	@Test
-	@Transactional
-	void 자격증_삭제_테스트() {
-		// profileService.removeCertification("5bb8351d-66c3-438c-a23d-5b26855a22c9");
-	}
+    @Test
+    @Transactional
+    void 자격증_삭제_테스트() {
+
+        String certName = "OPIC";
+        String pilotNickname = "pilot";
+
+        Certification certification = certRepository.findIdByCertNumber("49582038")
+                .orElseThrow(() -> new ReqNotFoundException("삭제할 자격증이 존재하지 않습니다."));
+
+        String certUidString = certification.getId().toString();
+        CommonResDto result = profileService.removeCertification(certUidString, pilotNickname);
+
+        assertEquals(certName + " 자격증을 삭제했습니다.", result.getMessage());
+        assertThrows(NoSuchElementException.class, () -> certRepository.findById(certification.getId()).get());
+    }
+
+
 
 }
