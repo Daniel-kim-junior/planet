@@ -25,6 +25,7 @@ import rocket.planet.domain.ProfileAuthority;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.AuthRepository;
 import rocket.planet.repository.jpa.DeptRepository;
@@ -72,7 +73,7 @@ public class AuthorityService {
 	}
 
 	@Transactional
-	public void modifyAuthority(AdminAuthModifyReqDto adminAuthModifyReqDto) {
+	public CommonResDto modifyAuthority(AdminAuthModifyReqDto adminAuthModifyReqDto) {
 		Optional<Department> department = Optional.ofNullable(
 			deptRepository.findByDeptName(adminAuthModifyReqDto.getDeptName()));
 		Optional<Team> team = Optional.ofNullable(teamRepository.findByTeamName(adminAuthModifyReqDto.getTeamName()));
@@ -121,6 +122,8 @@ public class AuthorityService {
 				.build());
 		}
 
+		return CommonResDto.builder().message(user.getUserNickName() + "님의 권한을 수정하였습니다.").build();
+
 	}
 
 	@Transactional
@@ -135,6 +138,9 @@ public class AuthorityService {
 
 		for (Org org : organization) {
 			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
+			if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
+				|| !profile.isProfileStatus())
+				continue;
 
 			// 현재 진행중인 프로젝트 유무 확인
 			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);

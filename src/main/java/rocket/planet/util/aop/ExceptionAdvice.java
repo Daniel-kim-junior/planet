@@ -25,24 +25,7 @@ import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.annotation.ValidDept;
 import rocket.planet.util.annotation.ValidEmailType;
 import rocket.planet.util.annotation.ValidPassword;
-import rocket.planet.util.exception.AlreadyExistsDeptException;
-import rocket.planet.util.exception.AlreadyExistsIdException;
-import rocket.planet.util.exception.ExceptionEnum;
-import rocket.planet.util.exception.IdMismatchException;
-import rocket.planet.util.exception.JwtInvalidException;
-import rocket.planet.util.exception.NoAccessAuthorityException;
-import rocket.planet.util.exception.NoAuthorityException;
-import rocket.planet.util.exception.NoSuchEmailException;
-import rocket.planet.util.exception.NoSuchEmailTokenException;
-import rocket.planet.util.exception.NoUserNickNameException;
-import rocket.planet.util.exception.NoValidEmailTokenException;
-import rocket.planet.util.exception.PasswordMatchException;
-import rocket.planet.util.exception.PasswordMismatchException;
-import rocket.planet.util.exception.ReqNotFoundException;
-import rocket.planet.util.exception.Temp30MinuteLockException;
-import rocket.planet.util.exception.UserLogException;
-import rocket.planet.util.exception.UserPwdCheckException;
-import rocket.planet.util.exception.UserTechException;
+import rocket.planet.util.exception.*;
 
 /*
  * 예외 처리를 위한 어드바이스(AOP)
@@ -223,6 +206,13 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public CommonErrorDto handleReqNotFoundException(ReqNotFoundException e) {
 		log.error("handleReqNotFoundException", e.getClass().getSimpleName(), e.getMessage());
+		return CommonErrorDto.builder().message(e.getMessage()).build();
+	}
+
+	@ExceptionHandler(DuplicateException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleDuplicateException(DuplicateException e) {
+		log.error("handleDuplicateException", e.getClass().getSimpleName(), e.getMessage());
 		return CommonErrorDto.builder().message(e.getMessage()).build();
 	}
 

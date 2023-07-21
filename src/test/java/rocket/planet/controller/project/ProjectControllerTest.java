@@ -181,7 +181,7 @@ class ProjectControllerTest {
 		String userNickName = "plpl";
 		String role = "PILOT";
 
-		// projectService.closeProjectApprove(projectName, userNickName, role, false);
+		projectService.closeProjectApprove(projectName, userNickName, role, "false");
 
 	}
 

@@ -23,7 +23,7 @@ public class TeamController {
 	@GetMapping("/members")
 	public ResponseEntity<TeamMemberListDto> memberList(@ModelAttribute ListReqDto listReqDto, String teamName) {
 		TeamMemberListDto teamMembers = teamService.getMemberList(listReqDto, teamName);
-		
+
 		return ResponseEntity.ok().body(teamMembers);
 
 	}

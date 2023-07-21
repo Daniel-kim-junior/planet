@@ -112,18 +112,14 @@ public class ProjectService {
 	public void registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
 		List<String> membersList = registerDto.getProjectMember();
 
-		for (String member : membersList) {
-			UserProject newProject = UserProject.builder()
-				.profile(profileRepository.findByUserNickName(member).get())
-				.project(project)
-				.userPjtInviter(registerDto.getUserNickName())
-				.userPjtCloseDt(LocalDate.of(2999, 12, 31))
-				.userPjtCloseApply(false)
-				.userPjtDesc("")
-				.build();
-
-			userPjtRepository.save(newProject);
-		}
+		membersList.stream().map(member -> UserProject.builder()
+			.profile(profileRepository.findByUserNickName(member).get())
+			.project(project)
+			.userPjtInviter(registerDto.getUserNickName())
+			.userPjtCloseDt(LocalDate.of(2999, 12, 31))
+			.userPjtCloseApply(false)
+			.userPjtDesc("")
+			.build()).forEach(userPjtRepository::save);
 
 		// Project Leader 등록
 		authorityService.addAuthority(AdminAddAuthDto.builder()
@@ -136,10 +132,11 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public void updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
+	public CommonResDto updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
 		Optional<Project> project = projectRepository.findByProjectName(projectUpdateDto.getProjectName());
 		project.get().updateProject(projectUpdateDto);
 
+		return CommonResDto.builder().message("해당 프로젝트 수정이 완료되었습니다.").build();
 	}
 
 	public boolean checkUser(String userNickName) {
@@ -147,14 +144,16 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public void deleteProject(ProjectUpdateStatusDto projectDeleteDto) {
+	public CommonResDto deleteProject(ProjectUpdateStatusDto projectDeleteDto) {
 		Optional<Project> project = projectRepository.findByProjectName(projectDeleteDto.getProjectName());
 		project.get().deleteProject(projectDeleteDto);
+
+		return CommonResDto.builder().message("해당 프로젝트 삭제가 완료되었습니다.").build();
 
 	}
 
 	@Transactional
-	public void closeProject(String projectName, String userNickName) {
+	public CommonResDto closeProject(String projectName, String userNickName) {
 		Project requestedProject = projectRepository.findByProjectName(projectName).get();
 		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
 
@@ -163,6 +162,8 @@ public class ProjectService {
 
 		// 프로젝트 상태 변경
 		requestedProject.close(userNickName);
+
+		return CommonResDto.builder().message("해당 프로젝트를 마감으로 변경하였습니다.").build();
 	}
 
 	public boolean isInProject(String projectName, String userNickName) {
@@ -173,7 +174,7 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public String closeProjectApprove(String projectName,
+	public CommonResDto closeProjectApprove(String projectName,
 		String userNickName, String role, String isApprove) {
 		// todo: error 처리 -> 권한 확인
 
@@ -182,20 +183,23 @@ public class ProjectService {
 
 		if (isApprove.equals("true")) {
 			requestedProject.approveProjectClose();
-			return "마감 요청을 승인하였습니다.";
+			return CommonResDto.builder().message("마감 요청을 승인하였습니다.").build();
+
 		} else {
 			requestedProject.rejectProjectClose();
-			return "마감 요청을 반려하였습니다.";
+			return CommonResDto.builder().message("마감 요청을 반려하였습니다.").build();
+
 		}
 	}
 
 	@Transactional
-	public void requestProjectClose(String projectName, String userNickName) {
+	public CommonResDto requestProjectClose(String projectName, String userNickName) {
 		if (isInProject(projectName, userNickName)) {
 			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
 				userNickName);
 			newUserProject.requestProjectClose();
 		}
+		return CommonResDto.builder().message("프로젝트 마감 요청을 완료하였습니다.").build();
 	}
 
 	@Transactional

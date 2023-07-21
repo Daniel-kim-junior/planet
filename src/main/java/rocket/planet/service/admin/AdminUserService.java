@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.User;
 import rocket.planet.dto.admin.AdminDto.AdminAuthModifyReqDto;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.auth.AuthorityService;
@@ -21,7 +22,7 @@ public class AdminUserService {
 	private final AuthorityService authorityService;
 
 	@Transactional
-	public void disabledUser(String userNickName) {
+	public CommonResDto disabledUser(String userNickName) {
 
 		Profile user = profileRepository.findByUserNickName(userNickName).orElseThrow(NoUserNickNameException::new);
 		User retiredUser = userRepository.findByProfile(user);
@@ -38,6 +39,8 @@ public class AdminUserService {
 				.role("GUEST").build());
 
 		user.updateRetiredProfile();
+
+		return CommonResDto.builder().message(userNickName + "를 퇴사자로 변경하였습니다.").build();
 
 	}
 }
