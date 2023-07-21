@@ -41,52 +41,49 @@ public class ProjectController {
 
 	@GetMapping("/management/projects/{userNickName}")
 	public ResponseEntity<Boolean> userNickNameCheck(@PathVariable("userNickName") String userNickName) {
-		boolean isPresent = projectService.checkUser(userNickName);
 
-		return ResponseEntity.ok().body(isPresent);
+		return ResponseEntity.ok().body(projectService.checkUser(userNickName));
 	}
 
 	@PostMapping("/management/projects")
 	public ResponseEntity<CommonResDto> projectSave(@RequestBody ProjectRegisterReqDto registerReqDto) {
-		CommonResDto res = projectService.registerProject(registerReqDto);
 
-		return ResponseEntity.ok().body(res);
+		return ResponseEntity.ok().body(projectService.registerProject(registerReqDto));
 	}
 
 	@PatchMapping("/management/projects")
-	public ResponseEntity<String> projectDetailModify(@RequestBody ProjectUpdateDetailDto projectDetailDto) {
-		projectService.updateProjectDetail(projectDetailDto);
+	public ResponseEntity<CommonResDto> projectDetailModify(@RequestBody ProjectUpdateDetailDto projectDetailDto) {
 
-		return ResponseEntity.ok().body("프로젝트 수정이 완료되었습니다.");
+		return ResponseEntity.ok().body(projectService.updateProjectDetail(projectDetailDto));
 	}
 
 	@PatchMapping("/management/projects/disable")
-	public ResponseEntity<String> projectRemove(@RequestBody ProjectUpdateStatusDto projectDeleteDto) {
-		projectService.deleteProject(projectDeleteDto);
+	public ResponseEntity<CommonResDto> projectRemove(@RequestBody ProjectUpdateStatusDto projectDeleteDto) {
+		;
 
-		return ResponseEntity.ok().body("프로젝트 삭제가 완료되었습니다.");
+		return ResponseEntity.ok().body(projectService.deleteProject(projectDeleteDto));
 	}
 
 	@PatchMapping("/management/projects/finish")
-	public ResponseEntity<String> projectClose(@RequestBody ProjectNameReqDto projectNameReqDto) {
-		projectService.closeProject(projectNameReqDto.getName(), projectNameReqDto.getUserNickName());
+	public ResponseEntity<CommonResDto> projectClose(@RequestBody ProjectNameReqDto projectNameReqDto) {
 
-		return ResponseEntity.ok().body("프로젝트를 마감하였습니다.");
+		return ResponseEntity.ok()
+			.body(projectService.closeProject(projectNameReqDto.getName(), projectNameReqDto.getUserNickName()));
 	}
 
 	@PatchMapping("/management/projects/confirm")
-	public ResponseEntity<String> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
-		String result = projectService.closeProjectApprove(closeReqDto.getName(),
-			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.getIsApprove());
+	public ResponseEntity<CommonResDto> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
 
-		return ResponseEntity.ok().body(result);
+		return ResponseEntity.ok().body(projectService.closeProjectApprove(closeReqDto.getName(),
+			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.getIsApprove()));
 	}
 
 	@PostMapping("/management/projects/confirm")
-	public ResponseEntity<String> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
-		projectService.requestProjectClose(projectNameReqDto.getName(), projectNameReqDto.getUserNickName());
+	public ResponseEntity<CommonResDto> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
+		;
 
-		return ResponseEntity.ok().body("프로젝트 마감 신청이 완료되었습니다.");
+		return ResponseEntity.ok()
+			.body(projectService.requestProjectClose(projectNameReqDto.getName(), projectNameReqDto.getUserNickName()));
 	}
 
 	@PostMapping("/management/projects/list")

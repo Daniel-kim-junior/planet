@@ -21,6 +21,7 @@ import rocket.planet.domain.Org;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.Role;
 import rocket.planet.domain.UserProject;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.common.ListReqDto;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.OrgRepository;
@@ -97,7 +98,7 @@ public class TeamService {
 	}
 
 	@Transactional
-	public void modifyMemberOrg(AdminOrgModifyReqDto orgModifyReqList) {
+	public CommonResDto modifyMemberOrg(AdminOrgModifyReqDto orgModifyReqList) {
 
 		// 소속 변경
 		Profile user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName()).orElseThrow();
@@ -119,5 +120,7 @@ public class TeamService {
 				teamRepository.findByTeamName(orgModifyReqList.getTeamName()),
 				deptRepository.findByDeptName(orgModifyReqList.getDeptName()));
 
+		return CommonResDto.builder().message("사용자의 소속을 변경하였습니다.").build();
 	}
+
 }
