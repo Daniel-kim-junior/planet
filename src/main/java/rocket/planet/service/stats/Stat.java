@@ -90,7 +90,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				final List<Org> orgList = ((OrgRepository)repository).findTeamStatsByDeptName(
 					department.getDeptName());
-				// TODO
+
 				String teamName;
 				Optional<Team> team;
 				for (Org org : orgList) {
@@ -122,13 +122,12 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				dto = LabelAndStatDto.builder().data(map).build();
 
 			} else if (category instanceof ProjectStats) {
-				// TODO 부문에 속한 팀들의 프로젝트 통계
+
 				map = new HashMap<>();
 
 				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByDept(
 					department.getDeptName());
 
-				// TODO
 				String projectName;
 				for (UserProject userProject : userProjectList) {
 					projectName = userProject.getProject().getProjectName();
@@ -185,7 +184,6 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByTeam(
 					team.getTeamName());
 
-				// TODO
 				// 팀에 속한 프로젝트 통계
 				String projectName;
 				for (UserProject userProject : userProjectList) {
@@ -279,7 +277,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			} else if (category instanceof DeptStats) {
 				// 부문별 통계
 				map = new HashMap<>();
-				// TODO
+
 				final List<Org> orgList = ((OrgRepository)repository).findDeptStatsByEntire();
 				String deptName;
 				Optional<Department> department;
@@ -302,7 +300,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			} else if (category instanceof ProjectStats) {
 
 				map = new HashMap<>();
-				// TODO
+
 				// 전체 프로젝트 별 통계
 				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtPartCountByEntire();
 				String projectName;

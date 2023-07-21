@@ -47,7 +47,7 @@ public enum ExceptionEnum {
 
 	ALREADY_EXISTS_DEPT_EXCEPTION("UE013", "이미 존재하는 부서입니다"),
 
-	INVALID_JWT_EXCEPTION("UE014", "유효하지 않은 토큰입니다"),
+	INVALID_JWT_EXCEPTION("UE014", "로그인이 만료되었습니다"),
 
 	INVALID_ORG_TYPE_EXCEPTION("UE015", "DEVELOPMENT, NON_DEVELOPMENT, NONE 중 하나를 입력해주세요"),
 
