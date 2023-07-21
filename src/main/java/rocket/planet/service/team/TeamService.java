@@ -136,7 +136,7 @@ public class TeamService {
 		// 소속 변경
 		Profile user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName()).orElseThrow();
 
-		if (user.getOrg() == null) {
+		if (user.getOrg().isEmpty()) {
 			// org 생성
 			Org nOrg = Org.builder()
 				.orgInviter("admin")
@@ -147,6 +147,7 @@ public class TeamService {
 				.profile(user)
 				.build();
 
+			orgRepository.save(nOrg);
 			user.updateOrg(Collections.singletonList(nOrg));
 
 			return CommonResDto.builder().message("사용자의 소속을 변경하였습니다.").build();
