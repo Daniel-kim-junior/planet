@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.Project;
@@ -41,7 +42,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
-	List<UserProject> findPjtPartCountByDepartment(String deptName);
+	List<UserProject> findPjtPartCountByDepartment(@Param("deptName") String deptName);
 
 	@Query(
 		"select distinct up "
@@ -54,7 +55,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and (up.userPjtCloseApply = true "
 			+ "or p.projectStatus != 'ONGOING') ")
-	List<UserProject> findPjtPartCountByDepartmentClosed(String deptName);
+	List<UserProject> findPjtPartCountByDepartmentClosed(@Param("deptName") String deptName);
 
 	@Query(
 		"select distinct up "
@@ -67,7 +68,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
-	List<UserProject> findPjtPartCountByTeam(String teamName);
+	List<UserProject> findPjtPartCountByTeam(@Param("teamName") String teamName);
 
 	@Query(
 		"select distinct up "
@@ -80,7 +81,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and (up.userPjtCloseApply = true "
 			+ "or p.projectStatus != 'ONGOING') ")
-	List<UserProject> findPjtPartCountByTeamClosed(String teamName);
+	List<UserProject> findPjtPartCountByTeamClosed(@Param("teamName") String teamName);
 
 	@Query(
 		"select distinct up "
@@ -113,7 +114,7 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
-	List<UserProject> findProjectStatsByTeam(String teamName);
+	List<UserProject> findProjectStatsByTeam(@Param("teamName") String teamName);
 
 	@Query(
 		"select distinct up "
@@ -126,5 +127,5 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
-	List<UserProject> findProjectStatsByDept(String deptName);
+	List<UserProject> findProjectStatsByDept(@Param("deptName") String deptName);
 }

@@ -30,7 +30,7 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "JOIN FETCH o.department d "
 			+ "where d.deptName = :deptName "
 			+ "and p.profileStatus = true")
-	List<Profile> findCareerStatsByDepartment(String deptName);
+	List<Profile> findCareerStatsByDepartment(@Param("deptName") String deptName);
 
 	@Query(
 		"select distinct p "
@@ -39,7 +39,7 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName "
 			+ "and p.profileStatus = true")
-	List<Profile> findCareerStatsByTeam(String teamName);
+	List<Profile> findCareerStatsByTeam(@Param("teamName") String teamName);
 
 	@Query("select p.profileCareer from Profile p where p.profileStatus = true")
 	List<Integer> findCareerStatsByEntire();
