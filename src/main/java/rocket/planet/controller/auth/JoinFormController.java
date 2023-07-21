@@ -49,8 +49,9 @@ public class JoinFormController {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(ConstraintViolationException.class)
-	public Object exception(Exception e) {
-		return ExceptionAdvice.getCommonErrorDto(ExceptionEnum.REQUEST_NOT_VALID_EXCEPTION);
+	public ResponseEntity exception(Exception e) {
+		return ResponseEntity.badRequest()
+			.body(ExceptionAdvice.getCommonErrorDto(ExceptionEnum.REQUEST_NOT_VALID_EXCEPTION));
 	}
 
 }
