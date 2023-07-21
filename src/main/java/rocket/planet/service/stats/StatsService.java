@@ -108,7 +108,7 @@ public class StatsService {
 
 		List<ResponseStatDto> res = new ArrayList<>();
 
-		// TODO: 2021-07-22 팀별 통계
+
 		if (isDevelop(department)) {
 			// 개발 부문인 경우
 			LabelAndStatDto statList = getDetailStats(team, pfTechRepository,

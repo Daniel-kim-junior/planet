@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import rocket.planet.domain.Org;
 
@@ -25,7 +26,7 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 		+ "WHERE d.deptName = :deptName "
 		+ "and t.teamInactive = false "
 		+ "and pf.profileStatus = true")
-	List<Org> findTeamStatsByDeptName(String deptName);
+	List<Org> findTeamStatsByDeptName(@Param("deptName") String deptName);
 
 	// 부문 당 프로필의 개수를 구하는 쿼리
 	@Query("SELECT o from Org o "
