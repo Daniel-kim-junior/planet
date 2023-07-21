@@ -34,7 +34,6 @@ public class EmailVerifyController {
 		try {
 			return ResponseEntity.ok().body(emailVerifyService.saveRedisToken(dto.getId(), gen.get(), dto.getType()));
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
 	}

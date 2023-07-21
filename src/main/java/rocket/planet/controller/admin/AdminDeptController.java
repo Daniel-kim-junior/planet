@@ -29,7 +29,7 @@ public class AdminDeptController {
 	}
 
 	@PutMapping("/name")
-	public ResponseEntity<AdminResDto> deptModify(@RequestBody AdminDeptModReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> deptModify(@Valid @RequestBody AdminDeptModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminDeptService.modifyDept(dto));
 	}
 

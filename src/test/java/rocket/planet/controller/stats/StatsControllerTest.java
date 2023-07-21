@@ -122,4 +122,28 @@ class StatsControllerTest {
 
 	}
 
+	@Test
+	@WithPlanetTestUser(email = "now20412041@gmail.com", role = "ROLE_ADMIN")
+	void request_dto_테스트() throws Exception {
+		mockMvc.perform(get("/api/stats/entire?companyName=dktechin&unit=-1")
+				.characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/stats/dept?deptName=&unit=3")
+				.characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/stats/dept?deptName=스마트솔루션&unit=-1")
+				.characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/stats/dept?deptName=&teamName=&unit=3")
+				.characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/stats/dept?deptName=스마트솔루션&teamName=스마트팩토리&unit=-1")
+				.characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+	}
+
 }

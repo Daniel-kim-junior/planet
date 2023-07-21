@@ -1,5 +1,7 @@
 package rocket.planet.controller.admin;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +25,12 @@ public class AdminTeamController {
 	private final AdminTeamService adminTeamService;
 
 	@PutMapping("/name")
-	public ResponseEntity<AdminResDto> teamModify(@RequestBody AdminTeamModReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamModify(@Valid @RequestBody AdminTeamModReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.modifyTeam(dto));
 	}
 
 	@PostMapping
-	public ResponseEntity<AdminResDto> teamAdd(@RequestBody AdminTeamAddReqDto dto) throws Exception {
+	public ResponseEntity<AdminResDto> teamAdd(@Valid @RequestBody AdminTeamAddReqDto dto) throws Exception {
 		return ResponseEntity.ok().body(adminTeamService.addTeam(dto));
 	}
 

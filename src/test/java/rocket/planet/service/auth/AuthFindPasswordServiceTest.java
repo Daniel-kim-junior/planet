@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.User;
 import rocket.planet.domain.redis.EmailFindConfirm;
+import rocket.planet.dto.auth.AuthDto;
 import rocket.planet.dto.auth.AuthDto.PasswordModifyReqDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.repository.redis.EmailFindConfirmRepository;
@@ -80,8 +81,9 @@ class AuthFindPasswordServiceTest {
 		 * 비밀번호 변경 확인 토큰이 있고 바꾸려는 비밀번호가 예전 비밀번호와 다를 때
 		 */
 		Assertions.assertThat(
-			authFindPasswordService.modifyPassword(PasswordModifyReqDto.builder().id("admin@gmail.com")
-				.password("Qwer12345!").build())).isEqualTo("비밀번호가 변경되었습니다");
+				authFindPasswordService.modifyPassword(PasswordModifyReqDto.builder().id("admin@gmail.com")
+					.password("Qwer12345!").build()))
+			.isInstanceOf(AuthDto.PasswordModifyResDto.class);
 
 	}
 

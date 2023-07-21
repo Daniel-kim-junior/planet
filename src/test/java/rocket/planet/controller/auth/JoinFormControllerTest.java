@@ -65,4 +65,10 @@ class JoinFormControllerTest {
 		 */
 		assertThat(list).isInstanceOf(List.class);
 	}
+
+	@Test
+	void request_dto_테스트() throws Exception {
+		mockMvc.perform(get("/api/auth/join-team?deptName=").characterEncoding("UTF-8"))
+			.andExpect(status().isBadRequest());
+	}
 }

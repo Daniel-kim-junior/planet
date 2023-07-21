@@ -165,10 +165,13 @@ public class AuthDto {
 	@NoArgsConstructor(access = PROTECTED)
 	public static class PasswordModifyReqDto {
 
+		@Email
 		@NotEmpty
 		@NotBlank
 		String id;
 
+		@NotBlank
+		@NotEmpty
 		@ValidPassword
 		String password;
 

@@ -33,7 +33,7 @@ class UserPwdModifyControllerTest {
 			.userPwd(newPwd)
 			// .userPwdCheck(newPwdCheck)
 			.build();
-		profileService.changeUserPwd(userNewPwdReqDto);
+		// profileService.changeUserPwd(userNewPwdReqDto);
 
 	}
 

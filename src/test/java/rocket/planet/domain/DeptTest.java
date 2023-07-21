@@ -70,7 +70,8 @@ public class DeptTest {
 			.company(company)
 			.deptName("부문없음")
 			.deptInactive(false)
-			.deptType(OrgType.NONE)
+			.deptType(OrgType.NON_DEVELOPMENT)
+			// .deptType(OrgType.NONE)
 			.build();
 		deptRepository.saveAndFlush(noneDept);
 

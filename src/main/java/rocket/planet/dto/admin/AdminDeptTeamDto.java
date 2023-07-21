@@ -2,6 +2,10 @@ package rocket.planet.dto.admin;
 
 import static lombok.AccessLevel.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +16,9 @@ public class AdminDeptTeamDto {
 	@Getter
 	@NoArgsConstructor(access = PROTECTED)
 	public static class AdminDeptAddReqDto {
+
+		@NotEmpty
+		@NotBlank
 		private String name;
 
 		@ValidDept
@@ -27,8 +34,13 @@ public class AdminDeptTeamDto {
 	@Getter
 	@NoArgsConstructor(access = PROTECTED)
 	public static class AdminDeptModReqDto {
+
+		@NotBlank
+		@NotEmpty
 		private String targetName;
 
+		@NotBlank
+		@NotEmpty
 		private String changeName;
 
 		@Builder
@@ -41,8 +53,13 @@ public class AdminDeptTeamDto {
 	@Getter
 	@NoArgsConstructor(access = PROTECTED)
 	public static class AdminTeamModReqDto {
+
+		@NotBlank
+		@NotEmpty
 		private String targetName;
 
+		@NotBlank
+		@NotEmpty
 		private String changeName;
 
 		private String changeDesc;
@@ -58,8 +75,13 @@ public class AdminDeptTeamDto {
 	@Getter
 	@NoArgsConstructor(access = PROTECTED)
 	public static class AdminTeamAddReqDto {
+
+		@NotBlank
+		@NotEmpty
 		private String teamName;
 
+		@NotBlank
+		@NotNull
 		private String deptName;
 
 		private String teamDesc;

@@ -100,6 +100,7 @@ class ProjectControllerTest {
 
 		projectService.saveProject(project1);
 
+
 		// 프로젝트 리더 등록
 		// ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
 		// 	.authType(AuthType.PROJECT)
