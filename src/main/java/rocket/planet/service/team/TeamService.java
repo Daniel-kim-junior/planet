@@ -5,6 +5,7 @@ import static rocket.planet.dto.team.TeamMemberDto.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import rocket.planet.domain.Role;
 import rocket.planet.domain.UserProject;
 import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.common.ListReqDto;
+import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
@@ -44,6 +46,7 @@ public class TeamService {
 	private final TeamRepository teamRepository;
 	private final DeptRepository deptRepository;
 	private final AuthorityService authorityService;
+	private final CompanyRepository companyRepository;
 
 	@Transactional
 	public TeamMemberListDto getMemberList(ListReqDto listReqDto, String teamName) {
@@ -51,33 +54,62 @@ public class TeamService {
 
 		List<TeamMemberInfoDto> teamMemberList = new ArrayList<>();
 
-		// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
-		List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
+		if (teamName != null) {
+			// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
+			List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
 
-		for (Org org : organization) {
-			Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
-			if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
-				|| !profile.isProfileStatus())
-				continue;
-			// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
-			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
+			for (Org org : organization) {
+				Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
+				if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
+					|| !profile.isProfileStatus())
+					continue;
+				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
+				List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
 
-			// 프로젝트 마감 일자가 있으면 hasProject == true
-			boolean hasProject = projectList.stream()
-				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
+				// 프로젝트 마감 일자가 있으면 hasProject == true
+				boolean hasProject = projectList.stream()
+					.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
-			String userEmail = userRepository.findByProfile_Id(profile.getId()).getUserId();
-			TeamMemberInfoDto teamMemberDto = TeamMemberInfoDto.builder()
-				.userNickName(profile.getUserNickName())
-				.profileEmail(userEmail)
-				.profileCareer(profile.getProfileCareer())
-				.profileStart(profile.getProfileStartDate())
-				.isActive(hasProject)
-				.deptName(organization.get(0).getDepartment().getDeptName())
-				.teamName(organization.get(0).getTeam().getTeamName())
-				.build();
+				String userEmail = userRepository.findByProfile_Id(profile.getId()).getUserId();
+				TeamMemberInfoDto teamMemberDto = TeamMemberInfoDto.builder()
+					.userNickName(profile.getUserNickName())
+					.profileEmail(userEmail)
+					.profileCareer(profile.getProfileCareer())
+					.profileStart(profile.getProfileStartDate())
+					.isActive(hasProject)
+					.deptName(organization.get(0).getDepartment().getDeptName())
+					.teamName(organization.get(0).getTeam().getTeamName())
+					.build();
 
-			teamMemberList.add(teamMemberDto);
+				teamMemberList.add(teamMemberDto);
+
+			}
+		} else {
+			List<Profile> noTeamProfile = profileRepository.findAllByOrg(null);
+			for (Profile noTeam : noTeamProfile) {
+				if (noTeam.getRole().equals(Role.ADMIN) || noTeam.getRole().equals(Role.RADAR)
+					|| !noTeam.isProfileStatus())
+					continue;
+				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
+				List<UserProject> projectList = userPjtRepository.findAllByProfile(noTeam);
+
+				// 프로젝트 마감 일자가 있으면 hasProject == true
+				boolean hasProject = projectList.stream()
+					.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
+
+				String userEmail = userRepository.findByProfile_Id(noTeam.getId()).getUserId();
+				TeamMemberInfoDto teamMemberDto = TeamMemberInfoDto.builder()
+					.userNickName(noTeam.getUserNickName())
+					.profileEmail(userEmail)
+					.profileCareer(noTeam.getProfileCareer())
+					.profileStart(noTeam.getProfileStartDate())
+					.isActive(hasProject)
+					.deptName("무소속")
+					.teamName("무소속")
+					.build();
+
+				teamMemberList.add(teamMemberDto);
+			}
 
 		}
 
@@ -103,6 +135,21 @@ public class TeamService {
 		// 소속 변경
 		Profile user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName()).orElseThrow();
 
+		if (user.getOrg() == null) {
+			// org 생성
+			Org nOrg = Org.builder()
+				.orgInviter("admin")
+				.orgStatus(true)
+				.team(teamRepository.findByTeamName(orgModifyReqList.getTeamName()))
+				.company(companyRepository.findByCompanyName("dktechin"))
+				.department(deptRepository.findByDeptName(orgModifyReqList.getDeptName()))
+				.profile(user)
+				.build();
+
+			user.updateOrg(Collections.singletonList(nOrg));
+
+			return CommonResDto.builder().message("사용자의 소속을 변경하였습니다.").build();
+		}
 		Optional<Org> oldOrg = orgRepository.findById(user.getOrg().get(0).getId());
 
 		// 권한 삭제

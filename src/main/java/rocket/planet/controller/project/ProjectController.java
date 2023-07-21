@@ -36,7 +36,7 @@ public class ProjectController {
 	@GetMapping("/project")
 	public ResponseEntity<ProjectDetailResDto> projectDetails(@ModelAttribute NameReqDto projectName) {
 
-		return ResponseEntity.ok().body(projectService.getProject(projectName.getName()));
+		return ResponseEntity.ok().body(projectService.getProject(projectName));
 	}
 
 	@GetMapping("/management/projects/{userNickName}")
@@ -48,7 +48,7 @@ public class ProjectController {
 	@PostMapping("/management/projects")
 	public ResponseEntity<CommonResDto> projectSave(@RequestBody ProjectRegisterReqDto registerReqDto) {
 
-		return ResponseEntity.ok().body(projectService.registerProject(registerReqDto));
+		return ResponseEntity.ok().body(projectService.saveProject(registerReqDto));
 	}
 
 	@PatchMapping("/management/projects")
@@ -59,7 +59,6 @@ public class ProjectController {
 
 	@PatchMapping("/management/projects/disable")
 	public ResponseEntity<CommonResDto> projectRemove(@RequestBody ProjectUpdateStatusDto projectDeleteDto) {
-		;
 
 		return ResponseEntity.ok().body(projectService.deleteProject(projectDeleteDto));
 	}
@@ -74,21 +73,19 @@ public class ProjectController {
 	@PatchMapping("/management/projects/confirm")
 	public ResponseEntity<CommonResDto> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
 
-		return ResponseEntity.ok().body(projectService.closeProjectApprove(closeReqDto.getName(),
-			closeReqDto.getUserNickName(), closeReqDto.getRole(), closeReqDto.getIsApprove()));
+		return ResponseEntity.ok().body(projectService.closeProjectApprove(closeReqDto));
 	}
 
 	@PostMapping("/management/projects/confirm")
 	public ResponseEntity<CommonResDto> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
-		;
 
 		return ResponseEntity.ok()
-			.body(projectService.requestProjectClose(projectNameReqDto.getName(), projectNameReqDto.getUserNickName()));
+			.body(projectService.requestProjectClose(projectNameReqDto));
 	}
 
 	@PostMapping("/management/projects/list")
 	public ResponseEntity<List<ProjectSummaryResDto>> projectList(@RequestBody ProjectNameReqDto projectNameReqDto) {
-		List<ProjectSummaryResDto> projectList = projectService.getProjectList(projectNameReqDto.getName());
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList(projectNameReqDto);
 
 		return ResponseEntity.ok().body(projectList);
 	}
@@ -96,7 +93,7 @@ public class ProjectController {
 	@GetMapping("/management/projects/request")
 	public ResponseEntity<List<ProjectCloseResDto>> projectReqList(
 		@ModelAttribute ProjectNameReqDto projectNameReqDto) {
-		List<ProjectCloseResDto> projectList = projectService.getProjectReqList(projectNameReqDto.getName());
+		List<ProjectCloseResDto> projectList = projectService.getProjectReqList(projectNameReqDto);
 
 		return ResponseEntity.ok().body(projectList);
 	}

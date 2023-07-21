@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.ProjectStatus;
 import rocket.planet.dto.project.ProjectCloseResDto;
+import rocket.planet.dto.project.ProjectDto.CloseReqDto;
+import rocket.planet.dto.project.ProjectNameReqDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.ProjectRepository;
@@ -96,7 +98,8 @@ class ProjectControllerTest {
 		// 	.projectEndDt(LocalDate.of(2023, 8, 7))
 		// 	.build();
 
-		// projectService.registerProject(project1);
+		projectService.saveProject(project1);
+
 
 		// 프로젝트 리더 등록
 		// ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
@@ -161,14 +164,18 @@ class ProjectControllerTest {
 	@Transactional
 	@Rollback(false)
 	void 프로젝트_마감_요청_테스트() {
-		String projectName1 = "스마트 시티 TF";
-		String userNickName1 = "plpl";
+		ProjectNameReqDto project1 = ProjectNameReqDto.builder()
+			.userNickName("plpl")
+			.name("스마트 시티 TF")
+			.build();
 
-		String projectName2 = "스마트 시티 TF";
-		String userNickName2 = "pilot";
+		ProjectNameReqDto project2 = ProjectNameReqDto.builder()
+			.userNickName("pilot")
+			.name("스마트 시티 TF")
+			.build();
 
-		projectService.requestProjectClose(projectName1, userNickName1);
-		projectService.requestProjectClose(projectName2, userNickName2);
+		projectService.requestProjectClose(project1);
+		projectService.requestProjectClose(project2);
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(2);
 	}
 
@@ -176,12 +183,14 @@ class ProjectControllerTest {
 	@Transactional
 	@Rollback(value = false)
 	void 프로젝트_마감_승인_테스트() {
+		CloseReqDto closeReqDto = CloseReqDto.builder()
+			.isApprove("false")
+			.name("스마트 시티 TF")
+			.role("PILOT")
+			.userNickName("plpl")
+			.build();
 
-		String projectName = "스마트 시티 TF";
-		String userNickName = "plpl";
-		String role = "PILOT";
-
-		projectService.closeProjectApprove(projectName, userNickName, role, "false");
+		projectService.closeProjectApprove(closeReqDto);
 
 	}
 
@@ -197,7 +206,11 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_목록_조회_테스트() {
-		List<ProjectSummaryResDto> projectList = projectService.getProjectList("스마트시티");
+		List<ProjectSummaryResDto> projectList = projectService.getProjectList(ProjectNameReqDto.builder()
+			.name("스마트시티")
+			.userNickName("plpl")
+			.role("PILOT")
+			.build());
 
 		assertThat(userPjtRepository.findAllByUserPjtCloseApply(true).size()).isEqualTo(1);
 
@@ -208,7 +221,8 @@ class ProjectControllerTest {
 	@Test
 	@Transactional
 	void 프로젝트_완수_요청_리스트_조회_테스트() {
-		List<ProjectCloseResDto> projectList = projectService.getProjectReqList("스마트시티");
+		List<ProjectCloseResDto> projectList = projectService.getProjectReqList(
+			ProjectNameReqDto.builder().name("스마트시티").role("PILOT").userNickName("plpl").build());
 
 		for (ProjectCloseResDto project : projectList)
 			System.out.println("==================final =========\n" + project);
