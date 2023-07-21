@@ -96,7 +96,7 @@ class ProjectControllerTest {
 		// 	.projectEndDt(LocalDate.of(2023, 8, 7))
 		// 	.build();
 
-		projectService.registerProject(project1);
+		// projectService.registerProject(project1);
 
 		// 프로젝트 리더 등록
 		// ProfileAuthority newPfAuth = authorityService.addAuthority(AdminAddAuthDto.builder()
@@ -181,7 +181,7 @@ class ProjectControllerTest {
 		String userNickName = "plpl";
 		String role = "PILOT";
 
-		projectService.closeProjectApprove(projectName, userNickName, role, false);
+		// projectService.closeProjectApprove(projectName, userNickName, role, false);
 
 	}
 

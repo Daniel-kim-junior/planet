@@ -2,8 +2,11 @@ package rocket.planet.util.aop;
 
 import java.lang.reflect.Field;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSendException;
@@ -48,7 +51,7 @@ import rocket.planet.util.exception.UserTechException;
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-	static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
+	public static CommonErrorDto getCommonErrorDto(ExceptionEnum exceptionEnum) {
 		return CommonErrorDto.builder().code(exceptionEnum.getCode()).message(exceptionEnum.getMessage()).build();
 	}
 
@@ -106,6 +109,12 @@ public class ExceptionAdvice {
 			} else if (field != null && field.isAnnotationPresent(Min.class)) {
 				log.error("MinValidException", e.getClass().getSimpleName(), e.getMessage());
 				return getCommonErrorDto(ExceptionEnum.MIN_NOT_UNIT_VALID_EXCEPTION);
+			} else if (field != null && field.isAnnotationPresent(NotEmpty.class)) {
+				log.error("Request Not Valid Exception", e.getClass().getSimpleName(), e.getMessage());
+				return getCommonErrorDto(ExceptionEnum.REQUEST_NOT_VALID_EXCEPTION);
+			} else if (field != null && field.isAnnotationPresent(NotBlank.class)) {
+				log.error("Request Not Valid Exception", e.getClass().getSimpleName(), e.getMessage());
+				return getCommonErrorDto(ExceptionEnum.REQUEST_NOT_VALID_EXCEPTION);
 			}
 		}
 		return getCommonErrorDto(ExceptionEnum.UNKNOWN_SERVER_EXCEPTION);
@@ -123,6 +132,13 @@ public class ExceptionAdvice {
 	public CommonErrorDto handleNoValidEmailTokenException(NoValidEmailTokenException e) {
 		log.error("NoValidEmailTokenException", e.getClass().getSimpleName(), e.getMessage());
 		return getCommonErrorDto(ExceptionEnum.EMAIL_TOKEN_NOT_VALID_EXCEPTION);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public CommonErrorDto handleConstraintViolationException(ConstraintViolationException e) {
+		log.error("Request Param Validation Exception", e.getClass().getSimpleName(), e.getMessage());
+		return getCommonErrorDto(ExceptionEnum.REQUEST_NOT_VALID_EXCEPTION);
 	}
 
 	@ExceptionHandler(PasswordMatchException.class)
