@@ -35,7 +35,7 @@ class ProfileControllerTest {
 			.profileCareer(3)
 			.profileBirthDt(LocalDate.of(1999, 8, 23))
 			.build();
-		// profileService.modifyProfile(profileUpdate);
+		 profileService.modifyProfile(profileUpdate, crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
 
@@ -47,7 +47,7 @@ class ProfileControllerTest {
 			.userNickName(crew.getUserNickName())
 			.profileDisplay(true)
 			.build();
-		// profileService.modifyProfileDisplay(displayUpdate);
+		 profileService.modifyProfileDisplay(displayUpdate, crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
 
@@ -59,8 +59,11 @@ class ProfileControllerTest {
 			.userNickName(crew.getUserNickName())
 			.profileAnnualStatus(true)
 			.build();
-		// profileService.modifyAnnualStatus(annualUpdate);
+		 profileService.modifyAnnualStatus(annualUpdate,crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
+
+
+
 
 }

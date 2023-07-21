@@ -89,21 +89,13 @@ public class TeamTest {
 			.department(itOutDept)
 			.teamName("IT컨설팅")
 			.teamInactive(false)
-
 			.teamDesc("IT컨설팅 팀입니다.")
 			.teamType(OrgType.DEVELOPMENT)
 			.build();
 		teamRepository.saveAndFlush(itConsultingTeam);
 
-		Team noneTeam = Team.builder()
-			.department(noneDept)
-			.teamName("팀없음")
-			.teamInactive(false)
 
-			.teamDesc("팀이 없습니다.")
-			.teamType(OrgType.NON_DEVELOPMENT)
-			.build();
-		teamRepository.saveAndFlush(noneTeam);
 	}
+
 
 }

@@ -33,6 +33,16 @@ class ProfileLogControllerTest {
                 .visitorNickName(crew.getUserNickName())
                 .build();
         profileService.addProfileVisitor(log2);
+        ProfileDto.VisitorReqDto log3 = ProfileDto.VisitorReqDto.builder()
+                .ownerNickName(plpl.getUserNickName())
+                .visitorNickName(crew.getUserNickName())
+                .build();
+        profileService.addProfileVisitor(log3);
+        ProfileDto.VisitorReqDto log4 = ProfileDto.VisitorReqDto.builder()
+                .ownerNickName(crew.getUserNickName())
+                .visitorNickName(plpl.getUserNickName())
+                .build();
+        profileService.addProfileVisitor(log4);
 
     }
 

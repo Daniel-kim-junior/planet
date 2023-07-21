@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import rocket.planet.domain.User;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.profile.ProfileDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.profile.ProfileService;
@@ -31,10 +32,11 @@ class UserPwdModifyControllerTest {
 		ProfileDto.UserNewPwdReqDto userNewPwdReqDto = ProfileDto.UserNewPwdReqDto.builder()
 			.userId(crew.get().getUserId())
 			.userPwd(newPwd)
-			// .userPwdCheck(newPwdCheck)
+			 .userPwdCheck(newPwdCheck)
 			.build();
-		// profileService.changeUserPwd(userNewPwdReqDto);
+		 profileService.changeUserPwd(userNewPwdReqDto, crew.get().getUserId());
 
 	}
+
 
 }

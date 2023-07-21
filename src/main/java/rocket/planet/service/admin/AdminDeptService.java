@@ -79,8 +79,7 @@ public class AdminDeptService {
 		}
 		List<Org> inactiveOrgs = orgRepository.findByDepartment_DeptInactive(true).orElse(Collections.emptyList());
 		for (Org org : inactiveOrgs) {
-			org.hasNoDept();
-			org.hasNoTeam();
+			orgRepository.delete(org);
 		}
 		return AdminResDto.builder()
 				.message(activeReqDtoDept.getDeptName() + " 부문은 비활성화되었으며 [ " + activeReqDtoDept.getDeptName() + " ] 부문에 속한 사원들은 현재 소속된 부문과 팀이 없습니다.")

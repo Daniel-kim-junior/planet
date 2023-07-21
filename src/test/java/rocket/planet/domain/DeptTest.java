@@ -66,14 +66,6 @@ public class DeptTest {
 			.build();
 		deptRepository.saveAndFlush(ftDept);
 
-		Department noneDept = Department.builder()
-			.company(company)
-			.deptName("부문없음")
-			.deptInactive(false)
-			.deptType(OrgType.NON_DEVELOPMENT)
-			// .deptType(OrgType.NONE)
-			.build();
-		deptRepository.saveAndFlush(noneDept);
 
 	}
 }
