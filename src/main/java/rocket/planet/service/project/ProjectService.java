@@ -25,6 +25,9 @@ import rocket.planet.domain.UserProject;
 import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.project.ProjectCloseResDto;
 import rocket.planet.dto.project.ProjectDetailResDto;
+import rocket.planet.dto.project.ProjectDto.CloseReqDto;
+import rocket.planet.dto.project.ProjectDto.NameReqDto;
+import rocket.planet.dto.project.ProjectNameReqDto;
 import rocket.planet.dto.project.ProjectRegisterReqDto;
 import rocket.planet.dto.project.ProjectSummaryResDto;
 import rocket.planet.repository.jpa.AuthRepository;
@@ -34,6 +37,7 @@ import rocket.planet.repository.jpa.ProjectRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 import rocket.planet.repository.jpa.UserPjtRepository;
 import rocket.planet.service.auth.AuthorityService;
+import rocket.planet.util.exception.ReqNotFoundException;
 
 @Service
 @Slf4j
@@ -49,39 +53,45 @@ public class ProjectService {
 	private final AuthorityService authorityService;
 
 	@Transactional
-	public ProjectDetailResDto getProject(String projectName) {
-		Optional<Project> project = projectRepository.findByProjectName(projectName);
+	public ProjectDetailResDto getProject(NameReqDto projectName) {
+		Project project = projectRepository.findByProjectName(projectName.getName())
+			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
 
-		Authority auth = authRepository.findByAuthTargetId(project.get().getId());
+		Authority auth = authRepository.findByAuthTargetId(project.getId());
 
-		List<UserProject> userprojectList = userPjtRepository.findAllByProject(project);
+		List<UserProject> userprojectList = userPjtRepository.findAllByProject(Optional.of(project));
 
 		List<String> projectMember = userprojectList.stream()
 			.map(user -> user.getProfile().getUserNickName())
 			.collect(Collectors.toList());
 
 		return ProjectDetailResDto.builder()
-			.projectName(projectName)
+			.projectName(projectName.getName())
 			.projectLeader(
 				pfAuthRepository.findByAuthority(auth).getProfile().getUserNickName())
-			.team(project.get().getTeam().getTeamName())
-			.dept(project.get().getTeam().getDepartment().getDeptName())
+			.team(project.getTeam().getTeamName())
+			.dept(project.getTeam().getDepartment().getDeptName())
 			.projectMember(projectMember)
-			.projectStatus(String.valueOf(project.get().getProjectStatus()))
-			.projectStartDt(project.get().getProjectStartDt())
-			.projectEndDt(project.get().getProjectEndDt())
-			.projectTech(project.get().getProjectTech())
-			.projectDesc(project.get().getProjectDesc())
-			.projectLastModifiedBy(project.get().getProjectLastModifiedBy())
-			.lastModifiedDate(project.get().getLastModifiedDt())
+			.projectStatus(String.valueOf(project.getProjectStatus()))
+			.projectStartDt(project.getProjectStartDt())
+			.projectEndDt(project.getProjectEndDt())
+			.projectTech(project.getProjectTech())
+			.projectDesc(project.getProjectDesc())
+			.projectLastModifiedBy(project.getProjectLastModifiedBy())
+			.lastModifiedDate(project.getLastModifiedDt())
 			.build();
 
 	}
 
 	@Transactional
-	public CommonResDto registerProject(ProjectRegisterReqDto registerDto) {
-		// 프로젝트 이름 중복 error 처리
-		Team team = teamRepository.findByTeamName(registerDto.getTeamName());
+	public CommonResDto saveProject(ProjectRegisterReqDto registerDto) {
+
+		if (projectRepository.findByProjectName(registerDto.getProjectName()).isPresent()) {
+			throw new ReqNotFoundException("동일한 프로젝트 이름이 존재합니다.");
+		}
+
+		Team team = Optional.ofNullable(teamRepository.findByTeamName(registerDto.getTeamName()))
+			.orElseThrow(() -> new ReqNotFoundException("해당하는 팀 이름이 존재하지 않습니다."));
 		OrgType teamType = team.getTeamType();
 
 		ProjectStatus status = ProjectStatus.ONGOING;
@@ -103,14 +113,15 @@ public class ProjectService {
 
 		Project newProject = projectRepository.save(project);
 
-		registerMemberToProject(registerDto, newProject);
+		addMemberToProject(registerDto, newProject);
 
-		return CommonResDto.builder().message("Good").build();
+		return CommonResDto.builder().message("프로젝트 생성이 완료되었습니다.").build();
 	}
 
 	@Transactional
-	public void registerMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
-		List<String> membersList = registerDto.getProjectMember();
+	public void addMemberToProject(ProjectRegisterReqDto registerDto, Project project) {
+		List<String> membersList = Optional.ofNullable(registerDto.getProjectMember())
+			.orElseThrow(() -> new ReqNotFoundException("팀원이 존재하지 않습니다."));
 
 		membersList.stream().map(member -> UserProject.builder()
 			.profile(profileRepository.findByUserNickName(member).get())
@@ -133,8 +144,15 @@ public class ProjectService {
 
 	@Transactional
 	public CommonResDto updateProjectDetail(ProjectUpdateDetailDto projectUpdateDto) {
-		Optional<Project> project = projectRepository.findByProjectName(projectUpdateDto.getProjectName());
-		project.get().updateProject(projectUpdateDto);
+		Project project = projectRepository.findByProjectName(projectUpdateDto.getProjectName())
+			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
+
+		// 프로젝트 리더인 경우에만 수정 가능
+		if (!projectUpdateDto.getProjectLeader().equals(projectUpdateDto.getUserNickName())) {
+			throw new ReqNotFoundException("해당 프로젝트의 리더인 경우에만 수정이 가능합니다.");
+		}
+
+		project.updateProject(projectUpdateDto);
 
 		return CommonResDto.builder().message("해당 프로젝트 수정이 완료되었습니다.").build();
 	}
@@ -145,8 +163,9 @@ public class ProjectService {
 
 	@Transactional
 	public CommonResDto deleteProject(ProjectUpdateStatusDto projectDeleteDto) {
-		Optional<Project> project = projectRepository.findByProjectName(projectDeleteDto.getProjectName());
-		project.get().deleteProject(projectDeleteDto);
+		Project project = projectRepository.findByProjectName(projectDeleteDto.getProjectName())
+			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
+		project.deleteProject(projectDeleteDto);
 
 		return CommonResDto.builder().message("해당 프로젝트 삭제가 완료되었습니다.").build();
 
@@ -154,7 +173,8 @@ public class ProjectService {
 
 	@Transactional
 	public CommonResDto closeProject(String projectName, String userNickName) {
-		Project requestedProject = projectRepository.findByProjectName(projectName).get();
+		Project requestedProject = projectRepository.findByProjectName(projectName)
+			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
 		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
 
 		// 프로젝트-유저 변경
@@ -174,14 +194,13 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public CommonResDto closeProjectApprove(String projectName,
-		String userNickName, String role, String isApprove) {
-		// todo: error 처리 -> 권한 확인
+	public CommonResDto closeProjectApprove(CloseReqDto closeReqDto) {
 
-		UserProject requestedProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
-			userNickName);
+		UserProject requestedProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(
+			closeReqDto.getName(),
+			closeReqDto.getUserNickName());
 
-		if (isApprove.equals("true")) {
+		if (closeReqDto.getIsApprove().equals("true")) {
 			requestedProject.approveProjectClose();
 			return CommonResDto.builder().message("마감 요청을 승인하였습니다.").build();
 
@@ -193,20 +212,23 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public CommonResDto requestProjectClose(String projectName, String userNickName) {
-		if (isInProject(projectName, userNickName)) {
-			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(projectName,
-				userNickName);
+	public CommonResDto requestProjectClose(ProjectNameReqDto projectNameReqDto) {
+		if (isInProject(projectNameReqDto.getName(), projectNameReqDto.getUserNickName())) {
+			UserProject newUserProject = userPjtRepository.findByProject_projectNameAndProfile_userNickName(
+				projectNameReqDto.getName(),
+				projectNameReqDto.getUserNickName());
 			newUserProject.requestProjectClose();
+		} else {
+			throw new ReqNotFoundException("해당 프로젝트의 팀원만 완수 요청을 할 수 있습니다.");
 		}
 		return CommonResDto.builder().message("프로젝트 마감 요청을 완료하였습니다.").build();
 	}
 
 	@Transactional
-	public List<ProjectSummaryResDto> getProjectList(String teamName) {
+	public List<ProjectSummaryResDto> getProjectList(ProjectNameReqDto projectNameReqDto) {
 		List<ProjectSummaryResDto> projectSummaryList = new ArrayList<>();
 
-		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(teamName);
+		List<Project> projectsList = projectRepository.findAllByTeam_TeamName(projectNameReqDto.getName());
 		for (Project project : projectsList) {
 			Authority auth = authRepository.findByAuthTargetId(project.getId());
 			Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
@@ -233,32 +255,34 @@ public class ProjectService {
 	}
 
 	@Transactional
-	public List<ProjectCloseResDto> getProjectReqList(String teamName) {
+	public List<ProjectCloseResDto> getProjectReqList(ProjectNameReqDto projectNameReqDto) {
 		// 팀이름으로 마감 요청 리스트 조회
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
 		// 팀이름으로 프로젝트 리스트 찾기
-		List<Project> projectsList = projectRepository.findByTeam_TeamName(teamName);
+		List<Project> projectsList = projectRepository.findByTeam_TeamName(projectNameReqDto.getName());
 
-		for (Project project : projectsList) {
-			// 프로젝트로 프로젝트-유저 정보 찾기
-			List<UserProject> userProjectList = userPjtRepository.findAllByProject(Optional.ofNullable(project));
+		if (!projectsList.isEmpty()) {
+			for (Project project : projectsList) {
+				// 프로젝트로 프로젝트-유저 정보 찾기
+				List<UserProject> userProjectList = userPjtRepository.findAllByProject(Optional.ofNullable(project));
 
-			// 프로젝트 리더 찾기
-			Authority auth = authRepository.findByAuthTargetId(project.getId());
-			Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
+				// 프로젝트 리더 찾기
+				Authority auth = authRepository.findByAuthTargetId(project.getId());
+				Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
 
-			for (UserProject userProject : userProjectList) {
-				if (userProject.isUserPjtCloseApply()) {
-					ProjectCloseResDto requestedProject = ProjectCloseResDto.builder()
-						.projectName(project.getProjectName())
-						.projectLeader(projectLeader.getUserNickName())
-						.userNickName(userProject.getProfile().getUserNickName())
-						.projectStartDt(project.getProjectStartDt())
-						.projectEndDt(project.getProjectEndDt())
-						.build();
+				for (UserProject userProject : userProjectList) {
+					if (userProject.isUserPjtCloseApply()) {
+						ProjectCloseResDto requestedProject = ProjectCloseResDto.builder()
+							.projectName(project.getProjectName())
+							.projectLeader(projectLeader.getUserNickName())
+							.userNickName(userProject.getProfile().getUserNickName())
+							.projectStartDt(project.getProjectStartDt())
+							.projectEndDt(project.getProjectEndDt())
+							.build();
 
-					projectCloseResDto.add(requestedProject);
+						projectCloseResDto.add(requestedProject);
+					}
 				}
 			}
 		}
