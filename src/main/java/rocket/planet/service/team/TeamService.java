@@ -60,8 +60,8 @@ public class TeamService {
 
 			for (Org org : organization) {
 				Profile profile = profileRepository.findByOrg(Optional.ofNullable(org));
-				if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR)
-					|| !profile.isProfileStatus())
+				if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR) || profile.getRole()
+					.equals(Role.GUEST) || !profile.isProfileStatus())
 					continue;
 				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
 				List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
@@ -87,7 +87,8 @@ public class TeamService {
 		} else {
 			List<Profile> noTeamProfile = profileRepository.findAllByOrg(null);
 			for (Profile noTeam : noTeamProfile) {
-				if (noTeam.getRole().equals(Role.ADMIN) || noTeam.getRole().equals(Role.RADAR)
+				if (noTeam.getRole().equals(Role.ADMIN) || noTeam.getRole().equals(Role.RADAR) || noTeam.getRole()
+					.equals(Role.GUEST)
 					|| !noTeam.isProfileStatus())
 					continue;
 				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기

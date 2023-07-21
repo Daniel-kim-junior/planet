@@ -40,7 +40,8 @@ public class AdminSearchService {
 
 		for (Profile user : userList) {
 
-			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || !user.isProfileStatus())
+			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || user.getRole()
+				.equals(Role.GUEST) || !user.isProfileStatus())
 				continue;
 			// 현재 진행 중인 프로젝트 유무
 			List<UserProject> projectList = userPjtRepository.findByProfile(user);
@@ -97,7 +98,8 @@ public class AdminSearchService {
 			// 현재 진행 중인 프로젝트 유무
 			List<UserProject> projectList = userPjtRepository.findByProfile(user);
 
-			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || !user.isProfileStatus())
+			if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.RADAR) || user.getRole()
+				.equals(Role.GUEST) || !user.isProfileStatus())
 				continue;
 			boolean hasProject = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
