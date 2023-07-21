@@ -49,7 +49,7 @@ public class AdminSearchService {
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
 			// 사용자 build
-			if (user.getOrg() == null) {
+			if (user.getOrg().isEmpty()) {
 				teamMemberList.add(AdminMemberOrgDto.builder()
 					.userNickName(user.getUserNickName())
 					.profileEmail(userRepository.findByProfile_Id(user.getId()).getUserId())
