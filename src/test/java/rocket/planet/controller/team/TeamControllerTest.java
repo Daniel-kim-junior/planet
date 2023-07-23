@@ -26,9 +26,5 @@ class TeamControllerTest {
 			.build();
 
 		TeamMemberListDto teamMembers = teamService.getMemberList(listReqDto, teamName);
-
-		// List<TeamMemberResDto> teamMembers = teamService.getMemberList(teamName);
-		// System.out.println(teamMembers.toString());
-		System.out.println(teamMembers);
 	}
 }

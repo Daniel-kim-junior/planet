@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import rocket.planet.domain.AuthType;
 import rocket.planet.dto.common.ListResDto;
@@ -44,7 +43,6 @@ public class AdminDto {
 
 	@Getter
 	@SuperBuilder
-	@ToString
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	@AllArgsConstructor
 	public static class AdminAuthMemberListDto extends ListResDto {

@@ -8,14 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import rocket.planet.dto.common.ListResDto;
 
 public class TeamMemberDto {
 	@Getter
 	@Builder
-	@ToString
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	@AllArgsConstructor
 	public static class TeamMemberInfoDto {
@@ -32,7 +30,6 @@ public class TeamMemberDto {
 	@SuperBuilder
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	@AllArgsConstructor
-	@ToString
 	public static class TeamMemberListDto extends ListResDto {
 		private List<TeamMemberInfoDto> memberList;
 	}

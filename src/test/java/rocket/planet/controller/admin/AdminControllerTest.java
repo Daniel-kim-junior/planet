@@ -10,8 +10,6 @@ import rocket.planet.dto.admin.AdminDto.AdminAuthMemberListDto;
 import rocket.planet.dto.admin.AdminDto.AdminAuthModifyReqDto;
 import rocket.planet.dto.admin.AdminDto.AdminOrgModifyReqDto;
 import rocket.planet.dto.common.ListReqDto;
-import rocket.planet.repository.jpa.AuthRepository;
-import rocket.planet.repository.jpa.PfAuthRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.admin.AdminUserService;
@@ -32,12 +30,6 @@ class AdminControllerTest {
 
 	@Autowired
 	private AdminUserService adminUserService;
-
-	@Autowired
-	private AuthRepository authRepository;
-
-	@Autowired
-	private PfAuthRepository pfAuthRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -77,7 +69,6 @@ class AdminControllerTest {
 			.deptName("AI챗봇")
 			.teamName("AI챗봇구축")
 			.build();
-		// AdminOrgModifyReqDto orgModify2 = AdminOrgModifyReqDto.builder().userNickName("pilot").deptName("스마트솔루션").teamName("스마트팩토리").build()
 
 		teamService.modifyMemberOrg(orgModify1);
 
@@ -87,9 +78,6 @@ class AdminControllerTest {
 	@Transactional
 	void 퇴사자_처리_테스트() {
 		adminUserService.disabledUser("captain");
-		//
-		// assertThat(authRepository.count()).isEqualTo(0);
-		// assertThat(pfAuthRepository.count()).isEqualTo(0);
 
 		System.out.println("profile=======> " + profileRepository.findByUserNickName("plpl").get());
 		System.out.println(
