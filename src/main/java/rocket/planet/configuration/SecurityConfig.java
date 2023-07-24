@@ -66,7 +66,7 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
-			.antMatchers("/api/management/**").access("hasRole('CAPTAIN') or hasRole('PILOT') or hasRole('RADAR')")
+			// .antMatchers("/api/management/**").access("hasRole('CAPTAIN') or hasRole('PILOT') or hasRole('RADAR')")
 			.anyRequest().authenticated()
 			.and()
 			.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder

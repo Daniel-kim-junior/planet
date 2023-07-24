@@ -24,6 +24,8 @@ public class ProjectUpdateDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	@Builder
+	@AllArgsConstructor
 	public static class ProjectUpdateDetailDto {
 		private String userNickName;
 		private String projectName;
@@ -35,35 +37,17 @@ public class ProjectUpdateDto {
 		private List<String> projectMember;
 		private String authType;
 
-		@Builder
-		public ProjectUpdateDetailDto(String userNickName, String projectName, String projectDesc, String projectTech,
-			LocalDate projectStartDt, LocalDate projectEndDt, String projectLeader, List<String> projectMember,
-			String authType) {
-			this.userNickName = userNickName;
-			this.projectName = projectName;
-			this.projectDesc = projectDesc;
-			this.projectTech = projectTech;
-			this.projectStartDt = projectStartDt;
-			this.projectEndDt = projectEndDt;
-			this.projectLeader = projectLeader;
-			this.projectMember = projectMember;
-			this.authType = authType;
-		}
 	}
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	@AllArgsConstructor
+	@Builder
 	public static class ProjectUpdateStatusDto {
 		private String projectName;
 		private String userNickName;
 		private String authType;
 
-		@Builder
-		public ProjectUpdateStatusDto(String projectName, String userNickName, String authType) {
-			this.projectName = projectName;
-			this.userNickName = userNickName;
-			this.authType = authType;
-		}
 	}
 
 }

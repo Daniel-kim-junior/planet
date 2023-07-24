@@ -6,6 +6,7 @@ import static rocket.planet.dto.project.ProjectUpdateDto.*;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,30 +41,35 @@ public class ProjectController {
 	}
 
 	@GetMapping("/management/projects/{userNickName}")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<Boolean> userNickNameCheck(@PathVariable("userNickName") String userNickName) {
 
 		return ResponseEntity.ok().body(projectService.checkUser(userNickName));
 	}
 
 	@PostMapping("/management/projects")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<CommonResDto> projectSave(@RequestBody ProjectRegisterReqDto registerReqDto) {
 
 		return ResponseEntity.ok().body(projectService.saveProject(registerReqDto));
 	}
 
 	@PatchMapping("/management/projects")
+	@PreAuthorize("hasRole('ROLE_PL')")
 	public ResponseEntity<CommonResDto> projectDetailModify(@RequestBody ProjectUpdateDetailDto projectDetailDto) {
 
 		return ResponseEntity.ok().body(projectService.updateProjectDetail(projectDetailDto));
 	}
 
 	@PatchMapping("/management/projects/disable")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<CommonResDto> projectRemove(@RequestBody ProjectUpdateStatusDto projectDeleteDto) {
 
 		return ResponseEntity.ok().body(projectService.deleteProject(projectDeleteDto));
 	}
 
 	@PatchMapping("/management/projects/finish")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<CommonResDto> projectClose(@RequestBody ProjectNameReqDto projectNameReqDto) {
 
 		return ResponseEntity.ok()
@@ -71,12 +77,14 @@ public class ProjectController {
 	}
 
 	@PatchMapping("/management/projects/confirm")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<CommonResDto> projectCloseApprove(@RequestBody CloseReqDto closeReqDto) {
 
 		return ResponseEntity.ok().body(projectService.closeProjectApprove(closeReqDto));
 	}
 
 	@PostMapping("/management/projects/confirm")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT','ROLE_CREW','ROLE_PL')")
 	public ResponseEntity<CommonResDto> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
 
 		return ResponseEntity.ok()
@@ -84,6 +92,7 @@ public class ProjectController {
 	}
 
 	@PostMapping("/management/projects/list")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<List<ProjectSummaryResDto>> projectList(@RequestBody ProjectNameReqDto projectNameReqDto) {
 		List<ProjectSummaryResDto> projectList = projectService.getProjectList(projectNameReqDto);
 
@@ -91,6 +100,7 @@ public class ProjectController {
 	}
 
 	@GetMapping("/management/projects/request")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
 	public ResponseEntity<List<ProjectCloseResDto>> projectReqList(
 		@ModelAttribute ProjectNameReqDto projectNameReqDto) {
 		List<ProjectCloseResDto> projectList = projectService.getProjectReqList(projectNameReqDto);
