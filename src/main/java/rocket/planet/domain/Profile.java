@@ -140,7 +140,6 @@ public class Profile extends BaseTime {
 	}
 
 	public void updateProfile(ProfileUpDateResDto updateDto) {
-		this.userName = updateDto.getUserName();
 		this.profileStartDate = updateDto.getProfileStartDate();
 		this.profileBirthDt = updateDto.getProfileBirthDt();
 		this.profileCareer = updateDto.getProfileCareer();

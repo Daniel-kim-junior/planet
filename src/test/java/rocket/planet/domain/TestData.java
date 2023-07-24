@@ -1,19 +1,33 @@
 package rocket.planet.domain;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
-import rocket.planet.repository.jpa.*;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import rocket.planet.repository.jpa.CompanyRepository;
+import rocket.planet.repository.jpa.DeptRepository;
+import rocket.planet.repository.jpa.OrgRepository;
+import rocket.planet.repository.jpa.PfTechRepository;
+import rocket.planet.repository.jpa.ProfileRepository;
+import rocket.planet.repository.jpa.TeamRepository;
+import rocket.planet.repository.jpa.TechRepository;
+import rocket.planet.repository.jpa.UserRepository;
 
 @SpringBootTest
+@Transactional
 public class TestData {
 
     @Autowired
@@ -37,10 +51,10 @@ public class TestData {
     @Autowired
     private PfTechRepository pfTechRepository;
 
-
     @Test
-    @Rollback(value = false)
     @Order(1)
+    @Rollback(false)
+    @Transactional
     void 사원_120명_생성() {
         Company company = companyRepository.findByCompanyName("dktechin");
 
@@ -70,8 +84,7 @@ public class TestData {
         teamsByNoneDevDepartment.put(hrDept, Arrays.asList(hrTeam, generalAffairsTeam));
 
         Profile admin = profileRepository.findByUserNickName("admin").get();
-
-        for (int i = 0; i < 100; i++) {
+       for (int i = 0; i < 100; i++) {
             String email = "engineer" + i + "@gmail.com";
             String password = "password" + i + "!";
             String nickname = "engineer" + i;
@@ -90,7 +103,8 @@ public class TestData {
 
                 int randomYear = ThreadLocalRandom.current().nextInt(startDate.getYear(), endDate.getYear() + 1);
                 int randomMonth = ThreadLocalRandom.current().nextInt(1, 13);
-                int randomDay = ThreadLocalRandom.current().nextInt(1, YearMonth.of(randomYear, randomMonth).lengthOfMonth() + 1);
+                int randomDay = ThreadLocalRandom.current()
+                        .nextInt(1, YearMonth.of(randomYear, randomMonth).lengthOfMonth() + 1);
 
                 LocalDate randomStartDate = LocalDate.of(randomYear, randomMonth, randomDay);
                 int randomCareer = ThreadLocalRandom.current().nextInt(1, 16);
@@ -145,7 +159,8 @@ public class TestData {
 
                 LocalDate startDate = LocalDate.of(2015, 8, 20);
                 LocalDate endDate = LocalDate.of(2023, 7, 22);
-                LocalDate randomStartDate = startDate.plusDays(ThreadLocalRandom.current().nextLong(startDate.until(endDate).getDays()));
+                LocalDate randomStartDate = startDate.plusDays(
+                        ThreadLocalRandom.current().nextLong(startDate.until(endDate).getDays()));
                 int randomCareer = ThreadLocalRandom.current().nextInt(1, 16);
                 Profile profile = Profile.builder()
                         .profileBirthDt(LocalDate.of(1995, 3, 15))
@@ -180,12 +195,12 @@ public class TestData {
             }
         }
 
-
     }
 
     @Test
     @Order(2)
-    @Rollback(value = false)
+    @Rollback(false)
+    @Transactional
     void 기술_랜덤하게_추가() {
         Tech lang1 = techRepository.findByTechName("Java");
         Tech lang2 = techRepository.findByTechName("Python");
