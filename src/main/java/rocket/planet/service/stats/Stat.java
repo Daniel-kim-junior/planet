@@ -112,13 +112,13 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				map = new HashMap<>();
 
-				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
+				final int onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
 					department.getDeptName());
-				List<Profile> statsByDepartment = ((UserPjtRepository)repository).findStatsByDepartment(
+				final int statsByDepartment = ((UserPjtRepository)repository).findStatsByDepartment(
 					department.getDeptName());
 
-				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", statsByDepartment.size() - onWorkingProfiles.size());
+				map.put("참여 중", onWorkingProfiles);
+				map.put("미 참여", statsByDepartment - onWorkingProfiles);
 
 				dto = LabelAndStatDto.builder().data(map).build();
 
@@ -197,12 +197,12 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			} else if (category instanceof PjtPartRateStats) {
 
 				map = new HashMap<>();
-				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
+				final int onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
 					team.getTeamName());
-				List<Profile> statsByTeam = ((UserPjtRepository)repository).findStatsByTeam(team.getTeamName());
+				final int statsByTeam = ((UserPjtRepository)repository).findStatsByTeam(team.getTeamName());
 
-				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", statsByTeam.size() - onWorkingProfiles.size());
+				map.put("참여 중", onWorkingProfiles);
+				map.put("미 참여", statsByTeam - onWorkingProfiles);
 				dto = LabelAndStatDto.builder().data(map).build();
 			}
 
@@ -262,10 +262,10 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			} else if (category instanceof PjtPartRateStats) {
 
 				map = new HashMap<>();
-				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntire();
-				int statsByEntire = ((UserPjtRepository)repository).countProfileByEntire();
-				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", statsByEntire - onWorkingProfiles.size());
+				final int onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntire();
+				final int statsByEntire = ((UserPjtRepository)repository).countProfileByEntire();
+				map.put("참여 중", onWorkingProfiles);
+				map.put("미 참여", statsByEntire - onWorkingProfiles);
 				dto = LabelAndStatDto.builder().data(map).build();
 			} else if (category instanceof DeptStats) {
 
@@ -294,7 +294,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				map = new HashMap<>();
 
-				List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtPartCountByEntire();
+				List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtByEntire();
 
 				for (UserProject userProject : userProjectList) {
 					if (map.containsKey(userProject.getProject().getProjectName())) {
