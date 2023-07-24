@@ -17,14 +17,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.util.exception.JwtInvalidException;
 
-/*
- * JWT 인증 필터(Spring Security Filter)
- */
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
 	public static final String AUTHORIZATION_HEADER = "Authorization";
+
 	public static final String BEARER_PREFIX = "Bearer ";
+
 	private final AuthenticationManager authenticationManager;
 
 	@Override
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);
 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				
+
 			} catch (JwtInvalidException e) {
 				log.debug("Invalid JWT Token", e);
 				SecurityContextHolder.clearContext();

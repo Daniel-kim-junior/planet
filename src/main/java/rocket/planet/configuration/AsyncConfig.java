@@ -17,7 +17,7 @@ public class AsyncConfig {
 		executor.setCorePoolSize(5);
 		executor.setMaxPoolSize(5);
 		executor.setThreadNamePrefix("planet-async-");
-		executor.initialize(); // 꼭 써줘야 한다.
+		executor.initialize();
 		return executor;
 	}
 }

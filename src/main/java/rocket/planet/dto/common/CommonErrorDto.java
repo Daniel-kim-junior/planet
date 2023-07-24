@@ -8,9 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/*
- * 공통 에러 DTO
- */
 @Getter
 @ToString
 @Builder

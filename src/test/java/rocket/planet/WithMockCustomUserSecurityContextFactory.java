@@ -9,9 +9,6 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 
 import rocket.planet.util.security.JwtAuthenticationToken;
 
-/*
- * 테스트용 커스텀 유저 어노테이션 팩토리
- */
 public class WithMockCustomUserSecurityContextFactory implements
 	WithSecurityContextFactory<WithPlanetTestUser> {
 

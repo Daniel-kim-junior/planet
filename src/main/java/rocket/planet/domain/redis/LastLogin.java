@@ -1,6 +1,5 @@
 package rocket.planet.domain.redis;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +17,12 @@ public class LastLogin {
 
 	private List<String> loginLogs = new ArrayList<>();
 
-
 	@Builder
 	public LastLogin(String email) {
 		this.email = email;
 	}
 
-	public void add (String log) {
+	public void add(String log) {
 		loginLogs.add(log);
 	}
 

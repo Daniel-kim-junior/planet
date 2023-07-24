@@ -107,13 +107,6 @@ public class AuthLoginAndJoinService {
 		this.jwtIssuer = jwtIssuer;
 	}
 
-	/**
-	 * 로그인 시작점
-	 *
-	 * @param dto
-	 * @return CompleteLogin() => LoginResDto
-	 * @패스워드 5회 틀릴 시 30분간 잠금
-	 */
 	@Transactional
 	public LoginResDto checkLogin(LoginReqDto dto) throws Exception {
 
@@ -125,11 +118,6 @@ public class AuthLoginAndJoinService {
 		return completeLogin(user);
 	}
 
-	/**
-	 * @param dto
-	 * @param user
-	 * @패스워드 5회 틀릴 시 30분간 잠금
-	 */
 	public void checkPasswordTryFiveValidation(LoginReqDto dto, User user) throws RedisException, NullPointerException {
 		if (!passwordEncoder.matches(dto.getPassword(), user.getUserPwd())) {
 			limitLoginRepository.findById(user.getUserId()).ifPresent(limitLogin -> {
@@ -178,12 +166,6 @@ public class AuthLoginAndJoinService {
 		return loginResDto;
 	}
 
-	/**
-	 * @param user
-	 * @기록이 없을때는 기본값 생성
-	 * @마지막 로그인 시간 Redis에 저장
-	 */
-
 	private void saveLastLoginLogDataInRedis(User user) throws RedisException {
 		Optional<LastLogin> lastLogin = lastLoginRepository.findById(user.getUserId());
 		if (lastLogin.isEmpty()) {
@@ -193,21 +175,10 @@ public class AuthLoginAndJoinService {
 		lastLoginRepository.save(lastLogin.get());
 	}
 
-	/**
-	 * @param user
-	 * @return
-	 * @DB에서 권한 정보 가져오기
-	 */
-
 	private List<Authority> getUserAuthoritiesByDb(User user) throws Exception {
 		return authRepository.findAllByProfileAuthority_ProfileUserId(user.getUserId());
 	}
 
-	/**
-	 * @param user
-	 * @param responseDto
-	 * @프로필 정보가 없을때 RefreshToken, AccessToken Redis에 저장
-	 */
 	private void saveAuthInRedisForJoinUser(User user, LoginResDto responseDto) throws RedisException {
 		refreshTokenRedisRepository.save(RefreshToken.builder().token(responseDto.getRefreshToken())
 			.email(user.getUserId())
@@ -216,14 +187,6 @@ public class AuthLoginAndJoinService {
 			.email(user.getUserId())
 			.build());
 	}
-
-	/**
-	 * @param user
-	 * @param userName
-	 * @param authority
-	 * @return
-	 * @프로필 정보가 없을때 LoginResDto 생성
-	 */
 
 	private LoginResDto makeLoginResBuilder(User user, String userName, String authority) throws
 		Exception {
@@ -237,15 +200,6 @@ public class AuthLoginAndJoinService {
 			.refreshToken(jwtIssuer.createRefreshToken(userName, authority))
 			.build();
 	}
-
-	/**
-	 * @param user
-	 * @param userName
-	 * @param authority
-	 * @param profile
-	 * @return
-	 * @프로필 정보가 있을때 LoginResDto 생성
-	 */
 
 	private LoginResDto makeLoginResBuilder(User user, String userName, String authority, Profile profile) throws
 		Exception {
@@ -262,11 +216,6 @@ public class AuthLoginAndJoinService {
 			.build();
 	}
 
-	/**
-	 * @param profile profile로 부터 AuthOrg 객체 생성
-	 * @return
-	 */
-
 	public AuthOrg getProfileToAuthOrg(Profile profile) throws Exception {
 		List<Org> org = profile.getOrg();
 
@@ -280,22 +229,10 @@ public class AuthLoginAndJoinService {
 			.teamName(team.isEmpty() ? null : team.get().getTeamName()).build();
 	}
 
-	/**
-	 * @param user
-	 * @return boolean
-	 * @유저의 비밀번호 변경일이 3개월이 지났는지 확인
-	 */
-
 	private boolean checkHasItBeenThreeMonthsSinceTheLastPasswordChange(User user) throws
 		Exception {
 		return user.getLastPwdModifiedDt().isBefore(LocalDate.now().minusDays(90));
 	}
-
-	/**
-	 * @param bearerToken
-	 * @return
-	 * @RefreshToken RefreshToken 해체
-	 */
 
 	private String makeResolveToken(String bearerToken) throws Exception {
 
@@ -305,12 +242,6 @@ public class AuthLoginAndJoinService {
 
 		return null;
 	}
-
-	/**
-	 * @param bearerToken
-	 * @return
-	 * @RefreshToken 해체 후 유효성 검사 및 새로운 토큰 발급
-	 */
 
 	@Transactional
 	public LoginResDto makeReissue(String bearerToken) throws Exception {
@@ -330,12 +261,6 @@ public class AuthLoginAndJoinService {
 
 		return completeLogin(findUserByJwtSubject);
 	}
-
-	/**
-	 * @param refreshToken
-	 * @param claims  Claim을 바탕으로 새로운 Token과 LoginResDto 생성
-	 * @return
-	 */
 
 	private LoginResDto getReissueResponseDto(String refreshToken, Claims claims) throws
 		Exception {
@@ -374,22 +299,11 @@ public class AuthLoginAndJoinService {
 		return issueRole;
 	}
 
-	/**
-	 * @param refreshToken
-	 * @param redisRefreshToken
-	 * @return
-	 * @Redis에 저장된 RefreshToken과 요청된 RefreshToken 비교 (캐싱 활용)
-	 */
 	public boolean checkRefreshTokenInRedis(String refreshToken, RefreshToken redisRefreshToken) throws
 		Exception {
 		return redisRefreshToken.getToken().equals(refreshToken) ? true : false;
 	}
 
-	/**
-	 * @param refreshToken
-	 * @return
-	 * @RefreshToken 유효성 체크
-	 */
 	public Claims getClaimsWithValidCheck(String refreshToken) {
 		if (!StringUtils.hasText(refreshToken)) {
 			throw new JwtInvalidException("not exists refresh token");
@@ -401,13 +315,6 @@ public class AuthLoginAndJoinService {
 		}
 		return claims;
 	}
-
-	/**
-	 * @param dto
-	 * @return
-	 * @회원가입 단순 계정정보에 대한 회원가입
-	 * 자동 로그인 처리
-	 */
 
 	@Transactional
 	public LoginResDto checkJoin(JoinReqDto dto) throws Exception {
@@ -430,12 +337,6 @@ public class AuthLoginAndJoinService {
 		lastLoginRepository.save(LastLogin.builder().email(dto.getId()).build());
 	}
 
-	/**
-	 * @param dto
-	 * @return
-	 * @기본 정보 등록(update)
-	 */
-
 	@Transactional
 	public BasicInputResDto saveBasicProfile(BasicInputReqDto dto, User user) throws Exception {
 		Optional.ofNullable(user)
@@ -451,13 +352,6 @@ public class AuthLoginAndJoinService {
 		return makeBasicInputResDto(saveProfile, user, org, updateUser.getUserId());
 	}
 
-	/**
-	 * @param dto
-	 * @param profile
-	 * @return
-	 * @회사, 부서, 팀 정보를 바탕으로 Org 생성
-	 */
-
 	public Org makeOrgByCompanyAndDeptAndTeam(BasicInputReqDto dto, Profile profile) throws
 		Exception {
 		Company dkTechIn = companyRepository.findByCompanyName("dktechin");
@@ -466,15 +360,6 @@ public class AuthLoginAndJoinService {
 		Org org = Org.joinDefaultOrg(dkTechIn, profile, department, team, true);
 		return orgRepository.save(org);
 	}
-
-	/**
-	 * @param profile
-	 * @param user
-	 * @param org
-	 * @param id
-	 * @return
-	 * @기본 정보 응답 DTO 생성
-	 */
 
 	private BasicInputResDto makeBasicInputResDto(Profile profile, User user, Org org, String id) throws
 		Exception {

@@ -6,14 +6,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.User;
-import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.profile.ProfileDto;
 import rocket.planet.repository.jpa.UserRepository;
 import rocket.planet.service.profile.ProfileService;
 
 @SpringBootTest
+@Transactional
 class UserPwdModifyControllerTest {
 
 	@Autowired
@@ -32,11 +33,10 @@ class UserPwdModifyControllerTest {
 		ProfileDto.UserNewPwdReqDto userNewPwdReqDto = ProfileDto.UserNewPwdReqDto.builder()
 			.userId(crew.get().getUserId())
 			.userPwd(newPwd)
-				.userPwdCheck(newPwdCheck)
+			.userPwdCheck(newPwdCheck)
 			.build();
-		 profileService.changeUserPwd(userNewPwdReqDto, crew.get().getUserId());
+		profileService.changeUserPwd(userNewPwdReqDto, crew.get().getUserId());
 
 	}
-
 
 }

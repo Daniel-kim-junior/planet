@@ -31,9 +31,7 @@ public class AuthRequestDtoTest {
 
 	@Test
 	void dto_validation_체크_테스트() throws Exception {
-		/**
-		 * 비밀번호 유효성 실패 테스팅
-		 */
+
 		JoinReqDto dto = builder().id("test").password("failtest").build();
 		objectMapper.writeValueAsString(dto);
 		mockMvc.perform(post("/api/auth/account-register").contentType("application/json")
@@ -82,9 +80,7 @@ public class AuthRequestDtoTest {
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(biDto)).characterEncoding("UTF-8"))
 			.andExpect(status().isBadRequest());
-		/**
-		 * teamName, userName, deptName이 공백일때 실패
-		 */
+
 		biDto = BasicInputReqDto.builder()
 			.userName(" ")
 			.career(1)
@@ -119,9 +115,6 @@ public class AuthRequestDtoTest {
 				.content(objectMapper.writeValueAsString(biDto)).characterEncoding("UTF-8"))
 			.andExpect(status().isBadRequest());
 
-		/**
-		 * 로그인 id가 email 형식이 아닐때 실패
-		 */
 		LoginReqDto loginDto = LoginReqDto.builder()
 			.id("now20412401").password("Qwer1234!").build();
 		objectMapper.writeValueAsString(dto);
@@ -129,16 +122,12 @@ public class AuthRequestDtoTest {
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(loginDto)).characterEncoding("UTF-8"))
 			.andExpect(status().isBadRequest());
-		/**
-		 * 엑세스 토큰 재발급 요청에서 헤더에 토큰이 없을때 실패
-		 */
+
 		mockMvc.perform(post("/api/auth/reissue")
 				.contentType("application/json")
 				.characterEncoding("UTF-8"))
 			.andExpect(status().isBadRequest());
-		/**
-		 * 아이디가 공백일때 실패
-		 */
+
 		loginDto = LoginReqDto.builder()
 			.id(" ").password("Qwer1234!").build();
 		objectMapper.writeValueAsString(dto);

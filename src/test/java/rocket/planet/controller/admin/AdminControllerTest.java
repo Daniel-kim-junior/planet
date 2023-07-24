@@ -17,6 +17,7 @@ import rocket.planet.service.auth.AuthorityService;
 import rocket.planet.service.team.TeamService;
 
 @SpringBootTest
+@Transactional
 class AdminControllerTest {
 
 	@Autowired
@@ -35,7 +36,6 @@ class AdminControllerTest {
 	private UserRepository userRepository;
 
 	@Test
-	@Transactional
 	void 권한_변경_테스트() {
 
 		AdminAuthModifyReqDto adminAuthModifyReqDto = AdminAuthModifyReqDto.builder()

@@ -43,9 +43,6 @@ class JoinFormControllerTest {
 		Object list = JsonPath.parse(mvcResult.getResponse()
 			.getContentAsString(Charset.forName("UTF-8"))).read("$");
 
-		/**
-		 * 응답이 배열
-		 */
 		assertThat(list).isInstanceOf(List.class);
 	}
 
@@ -60,9 +57,6 @@ class JoinFormControllerTest {
 		Object list = JsonPath.parse(mvcResult.getResponse()
 			.getContentAsString(Charset.forName("UTF-8"))).read("$");
 
-		/**
-		 * 응답이 배열
-		 */
 		assertThat(list).isInstanceOf(List.class);
 	}
 

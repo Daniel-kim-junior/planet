@@ -31,10 +31,6 @@ class LogOutRequestDtoTest {
 	@Test
 	void dto_validation_체크_테스트() throws Exception {
 
-		/**
-		 * 로그아웃 시 헤더에 토큰이 존재 x
-		 */
-
 		mockMvc.perform(post("/api/logout")).andExpect(status().isBadRequest());
 
 	}

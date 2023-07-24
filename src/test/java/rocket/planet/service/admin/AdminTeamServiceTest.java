@@ -50,10 +50,8 @@ class AdminTeamServiceTest {
 	@Test
 	void 팀_생성_테스트() throws Exception {
 
-		// dto가 null일 경우
 		assertThrows(Exception.class, () -> adminTeamService.addTeam(null));
 
-		// 팀의 부서가 존재하지 않을 경우
 		assertThrows(NoSuchDeptException.class,
 			() -> adminTeamService.addTeam(
 				AdminTeamAddReqDto.builder()
@@ -61,7 +59,6 @@ class AdminTeamServiceTest {
 					.teamName("dk")
 					.build()));
 
-		// 팀의 부서가 존재하나 팀이 이미 존재하는 경우
 		assertThrows(AlreadyExistsTeamException.class, () -> {
 			adminTeamService.addTeam(
 				AdminTeamAddReqDto.builder()
@@ -70,7 +67,6 @@ class AdminTeamServiceTest {
 					.build());
 		});
 
-		// 팀의 부서가 존재하고 팀이 존재하지 않는 경우 (등록 완료)
 		final AdminResDto dto = adminTeamService.addTeam(
 			AdminTeamAddReqDto.builder()
 				.deptName("부서 있음")
@@ -82,16 +78,14 @@ class AdminTeamServiceTest {
 
 	@Test
 	void 팀_수정_테스트() {
-		// dto가 null일 경우
+
 		assertThrows(Exception.class, () -> adminTeamService.modifyTeam(null));
 
-		// 팀이 존재하지 않을 경우
 		assertThrows(NoSuchTeamException.class, () -> adminTeamService.modifyTeam(
 			AdminTeamModReqDto.builder()
 				.targetName("dking")
 				.build()));
 
-		// 팀이 존재하나 변경할 이름이 이미 존재하는 경우
 		assertThrows(AlreadyExistsTeamException.class, () -> adminTeamService.modifyTeam(
 			AdminTeamModReqDto.builder()
 				.targetName("dk")

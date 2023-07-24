@@ -19,9 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import rocket.planet.dto.profile.ProfileDto;
 
-// 수정함
 @Entity
 @Getter
 @Table(name = "profile_cert")
@@ -56,7 +54,8 @@ public class Certification {
 	private String certNumber;
 
 	@Builder
-	public Certification(Profile profile, String certName, LocalDate certDt, String certAgency, LocalDate certExpireDate,
+	public Certification(Profile profile, String certName, LocalDate certDt, String certAgency,
+		LocalDate certExpireDate,
 		String certType, String certNumber) {
 		this.profile = profile;
 		this.certName = certName;
@@ -73,6 +72,5 @@ public class Certification {
 			+ ", 자격증 발급기관='" + certAgency + '\'' + ", 만료일='" + certExpireDate + '\'' + ", 자격증 유형='"
 			+ certType + '\'' + ", 자격증 번호='" + certNumber + '\'' + '}';
 	}
-
 
 }

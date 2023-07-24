@@ -55,7 +55,7 @@ public class TeamService {
 		List<TeamMemberInfoDto> teamMemberList = new ArrayList<>();
 
 		if (teamName != null) {
-			// 팀 이름으로 소속 찾기 -> 소속으로 팀원 프로필 목록 조회
+
 			List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
 
 			for (Org org : organization) {
@@ -63,10 +63,9 @@ public class TeamService {
 				if (profile.getRole().equals(Role.ADMIN) || profile.getRole().equals(Role.RADAR) || profile.getRole()
 					.equals(Role.GUEST) || !profile.isProfileStatus())
 					continue;
-				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
+
 				List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
 
-				// 프로젝트 마감 일자가 있으면 hasProject == true
 				boolean hasProject = projectList.stream()
 					.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
@@ -91,10 +90,9 @@ public class TeamService {
 					.equals(Role.GUEST)
 					|| !noTeam.isProfileStatus())
 					continue;
-				// 팀원 프로필로 현재 진행 중인 프로젝트 존재 여부 찾기
+
 				List<UserProject> projectList = userPjtRepository.findAllByProfile(noTeam);
 
-				// 프로젝트 마감 일자가 있으면 hasProject == true
 				boolean hasProject = projectList.stream()
 					.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
 
@@ -133,11 +131,10 @@ public class TeamService {
 	@Transactional
 	public CommonResDto modifyMemberOrg(AdminOrgModifyReqDto orgModifyReqList) {
 
-		// 소속 변경
 		Profile user = profileRepository.findByUserNickName(orgModifyReqList.getUserNickName()).orElseThrow();
 
 		if (user.getOrg().isEmpty()) {
-			// org 생성
+
 			Org nOrg = Org.builder()
 				.orgInviter("admin")
 				.orgStatus(true)
@@ -154,7 +151,6 @@ public class TeamService {
 		}
 		Optional<Org> oldOrg = orgRepository.findById(user.getOrg().get(0).getId());
 
-		// 권한 삭제
 		if (!user.getRole().equals(Role.CREW) && !user.getRole().equals(Role.PL)) {
 			authorityService.modifyAuthority(AdminAuthModifyReqDto.builder()
 				.userNickName(user.getUserNickName())

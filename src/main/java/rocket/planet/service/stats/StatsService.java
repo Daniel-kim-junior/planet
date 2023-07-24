@@ -58,7 +58,7 @@ public class StatsService {
 		List<ResponseStatDto> res = new ArrayList<>();
 
 		if (isDevelop(department)) {
-			// 개발 부문인 경우
+
 			LabelAndStatDto statList = getDetailStats(department, pfTechRepository,
 				TechStats.builder().name("기술별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());
@@ -108,9 +108,8 @@ public class StatsService {
 
 		List<ResponseStatDto> res = new ArrayList<>();
 
-
 		if (isDevelop(department)) {
-			// 개발 부문인 경우
+
 			LabelAndStatDto statList = getDetailStats(team, pfTechRepository,
 				TechStats.builder().name("기술별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());
@@ -152,7 +151,6 @@ public class StatsService {
 			DeptStats.builder().name("부문별").build(), dto.getUnit());
 		res.add(ResponseStatDto.builder().type("bar").name("부문별").labelAndStats(statList).build());
 
-		// 개발 부문인 경우
 		statList = getDetailStats(entireStats, pfTechRepository,
 			TechStats.builder().name("기술별").build(), dto.getUnit());
 		res.add(ResponseStatDto.builder().type("bar").name("기술별").labelAndStats(statList).build());

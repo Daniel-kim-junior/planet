@@ -18,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import rocket.planet.dto.common.CommonErrorDto;
 import rocket.planet.util.exception.ExceptionEnum;
 
-/*
- * 비인가 유저 접근 거부 예외 처리(Spring Security Exception Handler)
- */
 @Component
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

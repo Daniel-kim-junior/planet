@@ -17,9 +17,6 @@ import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import rocket.planet.service.email.EmailVerifyService;
 
-/*
- * 이메일 인증 컨트롤러
- */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

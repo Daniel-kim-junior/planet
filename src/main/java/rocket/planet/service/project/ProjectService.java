@@ -132,7 +132,6 @@ public class ProjectService {
 			.userPjtDesc("")
 			.build()).forEach(userPjtRepository::save);
 
-		// Project Leader 등록
 		authorityService.addAuthority(AdminAddAuthDto.builder()
 			.authTargetId(project.getId())
 			.authNickName(registerDto.getProjectLeader())
@@ -147,7 +146,6 @@ public class ProjectService {
 		Project project = projectRepository.findByProjectName(projectUpdateDto.getProjectName())
 			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
 
-		// 프로젝트 리더인 경우에만 수정 가능
 		if (!projectUpdateDto.getProjectLeader().equals(projectUpdateDto.getUserNickName())) {
 			throw new ReqNotFoundException("해당 프로젝트의 리더인 경우에만 수정이 가능합니다.");
 		}
@@ -177,10 +175,8 @@ public class ProjectService {
 			.orElseThrow(() -> new ReqNotFoundException("해당하는 프로젝트가 존재하지 않습니다."));
 		List<UserProject> userProjects = userPjtRepository.findAllByProject_Id(requestedProject.getId());
 
-		// 프로젝트-유저 변경
 		userProjects.forEach(UserProject::approveProjectClose);
 
-		// 프로젝트 상태 변경
 		requestedProject.close(userNickName);
 
 		return CommonResDto.builder().message("해당 프로젝트를 마감으로 변경하였습니다.").build();
@@ -256,18 +252,16 @@ public class ProjectService {
 
 	@Transactional
 	public List<ProjectCloseResDto> getProjectReqList(ProjectNameReqDto projectNameReqDto) {
-		// 팀이름으로 마감 요청 리스트 조회
+
 		List<ProjectCloseResDto> projectCloseResDto = new ArrayList<>();
 
-		// 팀이름으로 프로젝트 리스트 찾기
 		List<Project> projectsList = projectRepository.findByTeam_TeamName(projectNameReqDto.getName());
 
 		if (!projectsList.isEmpty()) {
 			for (Project project : projectsList) {
-				// 프로젝트로 프로젝트-유저 정보 찾기
+
 				List<UserProject> userProjectList = userPjtRepository.findAllByProject(Optional.ofNullable(project));
 
-				// 프로젝트 리더 찾기
 				Authority auth = authRepository.findByAuthTargetId(project.getId());
 				Profile projectLeader = pfAuthRepository.findByAuthority(auth).getProfile();
 

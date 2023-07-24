@@ -55,36 +55,19 @@ class EmailVerifyServiceTest {
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
 
-		/**
-		 * test1 유저가 존재할때 가입 불가
-		 */
 		when(userRepository.findByUserId("test1")).thenReturn(Optional.of(mock(User.class)));
-		/**
-		 * test2 유저가 존재gk
-		 */
+
 		when(userRepository.findByUserId("test2")).thenReturn(Optional.empty());
-		/**
-		 * test3 유저가 존재하지 않을때
-		 */
+
 		when(userRepository.findByUserId("test3")).thenReturn(Optional.empty());
 
-		/**
-		 * 회원 가입 토큰이 존재하지 않을때
-		 */
 		when(emailJoinTokenRepository.findById("test2")).thenReturn(Optional.empty());
-		/**
-		 * 회원 가입 토큰이 존재할때
-		 */
+
 		when(emailJoinTokenRepository.findById("test3")).thenReturn(
 			Optional.of(EmailJoinToken.builder().email("test3").token("test3").build()));
 
-		/**
-		 * 비밀번호 찾기 토큰이 존재하지 않을때
-		 */
 		when(emailFindTokenRepository.findById("test2")).thenReturn(Optional.empty());
-		/**
-		 * 비밀번호 찾기 토큰이 존재할때
-		 */
+
 		when(emailFindTokenRepository.findById("test3")).thenReturn(
 			Optional.of(EmailFindToken.builder().email("test3").token("test3").build()));
 	}
@@ -95,9 +78,7 @@ class EmailVerifyServiceTest {
 		final CompletableFuture<String> future1 = emailVerifyService.saveLimitTimeAndSendEmail(
 			EmailDto.EmailDuplicateCheckAndSendEmailReqDto
 				.builder().id("test1").type("join").build());
-		/**
-		 * 비동기 메소드 id 존재 예외
-		 */
+
 		assertThrows(ExecutionException.class, () -> {
 			future1.get();
 		});

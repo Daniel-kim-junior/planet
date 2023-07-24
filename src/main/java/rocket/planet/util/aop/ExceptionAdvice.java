@@ -44,9 +44,6 @@ import rocket.planet.util.exception.UserLogException;
 import rocket.planet.util.exception.UserPwdCheckException;
 import rocket.planet.util.exception.UserTechException;
 
-/*
- * 예외 처리를 위한 어드바이스(AOP)
- */
 @Slf4j
 @RestControllerAdvice
 public class ExceptionAdvice {

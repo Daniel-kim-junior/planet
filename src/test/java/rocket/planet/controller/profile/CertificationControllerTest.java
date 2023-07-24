@@ -1,13 +1,16 @@
 package rocket.planet.controller.profile;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+
 import rocket.planet.domain.Certification;
 import rocket.planet.domain.Profile;
 import rocket.planet.dto.common.CommonResDto;
@@ -17,14 +20,8 @@ import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.service.profile.ProfileService;
 import rocket.planet.util.exception.ReqNotFoundException;
 
-import java.time.LocalDate;
-import java.util.NoSuchElementException;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @SpringBootTest
+@Transactional
 class CertificationControllerTest {
 
 	@Autowired
@@ -36,7 +33,6 @@ class CertificationControllerTest {
 
 	@DisplayName("자격증 생성 테스트")
 	@Test
-	@Rollback(false)
 	void 자격증_생성_테스트() {
 		Profile admin = profileRepository.findByUserNickName("admin").get();
 		Profile crew = profileRepository.findByUserNickName("crew").get();
@@ -87,31 +83,28 @@ class CertificationControllerTest {
 			.certType("IT 자격증")
 			.certNumber("59302910")
 			.build();
-		 profileService.addCertification(cert1, admin.getUserNickName());
-		 profileService.addCertification(cert2, admin.getUserNickName());
-		 profileService.addCertification(cert3, crew.getUserNickName());
-		 profileService.addCertification(cert4, pilot.getUserNickName());
-		 profileService.addCertification(cert5, crew.getUserNickName());
+		profileService.addCertification(cert1, admin.getUserNickName());
+		profileService.addCertification(cert2, admin.getUserNickName());
+		profileService.addCertification(cert3, crew.getUserNickName());
+		profileService.addCertification(cert4, pilot.getUserNickName());
+		profileService.addCertification(cert5, crew.getUserNickName());
 
-    }
+	}
 
-    @Test
-    @Transactional
-    void 자격증_삭제_테스트() {
+	@Test
+	void 자격증_삭제_테스트() {
 
-        String certName = "OPIC";
-        String pilotNickname = "pilot";
+		String certName = "OPIC";
+		String pilotNickname = "pilot";
 
-        Certification certification = certRepository.findIdByCertNumber("49582038")
-                .orElseThrow(() -> new ReqNotFoundException("삭제할 자격증이 존재하지 않습니다."));
+		Certification certification = certRepository.findIdByCertNumber("49582038")
+			.orElseThrow(() -> new ReqNotFoundException("삭제할 자격증이 존재하지 않습니다."));
 
-        String certUidString = certification.getId().toString();
-        CommonResDto result = profileService.removeCertification(certUidString, pilotNickname);
+		String certUidString = certification.getId().toString();
+		CommonResDto result = profileService.removeCertification(certUidString, pilotNickname);
 
-        assertEquals(certName + " 자격증을 삭제했습니다.", result.getMessage());
-        assertThrows(NoSuchElementException.class, () -> certRepository.findById(certification.getId()).get());
-    }
-
-
+		assertEquals(certName + " 자격증을 삭제했습니다.", result.getMessage());
+		assertThrows(NoSuchElementException.class, () -> certRepository.findById(certification.getId()).get());
+	}
 
 }

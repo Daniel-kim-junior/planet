@@ -63,23 +63,16 @@ class AuthFindPasswordServiceTest {
 	@Test
 	void 비밀번호_변경_테스트() throws Exception {
 
-		/**
-		 * 비밀번호 변경 확인 토큰이 없을때
-		 */
 		assertThrows(NoValidEmailTokenException.class, () -> {
 			authFindPasswordService.modifyPassword(PasswordModifyReqDto.builder().id("noValidTokenUser@gmail.com")
 				.password("Qwer1234!").build());
 		});
-		/**
-		 * 비밀번호 변경 확인 토큰이 있지만 바꾸려는 비밀번호가 예전 비밀번호와 같을 때
-		 */
+
 		assertThrows(PasswordMatchException.class, () -> {
 			authFindPasswordService.modifyPassword(PasswordModifyReqDto.builder().id("admin@gmail.com")
 				.password("Qwer1234!").build());
 		});
-		/**
-		 * 비밀번호 변경 확인 토큰이 있고 바꾸려는 비밀번호가 예전 비밀번호와 다를 때
-		 */
+
 		Assertions.assertThat(
 				authFindPasswordService.modifyPassword(PasswordModifyReqDto.builder().id("admin@gmail.com")
 					.password("Qwer12345!").build()))

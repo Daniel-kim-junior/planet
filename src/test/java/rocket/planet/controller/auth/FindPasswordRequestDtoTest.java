@@ -32,9 +32,7 @@ class FindPasswordRequestDtoTest {
 
 	@Test
 	void dto_validation_체크_테스트() throws Exception {
-		/**
-		 * 비밀번호 유효성 및 id 실패 테스팅
-		 */
+
 		PasswordModifyReqDto dto = PasswordModifyReqDto.builder().id("test").password("failtest").build();
 		String loginDto = objectMapper.writeValueAsString(dto);
 

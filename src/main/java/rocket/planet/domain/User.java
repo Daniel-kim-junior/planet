@@ -56,9 +56,6 @@ public class User extends BaseTime {
 	@Column
 	private LocalDateTime userRetiredAt;
 
-	//	@OneToMany(mappedBy = "user")
-	//	private List<ProfileVisitor> profileVisitor = new ArrayList<>();
-
 	@Builder
 	public User(Profile profile, String userPwd, boolean userLock,
 		String userId, LocalDate lastPwdModifiedDt) {

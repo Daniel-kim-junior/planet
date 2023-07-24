@@ -27,9 +27,6 @@ import rocket.planet.util.security.JwtAuthenticationFilter;
 import rocket.planet.util.security.JwtAuthenticationProvider;
 import rocket.planet.util.security.JwtExceptionHandlerFilter;
 
-/*
- * Spring Security 설정
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -66,7 +63,6 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
-			// .antMatchers("/api/management/**").access("hasRole('CAPTAIN') or hasRole('PILOT') or hasRole('RADAR')")
 			.anyRequest().authenticated()
 			.and()
 			.addFilterAfter(new JwtAuthenticationFilter(authenticationManagerBuilder
@@ -74,8 +70,8 @@ public class SecurityConfig {
 					jwtAuthenticationProvider).getOrBuild()), LogoutFilter.class)
 			.addFilterBefore(jwtExceptionHandlerFilter, JwtAuthenticationFilter.class)
 			.exceptionHandling()
-			.authenticationEntryPoint(customAuthenticationEntryPoint) // 인증되지 않은 사용자가 접근하려 할 때
-			.accessDeniedHandler(customAccessDeniedHandler); // 인가되지 않은 사용자가 접근하려 할 때
+			.authenticationEntryPoint(customAuthenticationEntryPoint)
+			.accessDeniedHandler(customAccessDeniedHandler);
 		return http.build();
 	}
 

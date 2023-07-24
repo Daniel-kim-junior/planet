@@ -3,12 +3,13 @@ package rocket.planet.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.repository.jpa.CompanyRepository;
 import rocket.planet.repository.jpa.DeptRepository;
 
 @SpringBootTest
+@Transactional
 public class DeptTest {
 
 	@Autowired
@@ -18,7 +19,6 @@ public class DeptTest {
 	private DeptRepository deptRepository;
 
 	@Test
-	@Rollback(false)
 	public void createDepartmentTestData() {
 
 		Company company = Company.builder()
@@ -65,7 +65,6 @@ public class DeptTest {
 			.deptType(OrgType.DEVELOPMENT)
 			.build();
 		deptRepository.saveAndFlush(ftDept);
-
 
 	}
 }

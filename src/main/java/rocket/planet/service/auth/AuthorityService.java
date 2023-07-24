@@ -82,14 +82,11 @@ public class AuthorityService {
 			throw new NoAccessAuthorityException();
 		}
 
-		// 1. 프로필에서 역할 수정
 		Profile user = profileRepository.findByUserNickName(adminAuthModifyReqDto.getUserNickName()).orElseThrow(
 			NoUserNickNameException::new);
 
-		// 2. 프로필-권한에서 권한 삭제
-		// user가 갖고 있는 프로필-권한의 아이디가 팀이나 부문일 경우, 프로필-권한 & 권한 삭제
 		if (!user.getRole().equals(Role.CREW)) {
-			// captain이나 pilot인 경우
+
 			Optional<ProfileAuthority> profileAuthority = Optional.ofNullable(
 				pfAuthRepository.findByProfile(user).orElseThrow(NoAccessAuthorityException::new));
 
@@ -102,10 +99,8 @@ public class AuthorityService {
 			}
 		}
 
-		// 프로필에 있는 role 변경
 		user.updateRole(adminAuthModifyReqDto.getRole());
 
-		// 3. 권한 추가 & 4. 프로필-권한 추가
 		if (adminAuthModifyReqDto.getRole().equals("PILOT")) {
 			addAuthority(AdminAddAuthDto.builder()
 				.authNickName(user.getUserNickName())
@@ -132,8 +127,6 @@ public class AuthorityService {
 
 		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
-		// 팀으로 소속 인원 찾기
-
 		List<Org> organization = orgRepository.findAllByTeam_TeamName(teamName);
 
 		for (Org org : organization) {
@@ -143,7 +136,6 @@ public class AuthorityService {
 				|| !profile.isProfileStatus())
 				continue;
 
-			// 현재 진행중인 프로젝트 유무 확인
 			List<UserProject> projectList = userPjtRepository.findAllByProfile(profile);
 			boolean isActive = projectList.stream()
 				.anyMatch(project -> !project.getUserPjtCloseDt().isEqual(LocalDate.of(2999, 12, 31)));
@@ -161,7 +153,6 @@ public class AuthorityService {
 
 		}
 
-		// Paging
 		Page<AdminAuthMemberDto> memberList = getPagedResult(teamMemberList, pageable);
 
 		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),

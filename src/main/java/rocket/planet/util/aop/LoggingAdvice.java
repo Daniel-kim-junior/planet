@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-/*
- * 로깅 처리를 위한 어드바이스(AOP)
- */
 @Aspect
 @Component
 public class LoggingAdvice {
