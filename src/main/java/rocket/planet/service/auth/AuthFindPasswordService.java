@@ -42,6 +42,7 @@ public class AuthFindPasswordService {
 			if (passwordEncoder.matches(dto.getPassword(), user.getUserPwd()))
 				throw new PasswordMatchException();
 			user.updatePassword(passwordEncoder.encode(dto.getPassword()));
+			
 		});
 
 		emailFindConfirmRepository.delete(emailConfirm);

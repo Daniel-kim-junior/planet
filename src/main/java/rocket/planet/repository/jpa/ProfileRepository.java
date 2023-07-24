@@ -14,9 +14,12 @@ import rocket.planet.repository.jpa.profile.ProfileRepositoryCustom;
 
 public interface ProfileRepository extends JpaRepository<Profile, UUID>, ProfileRepositoryCustom {
 
+	int countProfileBy();
+
 	Optional<Profile> findByUserNickName(String userNickName);
 
 	Profile findByOrg(Optional<Org> organization);
+
 	List<Profile> findByUserNickNameStartsWith(String userNickName);
 
 	@Query("select distinct p "
@@ -46,4 +49,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, Profile
 	List<Integer> findCareerStatsByEntire();
 
 	List<Profile> findAllByOrg(Object o);
+
 }

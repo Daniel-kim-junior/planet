@@ -84,6 +84,15 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 	List<UserProject> findPjtPartCountByTeamClosed(@Param("teamName") String teamName);
 
 	@Query(
+		"select distinct p "
+			+ "from Profile p "
+			+ "join FETCH p.org o "
+			+ "JOIN FETCH o.department d "
+			+ "where d.deptName = :deptName "
+			+ "and p.profileStatus = true")
+	List<Profile> findStatsByDepartment(@Param("deptName") String deptName);
+
+	@Query(
 		"select distinct up "
 			+ "from UserProject up "
 			+ "JOIN FETCH up.profile pf "
@@ -102,6 +111,18 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "or p.projectStatus != 'ONGOING')"
 			+ "and pf.profileStatus = true ")
 	List<UserProject> findPjtPartCountByEntireClosed();
+
+	@Query(
+		"select distinct p "
+			+ "from Profile p "
+			+ "join FETCH p.org o "
+			+ "JOIN FETCH o.team t "
+			+ "where t.teamName = :teamName "
+			+ "and p.profileStatus = true")
+	List<Profile> findStatsByTeam(@Param("teamName") String teamName);
+
+	@Query("select count(p) from Profile p where p.profileStatus = true group by p.profileStatus")
+	int countProfileByEntire();
 
 	@Query(
 		"select distinct up "

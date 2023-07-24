@@ -48,6 +48,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 	public LabelAndStatDto getStats() {
 		LabelAndStatDto dto = null;
+
 		if (entity instanceof Department) {
 
 			Department department = (Department)entity;
@@ -113,12 +114,11 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartment(
 					department.getDeptName());
-
-				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByDepartmentClosed(
+				List<Profile> statsByDepartment = ((UserPjtRepository)repository).findStatsByDepartment(
 					department.getDeptName());
 
 				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", noWorkingProfiles.size());
+				map.put("미 참여", statsByDepartment.size() - onWorkingProfiles.size());
 
 				dto = LabelAndStatDto.builder().data(map).build();
 
@@ -143,7 +143,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			}
 
 		} else if (entity instanceof Team) {
-			// 팀 통계
+
 			Team team = (Team)entity;
 			if (category instanceof TechStats) {
 
@@ -188,6 +188,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				for (UserProject userProject : userProjectList) {
 					projectName = userProject.getProject().getProjectName();
+
 					if (map.containsKey(projectName)) {
 						map.put(projectName, map.get(projectName) + 1);
 					} else {
@@ -202,11 +203,10 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeam(
 					team.getTeamName());
-				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByTeamClosed(
-					team.getTeamName());
+				List<Profile> statsByTeam = ((UserPjtRepository)repository).findStatsByTeam(team.getTeamName());
 
 				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", noWorkingProfiles.size());
+				map.put("미 참여", statsByTeam.size() - onWorkingProfiles.size());
 				dto = LabelAndStatDto.builder().data(map).build();
 			}
 
@@ -267,11 +267,9 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				map = new HashMap<>();
 				final List<UserProject> onWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntire();
-				final List<UserProject> noWorkingProfiles = ((UserPjtRepository)repository).findPjtPartCountByEntireClosed(
-				);
-
+				int statsByEntire = ((UserPjtRepository)repository).countProfileByEntire();
 				map.put("참여 중", onWorkingProfiles.size());
-				map.put("미 참여", noWorkingProfiles.size());
+				map.put("미 참여", statsByEntire - onWorkingProfiles.size());
 				dto = LabelAndStatDto.builder().data(map).build();
 			} else if (category instanceof DeptStats) {
 
