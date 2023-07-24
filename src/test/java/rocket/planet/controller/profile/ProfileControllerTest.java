@@ -30,12 +30,12 @@ class ProfileControllerTest {
 		Profile crew = profileRepository.findByUserNickName("crew").get();
 		ProfileDto.ProfileUpDateResDto profileUpdate = ProfileDto.ProfileUpDateResDto.builder()
 			.userNickName(crew.getUserNickName())
-			.userName("크루킴")
+			// .userName("크루킴")
 			.profileStartDate(LocalDate.of(2022, 03, 22))
 			.profileCareer(3)
 			.profileBirthDt(LocalDate.of(1999, 8, 23))
 			.build();
-		 profileService.modifyProfile(profileUpdate, crew.getUserNickName());
+		profileService.modifyProfile(profileUpdate, crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
 
@@ -47,7 +47,7 @@ class ProfileControllerTest {
 			.userNickName(crew.getUserNickName())
 			.profileDisplay(true)
 			.build();
-		 profileService.modifyProfileDisplay(displayUpdate, crew.getUserNickName());
+		profileService.modifyProfileDisplay(displayUpdate, crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
 
@@ -59,11 +59,8 @@ class ProfileControllerTest {
 			.userNickName(crew.getUserNickName())
 			.profileAnnualStatus(true)
 			.build();
-		 profileService.modifyAnnualStatus(annualUpdate,crew.getUserNickName());
+		profileService.modifyAnnualStatus(annualUpdate, crew.getUserNickName());
 		assertThat(profileRepository.findByUserNickName("crew"));
 	}
-
-
-
 
 }

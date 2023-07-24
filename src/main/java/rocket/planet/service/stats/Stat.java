@@ -126,17 +126,16 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				map = new HashMap<>();
 
-				final List<Org> userProjectList = ((OrgRepository)repository).findProjectStatsByDept(
+				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByDept(
 					department.getDeptName());
 
-				for (Org org : userProjectList) {
-					org.getTeam().getProject().stream().forEach(project -> {
-						if (map.containsKey(project.getProjectName())) {
-							map.put(project.getProjectName(), map.get(project.getProjectName()) + 1);
-						} else {
-							map.put(project.getProjectName(), 1);
-						}
-					});
+				for (UserProject userProject : userProjectList) {
+					if (map.containsKey(userProject.getProject().getProjectName())) {
+						map.put(userProject.getProject().getProjectName(),
+							map.get(userProject.getProject().getProjectName()) + 1);
+					} else {
+						map.put(userProject.getProject().getProjectName(), 1);
+					}
 				}
 
 				dto = LabelAndStatDto.builder().data(map).build();
@@ -181,18 +180,16 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			} else if (category instanceof ProjectStats) {
 				map = new HashMap<>();
 
-				final List<Org> userProjectList = ((OrgRepository)repository).findProjectStatsByTeam(
+				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findProjectStatsByTeam(
 					team.getTeamName());
 
-				for (Org org : userProjectList) {
-					org.getTeam().getProject().stream().forEach(project -> {
-						if (map.containsKey(project.getProjectName())) {
-							map.put(project.getProjectName(), map.get(project.getProjectName()) + 1);
-						} else {
-							map.put(project.getProjectName(), 1);
-						}
-					});
-
+				for (UserProject userProject : userProjectList) {
+					if (map.containsKey(userProject.getProject().getProjectName())) {
+						map.put(userProject.getProject().getProjectName(),
+							map.get(userProject.getProject().getProjectName()) + 1);
+					} else {
+						map.put(userProject.getProject().getProjectName(), 1);
+					}
 				}
 
 				dto = LabelAndStatDto.builder().data(map).build();
@@ -297,14 +294,15 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				map = new HashMap<>();
 
-				final List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtPartCountByEntire();
-				String projectName;
+				List<UserProject> userProjectList = ((UserPjtRepository)repository).findPjtPartCountByEntire();
+
 				for (UserProject userProject : userProjectList) {
-					projectName = userProject.getProject().getProjectName();
-					if (map.containsKey(projectName)) {
-						map.put(projectName, map.get(projectName) + 1);
+					if (map.containsKey(userProject.getProject().getProjectName())) {
+						map.put(userProject.getProject().getProjectName(),
+							map.get(userProject.getProject().getProjectName()) + 1);
 					} else {
-						map.put(projectName, 1);
+						map.put(userProject.getProject().getProjectName(), 1);
+
 					}
 				}
 

@@ -84,6 +84,28 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and p.profileStatus = true")
 	List<Profile> findStatsByTeam(@Param("teamName") String teamName);
 
+	@Query(
+		"select distinct up from UserProject up "
+			+ "JOIN FETCH up.project p "
+			+ "JOIN FETCH up.profile pf "
+			+ "JOIN pf.org o "
+			+ "JOIN o.team t "
+			+ "where pf.profileStatus = true "
+			+ "and p.projectStatus = 'ONGOING' "
+			+ "and t.teamName = :teamName ")
+	List<UserProject> findProjectStatsByTeam(@Param("teamName") String teamName);
+
+	@Query(
+		"select distinct up from UserProject up "
+			+ "JOIN FETCH up.project p "
+			+ "JOIN FETCH up.profile pf "
+			+ "JOIN pf.org o "
+			+ "JOIN o.department d "
+			+ "where pf.profileStatus = true "
+			+ "and p.projectStatus = 'ONGOING' "
+			+ "and d.deptName = :deptName ")
+	List<UserProject> findProjectStatsByDept(@Param("deptName") String deptName);
+
 	@Query("select count(p) from Profile p where p.profileStatus = true group by p.profileStatus")
 	int countProfileByEntire();
 

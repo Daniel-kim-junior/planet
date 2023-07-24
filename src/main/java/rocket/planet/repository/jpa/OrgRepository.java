@@ -18,7 +18,7 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 
 	Optional<List<Org>> findByDepartment_DeptInactive(boolean deptInactive);
 
-	@Query("SELECT o from Org o "
+	@Query("SELECT distinct o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "LEFT JOIN FETCH o.department d "
 		+ "LEFT JOIN FETCH o.team t "
@@ -27,39 +27,18 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 		+ "and pf.profileStatus = true")
 	List<Org> findTeamStatsByDeptName(@Param("deptName") String deptName);
 
-	@Query("SELECT o from Org o "
+	@Query("SELECT distinct o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "LEFT JOIN FETCH o.department d "
 		+ "WHERE d.deptInactive = false "
 		+ "and pf.profileStatus = true ")
 	List<Org> findDeptStatsByEntire();
 
-	@Query("SELECT o from Org o "
+	@Query("SELECT distinct o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "JOIN FETCH o.team t "
 		+ "WHERE t.teamInactive = false "
 		+ "and pf.profileStatus = true ")
 	List<Org> findStatsTeamByEntire();
-
-	@Query(
-		"select o from Org o "
-			+ "JOIN FETCH o.profile pf "
-			+ "JOIN FETCH o.team t "
-			+ "JOIN FETCH t.project p "
-			+ "where pf.profileStatus = true "
-			+ "and p.projectStatus = 'ONGOING' "
-			+ "and t.teamName = :teamName ")
-	List<Org> findProjectStatsByTeam(@Param("teamName") String teamName);
-
-	@Query(
-		"select o from Org o "
-			+ "JOIN FETCH o.profile pf "
-			+ "JOIN FETCH o.department d "
-			+ "JOIN FETCH o.team t "
-			+ "JOIN FETCH t.project p "
-			+ "where pf.profileStatus = true "
-			+ "and p.projectStatus = 'ONGOING' "
-			+ "and d.deptName = :deptName ")
-	List<Org> findProjectStatsByDept(@Param("deptName") String deptName);
 
 }
