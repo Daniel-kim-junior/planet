@@ -50,38 +50,12 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "JOIN FETCH up.project p "
 			+ "JOIN FETCH up.profile pf "
 			+ "JOIN FETCH pf.org o "
-			+ "JOIN FETCH o.department d "
-			+ "where d.deptName = :deptName "
-			+ "and pf.profileStatus = true "
-			+ "and (up.userPjtCloseApply = true "
-			+ "or p.projectStatus != 'ONGOING') ")
-	List<UserProject> findPjtPartCountByDepartmentClosed(@Param("deptName") String deptName);
-
-	@Query(
-		"select distinct up "
-			+ "from UserProject up "
-			+ "JOIN FETCH up.project p "
-			+ "JOIN FETCH up.profile pf "
-			+ "JOIN FETCH pf.org o "
 			+ "JOIN FETCH o.team t "
 			+ "where t.teamName = :teamName "
 			+ "and pf.profileStatus = true "
 			+ "and up.userPjtCloseApply = false "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findPjtPartCountByTeam(@Param("teamName") String teamName);
-
-	@Query(
-		"select distinct up "
-			+ "from UserProject up "
-			+ "JOIN FETCH up.project p "
-			+ "JOIN FETCH up.profile pf "
-			+ "JOIN FETCH pf.org o "
-			+ "JOIN FETCH o.team t "
-			+ "where t.teamName = :teamName "
-			+ "and pf.profileStatus = true "
-			+ "and (up.userPjtCloseApply = true "
-			+ "or p.projectStatus != 'ONGOING') ")
-	List<UserProject> findPjtPartCountByTeamClosed(@Param("teamName") String teamName);
 
 	@Query(
 		"select distinct p "
@@ -101,16 +75,6 @@ public interface UserPjtRepository extends JpaRepository<UserProject, UUID> {
 			+ "and pf.profileStatus = true "
 			+ "and p.projectStatus = 'ONGOING' ")
 	List<UserProject> findPjtPartCountByEntire();
-
-	@Query(
-		"select distinct up "
-			+ "from UserProject up "
-			+ "JOIN FETCH up.profile pf "
-			+ "JOIN FETCH up.project p "
-			+ "where (up.userPjtCloseApply = true "
-			+ "or p.projectStatus != 'ONGOING')"
-			+ "and pf.profileStatus = true ")
-	List<UserProject> findPjtPartCountByEntireClosed();
 
 	@Query(
 		"select distinct p "
