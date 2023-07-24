@@ -143,7 +143,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 			}
 
 		} else if (entity instanceof Team) {
-			// 팀 통계
+
 			Team team = (Team)entity;
 			if (category instanceof TechStats) {
 
@@ -188,6 +188,7 @@ public class Stat<R extends JpaRepository, T extends StatCategory, E> {
 
 				for (UserProject userProject : userProjectList) {
 					projectName = userProject.getProject().getProjectName();
+
 					if (map.containsKey(projectName)) {
 						map.put(projectName, map.get(projectName) + 1);
 					} else {
