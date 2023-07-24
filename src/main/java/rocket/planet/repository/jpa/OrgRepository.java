@@ -18,7 +18,6 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 
 	Optional<List<Org>> findByDepartment_DeptInactive(boolean deptInactive);
 
-	// 부문에 해당하는 팀에 해당하는 프로필의 개수를 구하는 쿼리
 	@Query("SELECT o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "LEFT JOIN FETCH o.department d "
@@ -28,7 +27,6 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 		+ "and pf.profileStatus = true")
 	List<Org> findTeamStatsByDeptName(@Param("deptName") String deptName);
 
-	// 부문 당 프로필의 개수를 구하는 쿼리
 	@Query("SELECT o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "LEFT JOIN FETCH o.department d "
@@ -36,12 +34,32 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 		+ "and pf.profileStatus = true ")
 	List<Org> findDeptStatsByEntire();
 
-	// 전체 팀에 해당하는 프로필의 개수를 구하는 쿼리
 	@Query("SELECT o from Org o "
 		+ "JOIN FETCH o.profile pf "
 		+ "JOIN FETCH o.team t "
 		+ "WHERE t.teamInactive = false "
 		+ "and pf.profileStatus = true ")
 	List<Org> findStatsTeamByEntire();
+
+	@Query(
+		"select o from Org o "
+			+ "JOIN FETCH o.profile pf "
+			+ "JOIN FETCH o.team t "
+			+ "JOIN FETCH t.project p "
+			+ "where pf.profileStatus = true "
+			+ "and p.projectStatus = 'ONGOING' "
+			+ "and t.teamName = :teamName ")
+	List<Org> findProjectStatsByTeam(@Param("teamName") String teamName);
+
+	@Query(
+		"select o from Org o "
+			+ "JOIN FETCH o.profile pf "
+			+ "JOIN FETCH o.department d "
+			+ "JOIN FETCH o.team t "
+			+ "JOIN FETCH t.project p "
+			+ "where pf.profileStatus = true "
+			+ "and p.projectStatus = 'ONGOING' "
+			+ "and d.deptName = :deptName ")
+	List<Org> findProjectStatsByDept(@Param("deptName") String deptName);
 
 }

@@ -102,11 +102,11 @@ class StatsServiceTest {
 		when(userPjtRepository.findPjtPartCountByDepartment("테스트부문비개발")).thenReturn(
 			List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 
-		when(userPjtRepository.findProjectStatsByDept("테스트부문")).thenReturn(
-			List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
-
-		when(userPjtRepository.findProjectStatsByDept("테스트부문비개발")).thenReturn(
-			List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findProjectStatsByDept("테스트부문")).thenReturn(
+		// 	List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		//
+		// when(userPjtRepository.findProjectStatsByDept("테스트부문비개발")).thenReturn(
+		// 	List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 
 		/**
 		 * 팀 통계 테스트
@@ -125,10 +125,10 @@ class StatsServiceTest {
 			.thenReturn(List.of(Profile.builder().profileCareer(5).build()));
 		when(profileRepository.findCareerStatsByTeam("테스트팀비개발"))
 			.thenReturn(List.of(Profile.builder().profileCareer(5).build()));
-		when(userPjtRepository.findProjectStatsByTeam("테스트팀"))
-			.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
-		when(userPjtRepository.findProjectStatsByTeam("테스트팀비개발"))
-			.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findProjectStatsByTeam("테스트팀"))
+		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findProjectStatsByTeam("테스트팀비개발"))
+		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 		when(userPjtRepository.findPjtPartCountByTeam("테스트팀"))
 			.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 		when(userPjtRepository.findPjtPartCountByTeam("테스트팀비개발"))

@@ -71,7 +71,7 @@ public class StatsService {
 				TeamStats.builder().name("팀별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("팀별").labelAndStats(statList).build());
 
-			statList = getDetailStats(department, userPjtRepository,
+			statList = getDetailStats(department, orgRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
@@ -87,7 +87,7 @@ public class StatsService {
 				TeamStats.builder().name("팀별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("팀별").labelAndStats(statList).build());
 
-			statList = getDetailStats(department, userPjtRepository,
+			statList = getDetailStats(department, orgRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
@@ -118,7 +118,7 @@ public class StatsService {
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
-			statList = getDetailStats(team, userPjtRepository,
+			statList = getDetailStats(team, orgRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
@@ -130,7 +130,7 @@ public class StatsService {
 				CareerStats.builder().name("경력별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("경력별").labelAndStats(statList).build());
 
-			statList = getDetailStats(team, userPjtRepository,
+			statList = getDetailStats(team, orgRepository,
 				ProjectStats.builder().name("프로젝트별").build(), dto.getUnit());
 			res.add(ResponseStatDto.builder().type("bar").name("프로젝트별").labelAndStats(statList).build());
 
