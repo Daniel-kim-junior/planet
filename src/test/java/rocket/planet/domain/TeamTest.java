@@ -3,6 +3,7 @@ package rocket.planet.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.repository.jpa.DeptRepository;
@@ -18,6 +19,7 @@ public class TeamTest {
 	private TeamRepository teamRepository;
 
 	@Test
+	@Rollback(false)
 	public void createTeamTestData() {
 		Department smartSolutionDept = deptRepository.findByDeptName("스마트솔루션");
 		Department hrDept = deptRepository.findByDeptName("경영지원");
