@@ -87,11 +87,11 @@ class CertificationControllerTest {
 			.certType("IT 자격증")
 			.certNumber("59302910")
 			.build();
-		// profileService.addCertification(cert1);
-		// profileService.addCertification(cert2);
-		// profileService.addCertification(cert3);
-		// profileService.addCertification(cert4);
-		// profileService.addCertification(cert5);
+		 profileService.addCertification(cert1, admin.getUserNickName());
+		 profileService.addCertification(cert2, admin.getUserNickName());
+		 profileService.addCertification(cert3, crew.getUserNickName());
+		 profileService.addCertification(cert4, pilot.getUserNickName());
+		 profileService.addCertification(cert5, crew.getUserNickName());
 
     }
 

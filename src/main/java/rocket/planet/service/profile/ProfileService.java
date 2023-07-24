@@ -283,21 +283,20 @@ public class ProfileService {
                 .orElseThrow(() -> new ReqNotFoundException(techReqDto.getUserNickName() + "님의 프로필은 존재하지 않습니다."));
 
         if (!profile.getUserNickName().equals(loginUser)) {
-            throw new AccessDeniedException(loginUser + "님은 " + profile.getUserName() + "님의 프로필에 메인 기술을 등록할 수 없습니다.");
+            throw new AccessDeniedException(loginUser + "님은 " + profile.getUserNickName() + "님의 프로필에 메인 기술을 등록할 수 없습니다.");
         }
 
         Tech tech = techRepository.findByTechNameIgnoreCase(techReqDto.getTechName())
                 .orElseThrow(() -> new UserTechException("등록되지 않은 기술로 추가할 수 없습니다."));
 
-        if (pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserName(), tech.getTechName())) {
+        if (pfTechRepository.existsByProfile_UserNickNameAndTech_TechName(profile.getUserNickName(), tech.getTechName())) {
             throw new UserTechException("이미 등록된 기술입니다.");
         }
 
-        List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserName());
+        List<ProfileTech> userTechList = pfTechRepository.findByProfile_UserNickName(profile.getUserNickName());
         if (userTechList.size() >= 5) {
             throw new UserTechException("최대 다섯 개의 기술만 등록할 수 있습니다.");
         }
-
         ProfileTech userTech = ProfileTech.builder()
                 .profile(profile)
                 .tech(tech)
@@ -311,7 +310,7 @@ public class ProfileService {
         UUID userTechId = UUID.fromString(userTechIdString);
         ProfileTech tech = pfTechRepository.findById(userTechId).orElseThrow(() -> new ReqNotFoundException("삭제할 기술이 존재하지 않습니다."));
         if (!tech.getProfile().getUserNickName().equals(loginUser)) {
-            throw new AccessDeniedException(loginUser + "님은 " + tech.getProfile().getUserNickName() + "님의 " + tech.getTech().getTechName() + " 메인기술을 삭제할 권한이 없습니다.");
+            throw new AccessDeniedException(loginUser + "님은 " + tech.getProfile().getUserNickName() + "님의 메인기술인 " + tech.getTech().getTechName() + "을 삭제할 권한이 없습니다.");
         }
         pfTechRepository.deleteById(userTechId);
         return CommonResDto.builder().message(tech.getTech().getTechName() + " 기술을 메인 기술에서 삭제하였습니다.").build();
@@ -334,8 +333,8 @@ public class ProfileService {
         User user = userRepository.findByUserId(newPwdReqDto.getUserId())
                 .orElseThrow(() -> new UserPwdCheckException("유저를 찾을 수 없습니다."));
 
-        if (!user.getProfile().getUserNickName().equals(loginUser)) {
-            throw new AccessDeniedException(loginUser + "님은 " + user.getProfile().getUserNickName() + "님의 비밀번호를 변경할 수 없습니다.");
+        if (!user.getProfile().getUserId().equals(loginUser)) {
+            throw new AccessDeniedException(loginUser + "계정은 " + user.getProfile().getUserNickName() + "님의 비밀번호를 변경할 수 없습니다.");
         }
 
         if (newPwdReqDto.getUserPwdCheck() == null) {

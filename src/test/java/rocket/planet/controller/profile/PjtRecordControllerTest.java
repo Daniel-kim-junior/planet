@@ -117,19 +117,14 @@ class PjtRecordControllerTest {
 
 	}
 
-//	@Test
-//	@Transactional
-//	void 외부프로젝트_삭제_테스트() {
-//		 profileService.removeOutsideProject("56fad2d9-324f-4fdd-a624-5ae3b4440152");
-//		String pilotNickname = "pilot";
-//		String pjtName = "crewz";
-//		Profile pilot = profileRepository.findByUserNickName(pilotNickname).get();
-//		UUID pjtUid = pjtRecordRepository.findByPjtName(pjtName).orElseThrow(() -> new ReqNotFoundException("삭제할 외부프로젝트가 존재하지 않습니다.")).getId();
-//		String pjtUidString = pjtUid.toString();
-//		CommonResDto result = profileService.removeOutsideProject(pjtUidString, pilotNickname);
-//		assertEquals(pjtName + "을 삭제했습니다.", result.getMessage());
-//
-//	}
+	@Test
+	@Transactional
+	void 외부프로젝트_삭제_테스트() {
+		Profile pilot = profileRepository.findByUserNickName("pilot").get();
+		UUID pjtUid = pjtRecordRepository.findByPjtName("crewz").orElseThrow(() -> new ReqNotFoundException("삭제할 외부프로젝트가 존재하지 않습니다.")).getId();
+		String pjtUidString = pjtUid.toString();
+		CommonResDto result = profileService.removeOutsideProject(pjtUidString, pilot.getUserNickName());
+	}
 
 
 }
