@@ -19,7 +19,7 @@ public class ListReqDto {
 	private Integer pageSize = 8;
 
 	public Integer getPage() {
-		page = page - 1;
+		// page = page - 1;
 		if (page < 0) {
 			page = 0;
 		}

@@ -128,7 +128,7 @@ public class AuthorityService {
 
 	@Transactional
 	public AdminAuthMemberListDto getTeamMemberList(ListReqDto listReqDto, String teamName) {
-		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+		Pageable pageable = PageRequest.of(listReqDto.getPage() - 1, listReqDto.getPageSize());
 
 		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
@@ -165,9 +165,12 @@ public class AuthorityService {
 		Page<AdminAuthMemberDto> memberList = getPagedResult(teamMemberList, pageable);
 
 		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
-			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+			memberList.getTotalPages(), listReqDto.getPage() - 1, listReqDto.getPageSize());
 
-		return AdminAuthMemberListDto.builder().adminAuthMemberList(teamMemberList).pagingUtil(pagingUtil).build();
+		return AdminAuthMemberListDto.builder()
+			.adminAuthMemberList(memberList.getContent())
+			.pagingUtil(pagingUtil)
+			.build();
 
 	}
 
