@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rocket.planet.domain.Profile;
+import rocket.planet.domain.User;
 import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.profile.ProfileDto;
 import rocket.planet.service.profile.ProfileService;
@@ -117,8 +118,8 @@ public class ProfileController {
 
 	@PatchMapping("/modify-pwd")
 	public ResponseEntity<CommonResDto> userPwdModify(@RequestBody ProfileDto.UserNewPwdReqDto newPwdReqDto,
-		@AuthenticationPrincipal(expression = "profile") Profile profile) {
-		String loginUser = profile.getUserNickName();
+		@AuthenticationPrincipal(expression = "user") User user) {
+		String loginUser = user.getUserId();
 		return ResponseEntity.ok().body(profileService.changeUserPwd(newPwdReqDto, loginUser));
 	}
 

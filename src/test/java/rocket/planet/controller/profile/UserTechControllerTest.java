@@ -7,8 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import rocket.planet.domain.Profile;
+import rocket.planet.domain.ProfileTech;
 import rocket.planet.domain.Tech;
+import rocket.planet.dto.common.CommonResDto;
 import rocket.planet.dto.profile.ProfileDto;
+import rocket.planet.repository.jpa.PfTechRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TechRepository;
 import rocket.planet.service.profile.ProfileService;
@@ -16,12 +19,14 @@ import rocket.planet.service.profile.ProfileService;
 @SpringBootTest
 class UserTechControllerTest {
 
-	@Autowired
-	private ProfileRepository profileRepository;
-	@Autowired
-	private ProfileService profileService;
-	@Autowired
-	private TechRepository techRepository;
+    @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
+    private ProfileService profileService;
+    @Autowired
+    private TechRepository techRepository;
+    @Autowired
+    private PfTechRepository pfTechRepository;
 
     @DisplayName("기술 테스트")
     @Test
@@ -47,8 +52,10 @@ class UserTechControllerTest {
     @Transactional
     void 기술_삭제_테스트() {
         Profile crew = profileRepository.findByUserNickName("crew").get();
-        Tech tech = techRepository.findByTechNameIgnoreCase("kotlin").get();
-        profileService.removeUserTech(String.valueOf(tech.getId()), crew.getUserNickName());
+        Tech tech = techRepository.findByTechNameIgnoreCase("Java").get();
+        ProfileTech profileTech = pfTechRepository.findByProfile_UserNickNameAndTech_TechName(crew.getUserNickName(), tech.getTechName()).get();
+        CommonResDto result = profileService.removeUserTech(String.valueOf(profileTech.getId()), crew.getUserNickName());
+
     }
 
 

@@ -32,7 +32,7 @@ class UserPwdModifyControllerTest {
 		ProfileDto.UserNewPwdReqDto userNewPwdReqDto = ProfileDto.UserNewPwdReqDto.builder()
 			.userId(crew.get().getUserId())
 			.userPwd(newPwd)
-			 .userPwdCheck(newPwdCheck)
+				.userPwdCheck(newPwdCheck)
 			.build();
 		 profileService.changeUserPwd(userNewPwdReqDto, crew.get().getUserId());
 

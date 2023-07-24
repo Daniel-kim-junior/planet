@@ -11,6 +11,10 @@ import rocket.planet.repository.jpa.OrgRepository;
 import rocket.planet.repository.jpa.ProfileRepository;
 import rocket.planet.repository.jpa.TeamRepository;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 @SpringBootTest
 public class OrgTest {
 	@Autowired
@@ -36,6 +40,7 @@ public class OrgTest {
 		Department itConsultingDept = deptRepository.findByDeptName("IT아웃소싱");
 
 		Team hrTeam = teamRepository.findByTeamName("인사");
+		Team generalAffairsTeam = teamRepository.findByTeamName("총무");
 		Team smartFactoryTeam = teamRepository.findByTeamName("스마트팩토리");
 		Team aiChatbotTeam = teamRepository.findByTeamName("AI챗봇구축");
 		Team internalSysTeam = teamRepository.findByTeamName("사내정보시스템");
@@ -113,6 +118,28 @@ public class OrgTest {
 				.orgStatus(true)
 				.build();
 		orgRepository.save(starOrg);
+
+//		List<Department> departments = Arrays.asList(hrDept, smartDept, aiChatbotDept, internalSysDept, itConsultingDept);
+//		List<List<Team>> teamsByDepartment = Arrays.asList(
+//				Arrays.asList(hrTeam, generalAffairsTeam),
+//				Arrays.asList(smartCityTeam, smartFactoryTeam),
+//				Arrays.asList(aiChatbotTeam),
+//				Arrays.asList(internalSysTeam),
+//				Arrays.asList(itConsultingTeam)
+//
+//		int randomDeptIndex = ThreadLocalRandom.current().nextInt(departments.size());
+//		Department randomDept = departments.get(randomDeptIndex);
+//		List<Team> teamsInRandomDept = teamsByDepartment.get(randomDeptIndex);
+//
+//		int randomTeamIndex = ThreadLocalRandom.current().nextInt(teamsInRandomDept.size());
+//		Team randomTeam = teamsInRandomDept.get(randomTeamIndex);
+//
+//
+//		);
+
+
+
+
 
 	}
 
