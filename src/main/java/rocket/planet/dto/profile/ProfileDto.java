@@ -35,13 +35,10 @@ public class ProfileDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ProfileUpDateResDto {
-        private String userName;
         private String userNickName;
-        private boolean profileDisplay;
         private int profileCareer;
         private LocalDate profileBirthDt;
         private LocalDate profileStartDate;
-        private boolean profileAnnualStatus;
     }
 
     @Getter
