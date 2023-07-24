@@ -32,7 +32,7 @@ public class AdminSearchService {
 
 	@Transactional
 	public AdminMemberOrgListDto searchOrgUser(ListReqDto listReqDto, String userNickName) {
-		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+		Pageable pageable = PageRequest.of(listReqDto.getPage() - 1, listReqDto.getPageSize());
 		List<AdminMemberOrgDto> teamMemberList = new ArrayList<>();
 
 		// nickname이 포함된 유저 검색
@@ -74,10 +74,10 @@ public class AdminSearchService {
 		Page<AdminMemberOrgDto> memberList = getOrgPagedResult(teamMemberList, pageable);
 
 		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
-			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+			memberList.getTotalPages(), listReqDto.getPage() - 1, listReqDto.getPageSize());
 
 		return
-			AdminMemberOrgListDto.builder().memberList(teamMemberList).pagingUtil(pagingUtil).build();
+			AdminMemberOrgListDto.builder().memberList(memberList.getContent()).pagingUtil(pagingUtil).build();
 	}
 
 	public Page<AdminMemberOrgDto> getOrgPagedResult(List<AdminMemberOrgDto> teamMembers, Pageable pageable) {
@@ -88,7 +88,7 @@ public class AdminSearchService {
 
 	@Transactional
 	public AdminAuthMemberListDto searchAuthUser(ListReqDto listReqDto, String userNickName) {
-		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+		Pageable pageable = PageRequest.of(listReqDto.getPage() - 1, listReqDto.getPageSize());
 		List<AdminAuthMemberDto> teamMemberList = new ArrayList<>();
 
 		// 닉네임이 포함됨 userList
@@ -117,10 +117,13 @@ public class AdminSearchService {
 		Page<AdminAuthMemberDto> memberList = getAuthPagedResult(teamMemberList, pageable);
 
 		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
-			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+			memberList.getTotalPages(), listReqDto.getPage() - 1, listReqDto.getPageSize());
 
 		return
-			AdminAuthMemberListDto.builder().adminAuthMemberList(teamMemberList).pagingUtil(pagingUtil).build();
+			AdminAuthMemberListDto.builder()
+				.adminAuthMemberList(memberList.getContent())
+				.pagingUtil(pagingUtil)
+				.build();
 
 	}
 

@@ -50,7 +50,7 @@ public class TeamService {
 
 	@Transactional
 	public TeamMemberListDto getMemberList(ListReqDto listReqDto, String teamName) {
-		Pageable pageable = PageRequest.of(listReqDto.getPage(), listReqDto.getPageSize());
+		Pageable pageable = PageRequest.of(listReqDto.getPage() - 1, listReqDto.getPageSize());
 
 		List<TeamMemberInfoDto> teamMemberList = new ArrayList<>();
 
@@ -117,10 +117,10 @@ public class TeamService {
 		Page<TeamMemberInfoDto> memberList = getPagedResult(teamMemberList, pageable);
 
 		PagingUtil pagingUtil = new PagingUtil(memberList.getTotalElements(),
-			memberList.getTotalPages(), listReqDto.getPage(), listReqDto.getPageSize());
+			memberList.getTotalPages(), listReqDto.getPage() - 1, listReqDto.getPageSize());
 
 		return
-			TeamMemberListDto.builder().memberList(teamMemberList).pagingUtil(pagingUtil).build();
+			TeamMemberListDto.builder().memberList(memberList.getContent()).pagingUtil(pagingUtil).build();
 
 	}
 
