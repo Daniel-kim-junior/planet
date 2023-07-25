@@ -23,10 +23,8 @@ import rocket.planet.domain.Org;
 import rocket.planet.domain.OrgType;
 import rocket.planet.domain.Profile;
 import rocket.planet.domain.ProfileTech;
-import rocket.planet.domain.Project;
 import rocket.planet.domain.Team;
 import rocket.planet.domain.Tech;
-import rocket.planet.domain.UserProject;
 import rocket.planet.dto.stats.DeptStatsReqDto;
 import rocket.planet.dto.stats.EntireStatsReqDto;
 import rocket.planet.dto.stats.ResponseStatDto;
@@ -96,11 +94,11 @@ class StatsServiceTest {
 		when(orgRepository.findTeamStatsByDeptName("테스트부문비개발")).thenReturn(
 			List.of(mock(Org.class), mock(Org.class), mock(Org.class)));
 
-		when(userPjtRepository.findPjtPartCountByDepartment("테스트부문")).thenReturn(
-			List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findPjtPartCountByDepartment("테스트부문")).thenReturn(
+		// 	List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 
-		when(userPjtRepository.findPjtPartCountByDepartment("테스트부문비개발")).thenReturn(
-			List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findPjtPartCountByDepartment("테스트부문비개발")).thenReturn(
+		// 	List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 
 		// when(userPjtRepository.findProjectStatsByDept("테스트부문")).thenReturn(
 		// 	List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
@@ -129,10 +127,10 @@ class StatsServiceTest {
 		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 		// when(userPjtRepository.findProjectStatsByTeam("테스트팀비개발"))
 		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
-		when(userPjtRepository.findPjtPartCountByTeam("테스트팀"))
-			.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
-		when(userPjtRepository.findPjtPartCountByTeam("테스트팀비개발"))
-			.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findPjtPartCountByTeam("테스트팀"))
+		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
+		// when(userPjtRepository.findPjtPartCountByTeam("테스트팀비개발"))
+		// 	.thenReturn(List.of(UserProject.builder().project(Project.builder().projectName("g").build()).build()));
 
 	}
 
