@@ -41,9 +41,8 @@ public class ProjectController {
 	}
 
 	@GetMapping("/management/projects/{userNickName}")
-	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT')")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT', 'ROLE_CREW')")
 	public ResponseEntity<Boolean> userNickNameCheck(@PathVariable("userNickName") String userNickName) {
-
 		return ResponseEntity.ok().body(projectService.checkUser(userNickName));
 	}
 
@@ -55,7 +54,7 @@ public class ProjectController {
 	}
 
 	@PatchMapping("/management/projects")
-	@PreAuthorize("hasRole('ROLE_PL')")
+	@PreAuthorize("hasAnyRole('ROLE_PILOT', 'ROLE_CAPTAIN', 'ROLE_RADAR', 'ROLE_ADMIN', 'ROLE_CREW')")
 	public ResponseEntity<CommonResDto> projectDetailModify(@RequestBody ProjectUpdateDetailDto projectDetailDto) {
 
 		return ResponseEntity.ok().body(projectService.updateProjectDetail(projectDetailDto));
@@ -84,7 +83,7 @@ public class ProjectController {
 	}
 
 	@PostMapping("/management/projects/confirm")
-	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT','ROLE_CREW','ROLE_PL')")
+	@PreAuthorize("hasAnyRole('ROLE_RADAR', 'ROLE_CAPTAIN','ROLE_PILOT','ROLE_CREW')")
 	public ResponseEntity<CommonResDto> projectCloseRequest(@RequestBody ProjectNameReqDto projectNameReqDto) {
 
 		return ResponseEntity.ok()

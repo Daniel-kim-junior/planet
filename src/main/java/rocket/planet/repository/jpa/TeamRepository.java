@@ -20,11 +20,4 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 	@Query("SELECT t FROM Team t JOIN FETCH t.department d WHERE d.deptName = :deptName and t.teamName = :teamName and t.teamInactive = false")
 	Optional<Team> findTeamByDeptName(@Param("deptName") String deptName, @Param("teamName") String teamName);
 
-	@Query("SELECT t FROM Team t "
-		+ "JOIN FETCH t.department d "
-		+ "WHERE d.deptName = :deptName "
-		+ "and t.teamInactive = false "
-		+ "group by t.teamName")
-	List<Team> findTeamStatsByDeptName(@Param("deptName") String deptName);
-
 }

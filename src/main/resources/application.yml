@@ -4,16 +4,18 @@ spring:
   mvc:
     path-match:
       matching-strategy: ant_path_matcher #url 패턴 매칭 전략
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     open-in-view: false
     database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: false
     show-sql: true
     properties:
-      hibernate.default_batch_fetch_size: 1000
-
+      hibernate:
+        default_batch_fetch_size: 100 #최적화 옵션
+  
   config:
     import: classpath:local-profile.yml
 logging:
@@ -25,6 +27,7 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
 
 ---
 spring.config.activate.on-profile: local-profile

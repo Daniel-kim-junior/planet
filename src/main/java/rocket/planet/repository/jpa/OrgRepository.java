@@ -18,25 +18,25 @@ public interface OrgRepository extends JpaRepository<Org, UUID> {
 
 	Optional<List<Org>> findByDepartment_DeptInactive(boolean deptInactive);
 
-	@Query("SELECT distinct o from Org o "
-		+ "JOIN FETCH o.profile pf "
-		+ "LEFT JOIN FETCH o.department d "
+	@Query("SELECT o from Org o "
+		+ "JOIN o.profile pf "
+		+ "LEFT JOIN o.department d "
 		+ "LEFT JOIN FETCH o.team t "
 		+ "WHERE d.deptName = :deptName "
 		+ "and t.teamInactive = false "
 		+ "and pf.profileStatus = true")
 	List<Org> findTeamStatsByDeptName(@Param("deptName") String deptName);
 
-	@Query("SELECT distinct o from Org o "
-		+ "JOIN FETCH o.profile pf "
+	@Query("SELECT o from Org o "
+		+ "JOIN o.profile pf "
 		+ "LEFT JOIN FETCH o.department d "
 		+ "WHERE d.deptInactive = false "
 		+ "and pf.profileStatus = true ")
 	List<Org> findDeptStatsByEntire();
 
 	@Query("SELECT distinct o from Org o "
-		+ "JOIN FETCH o.profile pf "
-		+ "JOIN FETCH o.team t "
+		+ "JOIN o.profile pf "
+		+ "LEFT JOIN FETCH o.team t "
 		+ "WHERE t.teamInactive = false "
 		+ "and pf.profileStatus = true ")
 	List<Org> findStatsTeamByEntire();

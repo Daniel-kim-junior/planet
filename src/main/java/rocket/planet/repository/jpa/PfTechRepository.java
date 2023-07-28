@@ -22,8 +22,8 @@ public interface PfTechRepository extends JpaRepository<ProfileTech, UUID> {
 		+ "from ProfileTech pt "
 		+ "join fetch pt.tech t "
 		+ "join fetch pt.profile p "
-		+ "join fetch p.org o "
-		+ "join fetch o.department d "
+		+ "join p.org o "
+		+ "LEFT join o.department d "
 		+ "where d.deptName = :deptName ")
 	List<ProfileTech> findTechStatsByProfileDepartment(@Param("deptName") String deptName);
 
@@ -31,8 +31,8 @@ public interface PfTechRepository extends JpaRepository<ProfileTech, UUID> {
 		+ "from ProfileTech pt "
 		+ "join fetch pt.tech th "
 		+ "join fetch pt.profile p "
-		+ "join fetch p.org o "
-		+ "join fetch o.team t "
+		+ "join p.org o "
+		+ "LEFT join o.team t "
 		+ "where t.teamName = :teamName "
 		+ "and p.profileStatus = true ")
 	List<ProfileTech> findTechStatsByProfileTeam(@Param("teamName") String teamName);
